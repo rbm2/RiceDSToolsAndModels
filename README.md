@@ -7,6 +7,7 @@
 #  Copyright 2003      by Till Tantau   <tantau@users.sourceforge.net>
 #                      and 2008 by Daina Chiba <daina.chiba@gmail.com>
 
+# Additional (draft) course instructor materials are available by contacting Risa Myers (rbm2@rice.edu)
 
 # Substantial contributions to this material and / or the course Comp 543 were made by:
 
