@@ -7,12 +7,14 @@
 #  Copyright 2003      by Till Tantau   <tantau@users.sourceforge.net>
 #                      and 2008 by Daina Chiba <daina.chiba@gmail.com>
 
-# Additional (draft) course instructor materials are available by contacting Risa Myers (rbm2@rice.edu)
+The development of this course was supported in part by the NLM under grant number T15LM007093.
 
-# Substantial contributions to this material and / or the course Comp 543 were made by:
+Additional (draft) course instructor materials are available by contacting Risa Myers (rbm2@rice.edu)
 
-# Chris Jermaine
-# Risa Myers
-# Gao Pan
-# Gabe Vacaliuc
-# Shengqi Wang
+Substantial contributions to this material and / or the course Comp 543 were made by:
+
+Chris Jermaine
+Risa Myers
+Gao Pan
+Gabe Vacaliuc
+Shengqi Wang
