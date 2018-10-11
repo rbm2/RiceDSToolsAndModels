@@ -11,7 +11,11 @@ Additional (draft) course instructor materials are available by contacting Risa 
 Substantial contributions to this material and / or the course Comp 543 were made by:
 
 Chris Jermaine
+
 Risa Myers
+
 Gao Pan
+
 Gabe Vacaliuc
+
 Shengqi Wang
