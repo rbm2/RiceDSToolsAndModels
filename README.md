@@ -14,6 +14,8 @@ Chris Jermaine
 
 Risa Myers
 
+Jonas Actor
+
 Gao Pan
 
 Gabe Vacaliuc
