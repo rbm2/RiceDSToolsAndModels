@@ -1,0 +1,18 @@
+version: "3"
+services:
+  jupyter:
+    image: gvacaliuc/db-notebook
+    ports:
+      - "8888:8888"
+    volumes:
+      - "./notebooks:/home/jovyan/notebooks" 
+      - "./data:/home/jovyan/data"
+  postgres:
+    image: postgres:alpine
+    restart: always
+    environment:
+      POSTGRES_USER: dbuser
+      POSTGRES_PASSWORD: comp543isgreat
+      POSTGRES_DB: comp543
+    volumes:
+      - "./data:/data"

@@ -3,3 +3,10 @@
 .DS_Store
 .DS_Store
 .DS_Store
+*.aux
+*.log
+*.gz
+*.out
+*.pygtex
+*.pygstyle
+labs/NumpyArrayPerformance/.ipynb_checkpoints/NumpyArrayPerformance-checkpoint.ipynb

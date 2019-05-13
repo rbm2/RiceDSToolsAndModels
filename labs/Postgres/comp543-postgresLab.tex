@@ -1,0 +1,373 @@
+% to build this file run:
+% pdflatex -shell-escape comp543-postgresLab.tex
+
+%Copyright 2019 Rice University
+%
+%Licensed under the Apache License, Version 2.0 (the "License");
+%you may not use this file except in compliance with the License.
+%You may obtain a copy of the License at
+%
+%    https://www.apache.org/licenses/LICENSE-2.0
+%
+%Unless required by applicable law or agreed to in writing, software
+%distributed under the License is distributed on an "AS IS" BASIS,
+%WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+%See the License for the specific language governing permissions and
+%limitations under the License.
+
+\documentclass[paper=letter, fontsize=12pt]{article}
+
+% document format
+\usepackage{ragged2e} 
+\usepackage[margin=1in]{geometry} 
+
+% text format
+\usepackage[english]{babel} 
+\usepackage{amsmath,amsfonts,amsthm} 
+\usepackage{enumitem} 
+\usepackage{hyperref}
+
+% sectioning
+\usepackage[section]{placeins}  
+\usepackage{sectsty} 
+
+\allsectionsfont{\normalfont\scshape} 
+\numberwithin{equation}{section} 
+\numberwithin{figure}{section} 
+\numberwithin{table}{section} 
+                                                 
+
+% algorithms
+\usepackage{algorithm}
+\usepackage[compatible]{algpseudocode}
+
+% header / footer
+\usepackage{fancyhdr} 
+
+\pagestyle{fancyplain} 
+\fancyhead{} 
+\fancyfoot[L]{} 
+\fancyfoot[C]{} 
+\fancyfoot[R]{\thepage} 
+\renewcommand{\headrulewidth}{0pt} 
+\renewcommand{\footrulewidth}{0pt} 
+\setlength{\headheight}{13.6pt} 
+
+% misc preamble
+\setlength\parindent{4pt} 
+\setlength{\parskip}{\baselineskip} 
+\newcommand{\horrule}[1]{\rule{\linewidth}{#1}} 
+\newcommand{\fancyline}{\\ \horrule{0.5pt} \vspace{0.1cm}} 
+
+% Code Cells
+\usepackage{minted}
+\usepackage{mdframed}
+
+\definecolor{dkgreen}{rgb}{0,0.6,0}
+\definecolor{gray}{rgb}{0.5,0.5,0.5}
+\definecolor{mauve}{rgb}{0.58,0,0.82}
+
+% Colors for minted package
+\definecolor{codecellbg}{rgb}{0.950,0.950,0.950}
+\definecolor{riceblue}{rgb}{0.000,0.141,0.416}
+\definecolor{ricegray}{rgb}{0.369,0.376,0.384}
+
+\mdfdefinestyle{inputcell}{%
+ hidealllines=true,leftline=true,
+ skipabove=12pt,skipbelow=0pt,
+ innertopmargin=0.4em,%
+ innerbottommargin=0.4em,%
+ innerrightmargin=0.5em,%
+ rightmargin=0.5em,%
+ innerleftmargin=0.5em,%
+ leftmargin=0.5em,%
+ linecolor=riceblue,linewidth=3pt,%
+ backgroundcolor=codecellbg,%
+}
+
+% sets up the minted styles, for now hardcodes python.
+\setminted{mathescape,
+           numbersep=5pt,
+           breaklines,
+           framesep=2mm}
+
+\BeforeBeginEnvironment{minted}{\begin{mdframed}[style=inputcell]}
+\AfterEndEnvironment{minted}{\end{mdframed}}
+
+%-------------------------------------------------------------------------------
+%	TITLE SECTION
+%-------------------------------------------------------------------------------
+
+\title{	
+\normalfont \normalsize 
+\textsc{rice university} \\ [25pt]
+\horrule{0.5pt} \\[0.4cm] 
+\huge COMP543 Lab 2: Connecting Postgres and Jupyter \\ 
+\horrule{2pt} \\[0.5cm] 
+}
+
+\author{COMP543 Instructors}
+
+\date{Last edited: \today}
+
+%-------------------------------------------------------------------------------
+%   CONTENT
+%-------------------------------------------------------------------------------
+
+\begin{document}
+
+\maketitle
+
+The first two assignments will be done in SQL using
+\href{https://www.postgresql.org/}{Postgres}.  Today we'll be running through
+some examples of accessing SQL databases using Jupyter Notebooks.  If you were
+successful in setting up Docker in the previous lab, then today should be very
+straightforward, otherwise you might have a bit of installation to do.
+
+\section{Background \& Setup}
+
+\subsection{Docker Compose}
+
+\textbf{
+  This section applies to you if you plan on using Docker for running Postgres
+  and Jupyter during this class (most of you).
+}
+
+In the last lab, we introduced you to Docker and had you run some basic
+commands to get a Jupyter Notebook server running.  Today, rather than
+executing several commands at the command line to get your environment set up,
+we're going to use a popular tool distributed with Docker called
+\href{https://docs.docker.com/compose/overview/}{Docker Compose}.  The basic
+idea is that you define your environment in a text file rather than on the
+command line.  This allows us to share environments as easy as we can share a
+text file!  See below for an example that sets up a Postgres container and
+a Jupyter notebook container:
+
+\begin{minted}{yaml}
+version: "3"
+services:
+  jupyter:
+    image: gvacaliuc/db-notebook
+    ports:
+      - "8888:8888"
+    volumes:
+      - "./notebooks:/home/jovyan/notebooks" 
+      - "./data:/home/jovyan/data"
+  postgres:
+    image: postgres:alpine
+    restart: always
+    environment:
+      POSTGRES_USER: dbuser
+      POSTGRES_PASSWORD: comp543isgreat
+      POSTGRES_DB: comp543
+    volumes:
+      - "./data:/data"
+\end{minted}
+
+This file format is known as YAML and is sometimes described as a
+``Pythonic-JSON''.  We have provided this file for you.
+
+The section under \texttt{jupyter} creates a container
+running the \texttt{gvacaliuc/db-notebook} container, binds port
+\texttt{8888} on the host to port \texttt{8888} on the container, and shares
+two volumes with the container.
+
+The section under \texttt{postgres} creates a container running the
+\texttt{postgres:alpine}\footnote{Note that the image syntax is generally
+  \texttt{user/repository[:tag]}, but for useful and common programs such as
+  Postgres, Docker, Inc. maintains a set of images that can be accessed by
+  their name.} image, with a default hostname of \texttt{postgres}, and sets
+some environment variables that determine how the container should build the
+database / how users will access it.  It also shares a data volume with the
+container.
+
+To actually start these containers, one would navigate to the directory
+containing this file and simply run \texttt{docker-compose up}.  No more long
+command line arguments to docker!
+
+\subsubsection{Absolute vs. Relative Paths}
+
+Some of you may notice that we used relative paths in the compose file
+(\texttt{./notebooks:/home/jovyan/notebooks}) to declare the volumes to share,
+which is not allowed when specifying the host mount path from the regular
+docker CLI (\texttt{docker run -v /home/user/notebooks:/home/jovyan/notebooks image}).
+This restriction is relaxed in compose, allowing us to more conveniently create
+host mounts.
+
+\subsection{Manual Installation}
+
+\textbf{
+  This section applies to you if were unable to get Docker set up in the last
+  lab.
+}
+
+To follow along with this lab, you'll need to install Postgres on your computer
+as well as Jupyter and some related Python packages.  If you do not have a
+Python installation on your computer yet, it is recommended you install the
+Anaconda distribution.
+
+\subsubsection{Postgres}
+
+Install using the instructions listed here:
+\href{http://postgresguide.com/setup/install.html}{http://postgresguide.com/setup/install.html}.
+
+\begin{itemize}
+  \item Windows:
+    \href{https://www.postgresql.org/download/windows/}{https://www.postgresql.org/download/windows/}
+  \item Mac: \href{https://postgresapp.com/}{https://postgresapp.com/}
+  \item Linux: See guide linked above.
+\end{itemize}
+
+\subsubsection{Jupyter / Python}
+
+It's recommended to use the Anaconda Distribution of Python 3.6:
+\href{https://www.anaconda.com/download}{https://www.anaconda.com/download}.
+
+\subsubsection{Python Packages}
+
+You'll need to install the following packages:
+
+\begin{minted}{text}
+jupyter
+pandas
+numpy
+scipy
+ipython-sql
+sqlalchemy
+psycopg2
+\end{minted}
+
+\section{Exercises}
+
+The data and notebooks for this lab are available as a zip file on canvas
+linked to the lab assignment.  Extract it and navigate to that directory.
+
+\subsection{Start Postgres and Jupyter}
+
+
+Make sure you do not already have Jupyter running on your machine. If you do, either shut it down or change the port mapping specified in the .yml file.
+
+If you're not using Docker, please start Postgres and Jupyter as you normally
+would and then open the Jupyter notebook provided in the lab zip file.
+
+Otherwise, navigate to the base of the zip file (in the terminal
+environment you run Docker from) and execute
+
+\begin{minted}{bash}
+docker-compose up 
+\end{minted}
+
+You should see some pretty output about \texttt{postgres} starting and some
+about \texttt{jupyter} starting. Open the URL that's printed from Jupyter and
+open the notebook interface.
+
+\subsection{Connect to Postgres via \texttt{psql}}
+
+Before we begin writing SQL queries, we need to load some data into our
+database.  We'll do this by connecting to our database engine via the command
+line utility \texttt{psql}, although this can also be done through Jupyter, or
+via a GUI interface.
+
+\subsubsection{Connecting with Docker}
+Your \texttt{username/password} pair is \texttt{dbuser/comp543isgreat}.  From
+the base of the lab folder (with the \texttt{docker-compose.yml} file),
+execute:
+
+\begin{minted}{text}
+docker-compose exec postgres psql -d comp543 -U dbuser
+\end{minted}
+
+You may be prompted for a password.  On a successful connection, you should
+see output this:
+
+\begin{minted}{text}
+psql (10.1)
+Type "help" for help.
+
+comp543=# 
+\end{minted}
+
+\subsubsection{Connecting Manually}
+
+You'll want to follow the documentation from Postgres to use psql.  On Mac /
+Linux you might be able to use \texttt{man psql} for help connecting.  If
+you're having trouble getting connected, please grab a TA for help.
+
+\subsection{Adding data to Postgres}
+
+Since we're working in a fresh database, we shouldn't have any tables yet.  We
+can make sure of this using the
+\texttt{{\textbackslash}d} meta-command:
+\begin{minted}{text}
+psql (10.1)
+Type "help" for help.
+
+comp543=# \d
+Did not find any relations.
+\end{minted}
+
+Let's create two new tables:
+\begin{itemize}
+  \item \texttt{cypher(letter CHAR, value INTEGER)}
+  \item \texttt{message(seq INTEGER, value INTEGER)}
+\end{itemize}
+
+\begin{minted}{text}
+comp543=# CREATE TABLE cypher(
+  letter CHAR,
+  value INTEGER
+);
+comp543=# CREATE TABLE message(
+  seq INTEGER,
+  value INTEGER
+);
+\end{minted}
+
+If you made a mistake and need to reload or recreate these tables, you can easily remove them from the database with the commands
+\begin{minted}{text}
+comp543=# DROP TABLE cypher;
+comp543=# DROP TABLE message;
+\end{minted}
+
+
+Then load up the provided cypher data.  Note that if you're using docker, you're
+actually executing the psql command on the \texttt{postgres} container.  Where
+are the data files locally, and where do they end up in the container?  You'll
+have to look at the \texttt{docker-compose.yml} file and the provided data
+files to figure out the correct command below.  If you're not using
+docker you'll still have to figure out the correct path and delimiter.
+
+Use the psql COPY command to load data from the cypher.txt and
+secretmessage.txt files into their corresponding tables. The syntax for this
+command is:
+
+\begin{minted}{text}
+comp543=# \COPY cypher FROM '<path to cypher data>' DELIMITER '<delimiter>' CSV;  
+comp543=# \COPY message FROM '<path to message data>' DELIMITER '<delimiter>' CSV;  
+\end{minted}
+
+Where \texttt{<path to cypher data>} is the location where the docker container
+can access the file which contains the file cypher.txt, \texttt{<path to
+  message data>} is the location where the docker container the
+secretmessage.txt  file, \texttt{<delimiter>} is the delimiter used in the
+provided data files. Note that the path to the files you need to specify is relative to the folder where you kicked off docker-compose. So, if you were in /Users/rbm2/Documents/543/lab2-postgres-jupyter, your path should be relative to that location.
+
+You can quit \texttt{psql} using the meta-command
+\texttt{{\textbackslash}quit}.
+
+\subsection{Connect to SQL and start Querying!}
+
+From here on out, follow the instructions in the provided notebook.  Please
+submit a \texttt{.ipynb} file of your completed
+notebook on Canvas.
+
+\subsection{Shutting down your containers and cleaning up}
+
+To shutdown and remove your containers, type \texttt{docker-compose down} in
+the lab directory.  Alternatively, one can type \texttt{docker-compose stop}
+followed \texttt{docker-compose rm}.  Note that there is a notion of stopping
+containers, as well as removing containers.  Stopping simply stops execution
+and preserves the filesystem, while removing actually removes all data related
+to the containers.
+
+\end{document}

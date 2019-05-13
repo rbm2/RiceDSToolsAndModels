@@ -1,0 +1,9 @@
+version: "3"
+services:
+  jupyter:
+    image: gvacaliuc/spark
+    ports:
+      - "8888:8888"
+    volumes:
+      - "./notebooks:/home/jovyan/notebooks" 
+      - "./data:/home/jovyan/data"

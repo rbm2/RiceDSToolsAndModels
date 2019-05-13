@@ -1,0 +1,7 @@
+This lab has two parts - running TensorFlow in AWS and CoLaboratory. 
+
+For AWS part, please follow the lab instruction: TFlab.pdf Preview the documentand the starting code is: RNN.pyPreview the document
+
+For CoLaboratory part, you will need a Google Account. If you don't have a Google account, please go to www.google.com, click "Sign In" to create an account for free. Please download RNN_CoLab.ipynb, upload it into you own Google Drive, and follow the instructions in the .ipynb file to complete the lab. Note: this particular .ipynb file is not for Jupyter Notebook, please only open it in your Google Drive by either double click the file or right click, and then select "open by CoLab".   Note that you must use Chrome for this lab.
+
+If you cannot open the .ipynb file from your Google Drive, please click here https://colab.research.google.com/notebooks/welcome.ipynb#recent=true and in the pop-up window, select "upload" tag to upload RNN_CoLab.ipynb, then follow the instructions in the notebook.
