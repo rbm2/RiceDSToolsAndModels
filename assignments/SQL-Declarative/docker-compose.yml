@@ -1,0 +1,9 @@
+version: "3"
+services:
+  jupyter:
+    image: gvacaliuc/db-notebook
+    ports:
+      - "8888:8888"
+    volumes:
+      - ".:/home/jovyan/work/a1-declarative-sql"
+    command: "start.sh jupyter lab"

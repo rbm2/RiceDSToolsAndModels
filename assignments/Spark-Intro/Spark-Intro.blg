@@ -1,0 +1,46 @@
+This is BibTeX, Version 0.99d (TeX Live 2017)
+Capacity: max_strings=100000, hash_size=100000, hash_prime=85009
+The top-level auxiliary file: Spark-Intro.aux
+The style file: elsarticle-num.bst
+Database file #1: tardigrade.bib
+You've used 2 entries,
+            2937 wiz_defined-function locations,
+            683 strings with 5796 characters,
+and the built_in function-call counts, 847 in all, are:
+= -- 56
+> -- 62
+< -- 0
++ -- 22
+- -- 20
+* -- 80
+:= -- 151
+add.period$ -- 2
+call.type$ -- 2
+change.case$ -- 2
+chr.to.int$ -- 0
+cite$ -- 2
+duplicate$ -- 16
+empty$ -- 69
+format.name$ -- 22
+if$ -- 184
+int.to.chr$ -- 0
+int.to.str$ -- 2
+missing$ -- 2
+newline$ -- 14
+num.names$ -- 2
+pop$ -- 12
+preamble$ -- 1
+purify$ -- 0
+quote$ -- 0
+skip$ -- 33
+stack$ -- 0
+substring$ -- 60
+swap$ -- 2
+text.length$ -- 0
+text.prefix$ -- 0
+top$ -- 0
+type$ -- 0
+warning$ -- 0
+while$ -- 4
+width$ -- 3
+write$ -- 22

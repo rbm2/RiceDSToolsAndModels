@@ -1,0 +1,20 @@
+\begin{thebibliography}{1}
+\expandafter\ifx\csname url\endcsname\relax
+  \def\url#1{\texttt{#1}}\fi
+\expandafter\ifx\csname urlprefix\endcsname\relax\def\urlprefix{URL }\fi
+\expandafter\ifx\csname href\endcsname\relax
+  \def\href#1#2{#2} \def\path#1{#1}\fi
+
+\bibitem{boothby}
+T.~C. Boothby, J.~R. Tenlen, F.~W. Smith, J.~R. Wang, K.~A. Patanella, E.~O.
+  Nishimura, S.~C. Tintori, Q.~Li, C.~D. Jones, M.~Yandell, Evidence for
+  extensive horizontal gene transfer from the draft genome of a tardigrade,
+  Proceedings of the National Academy of Sciences 112~(52) (2015) 15976--15981.
+
+\bibitem{Koutsovoulos}
+G.~Koutsovoulos, S.~Kumar, D.~R. Laetsch, L.~Stevens, J.~Daub, C.~Conlon,
+  H.~Maroon, F.~Thomas, A.~A. Aboobaker, M.~Blaxter, No evidence for extensive
+  horizontal gene transfer in the genome of the tardigrade hypsibius dujardini,
+  Proceedings of the National Academy of Sciences (2016) 201600338.
+
+\end{thebibliography}

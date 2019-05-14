@@ -1,0 +1,13 @@
+For this assignment, you are asked to write and execute 12 declarative SQL queries, and to turn in the queries and results on Canvas.
+
+What to turn in: A modified version of the assignment Jupyter Notebook that contains your answers.  
+
+Run this assignment on Orion.
+	1. Connect via: https://orion-196-39.crc.rice.edu
+	2. Select the gvacaliuc/db-notebook image
+	3. Upload the assignment notebook
+	4. Connect to the database using the password emailed to you (instructions are in the notebook) This Jupyter Notebook contains the assignment: SQL-Declarative.ipynb
+
+	If you want to change the data for testing, use: SQL-Data.ipynb
+
+Please note that your final submission must be on the full dataset. 
