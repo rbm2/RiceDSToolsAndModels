@@ -1,0 +1,11 @@
+The notebook for the assignment is located here: 
+
+Please use the image "jupyter/scipy-notebook" for this assignment.
+
+Please use the Jupyter Web UI to upload the notebook to your "work" folder.  It is VITAL you do your work in this folder, as all other folders are not retained across server restarts.  It is also important to download your notebook and save your work after each session, as it's unlikely, but possible that user data may be removed as part of system maintenance.
+
+Submit your final notebook with output.
+
+Honor Code: This assignment is to be completed individually.
+
+

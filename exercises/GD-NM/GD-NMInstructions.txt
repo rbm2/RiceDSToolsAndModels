@@ -1,0 +1,16 @@
+Your goal is to implement two numerical optimization methods that find the minimum of the McCormick function. (more details are provided in the notebook). For your reference, this minimum is found at:
+
+(-0.54719755, -1.54719755)
+
+and the value of the function at this point is: 
+
+-1.9132229549810367
+
+ 
+
+The assignment is: 
+
+Submit your Jupyter Notebook with outputs.
+
+
+Honor Code: This assignment is to be completed individually. 

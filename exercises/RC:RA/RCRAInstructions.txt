@@ -1,0 +1,8 @@
+In this assignment, you will write some Relational Algebra and Relational Calculus expressions.
+
+The assignment is:
+
+Your solution must be typed (we have to be sure we can read your answers). Please submit your solution as a pdf file.
+
+
+Honor Code: This assignment is to be completed individually. 
