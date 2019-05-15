@@ -1,0 +1,8 @@
+Your goal is to implement the EM algorithm, as presented in class.
+
+The assignment is: 
+
+Submit your Jupyter Notebook with outputs.
+
+
+Honor Code: This assignment is to be completed individually. 
