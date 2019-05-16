@@ -1,0 +1,14 @@
+The assignment is: 
+
+The code to build the dictionary is: 
+
+The list of categories is: 
+
+The queries are in: 
+
+A subset of the pubmed file is:
+
+Submit your python code (.py file) and your results in a text file (.txt).
+
+
+Honor Code: This assignment is to be completed individually. 
