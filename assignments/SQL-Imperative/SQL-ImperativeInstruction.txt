@@ -1,0 +1,7 @@
+The description of the assignment can be found here:
+
+The data are already on Orion.
+
+Turn in a Jupyter Notebook with your code and output.
+
+Honor Code: This assignment is to be completed individually.

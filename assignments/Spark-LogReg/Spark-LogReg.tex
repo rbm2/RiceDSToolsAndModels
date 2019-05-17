@@ -1,0 +1,374 @@
+%Copyright ©2019 Christopher M Jermaine (cmj4@rice.edu), and Risa B Myers  (rbm2@rice.edu)
+%
+%Licensed under the Apache License, Version 2.0 (the "License");
+%you may not use this file except in compliance with the License.
+%You may obtain a copy of the License at
+%
+%    https://www.apache.org/licenses/LICENSE-2.0
+%
+%Unless required by applicable law or agreed to in writing, software
+%distributed under the License is distributed on an "AS IS" BASIS,
+%WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+%See the License for the specific language governing permissions and
+%limitations under the License.
+\documentclass[11pt]{article}
+%\documentclass[12pt]{amsart}
+%\usepackage{latex8}
+\usepackage{fullpage}
+\usepackage{times}
+\usepackage{url}
+\usepackage[normalem]{ulem}
+\usepackage{epsfig} 
+%\usepackage{latexsym}
+\usepackage{subfigure}
+\usepackage{graphicx}
+\usepackage{titlesec}
+\usepackage{multirow}
+\usepackage{amsmath,amssymb}
+
+\titlespacing{\section}{0pt}{3mm}{1mm}
+\titlespacing{\subsection}{0pt}{2mm}{0.5mm}
+\titlespacing{\subsubsection}{0pt}{2mm}{0.8mm}
+
+%\topmargin 0.75in 
+%\oddsidemargin -0.04in
+%\textwidth 6.5in
+%\textheight 9.0in 
+%\setlength{\textheight}{23.1cm}
+%\setlength{\textwidth}{17.0cm}
+
+\newcommand{\muhat}{\hat{\mu}}
+\newcommand{\sigmahat}{\hat{\sigma}}
+\newcommand{\todo}[1]{[\textbf{TODO: #1}]}
+\newcommand{\eat}[1]{} % TO MAKE LARGE BLOCKS OF TEXT INVISIBLE
+\newcommand{\sz}[1]{\lvert#1\rvert}
+\newcommand{\card}[1]{\lvert#1\rvert}
+\newcommand{\xp}[2]{P \if*#1\else^{#1}\fi \if*#2\else_{\! #2}\fi}
+\newcommand{\pr}[3]{\xp{#1}{#2}\left\{\,#3\,\right\}}
+\newcommand{\prl}[3]{\xp{#1}{#2}\{\,#3\,\}}
+\renewcommand\:{\colon} % for use with \sset, etc.
+\newcommand{\sset}[1]{\left\{\,#1\,\right\}}
+\newcommand\xD{\mathcal{D}}
+\newcommand\xP{\mathcal{P}}
+\newcommand\xS{\mathcal{S}}
+\newcommand\xbar{\bar x}
+\newcommand\vbar{\bar v}
+\newcommand\xmax{{x_{\text{max}}}}
+\newcommand\eps{\epsilon}
+\newcommand{\eeblk}{\hbox{\lower 1pt \vbox{\hrule width6pt\hbox to
+  6pt{\vrule height5pt depth1pt \hfil\vrule height5pt depth1pt} \hrule
+  width6pt} \unskip}}
+\newcommand{\eblk}{{\unskip\nobreak\hfil\penalty50
+  \hskip1em\hbox{}\nobreak\hfil\eeblk
+  \parfillskip=0pt\finalhyphendemerits=0\par}}
+\newtheorem{xample}{Example}
+%\newenvironment{example}{\begin{xample}\em}{\eblk\end{xample}}
+\makeatletter
+\newenvironment{sql}%
+ {\vskip 5pt\begin{list}{}{%
+  \setlength{\topsep}{0pt}\setlength{\partopsep}{0pt}\setlength{\parskip}{0pt}%
+  \setlength{\parsep}{0pt}\setlength{\labelwidth}{0pt}%
+  \setlength{\rightmargin}{0pt}\setlength{\leftmargin}{0pt}%
+  \setlength{\labelsep}{0pt}%
+  \obeylines\@vobeyspaces\normalfont\ttfamily%
+  \item[]}}
+ {\end{list}\vskip5pt\noindent}
+\makeatother
+\newcommand{\bpar}[1]{\vskip 5pt\noindent\textbf{#1}\hskip 1em}
+\newcommand\yN{{\tilde N}}
+\newcommand\yX{{\tilde X}}
+\newcommand\ymu{{\tilde\mu}}
+\newcommand\ysigma{{\tilde\sigma}}
+
+
+\newcommand{\goodgap}{
+        \hspace{\subfigtopskip}
+        \hspace{\subfigbottomskip}
+}
+
+% math stuff
+\renewcommand{\log}[1]{\text{log}\left(#1\right)}
+\renewcommand{\exp}[1]{\text{exp}\left\{#1\right\}}
+\newcommand{\norm}[2]{\left|\left|#1\right|\right|_{#2}}
+
+%\renewcommand{\baselinestretch}{0.99}
+
+\newtheorem{definition}{Definition}
+\newtheorem{Rule}{Rule}
+\newtheorem{lemma}{Lemma}
+\newtheorem{theorem}{Theorem}
+\newtheorem{problem}{Problem}
+\newtheorem{example}{Example}
+\newtheorem{optimization}{Optimization}
+\newtheorem{observation}{Observation}
+\newtheorem{corollary}{Corollary}
+
+\newcommand{\qed}{\hspace*{\fill}
+           \vbox{\hrule\hbox{\vrule\squarebox{.667em}\vrule}\hrule}\smallskip}
+
+\long\def \ignoreme#1{}
+
+\def\qed{\hfill \mbox{\rule[0pt]{1.5ex}{1.5ex}}}
+
+
+
+\begin{document}
+%\maketitle
+%\pagestyle{empty}
+
+\begin{center}
+{\bf \huge{Data Science Tools and Models: Logistic Regression on Spark}}
+\end{center}
+
+
+\vspace{10 pt}
+
+\section{Description}
+
+In this assignment, you will be implementing a regularized, logistic regression to classify text documents.
+The implementation will be in Python, on top of Spark, using RDDs.  To handle the large data set that
+we will be giving you, it is necessary to use Amazon AWS.
+
+You will be asked to perform three subtasks:
+(1) data preparation, (2) learning (which will be done via gradient descent) and (3) evaluation of the learned
+model.
+
+\section{Data}
+
+You will be dealing with a data set that consists of around 150,000 text documents
+and a test/evaluation data set that consists of around 16,700 text documents. These documents are descriptions of clinical studies.
+At the highest level, 
+your task is to build a classifier that can automatically figure out whether a text document is a study specifically about obesity. Some documents may mention obesity as a factor, but are not actually studies of obesity.
+
+We have prepared three data sets for your use.
+
+\begin{enumerate}
+
+\item The \emph{Training Data Set} (95 Mb of text). This is the set you will use to train your logistic regression
+model: 
+
+{\scriptsize\texttt{s3://[DataLocation]/a5KDtrainingV2.txt}}
+
+
+\item The \emph{Testing Data Set} (10 MB of text).  This is the set you will use to evaluate your model:  
+
+{\scriptsize\texttt{s3://[DataLocation]/a5KDtestingV2.txt}}
+
+\item The \emph{Small Data Set} (6 MB of text).  This is for you to use for training and testing of your model
+on a smaller data set:
+
+{\scriptsize\texttt{s3://[DataLocation]/a5KDsmallsetV2.txt}}
+
+\end{enumerate}
+
+\vspace{5 pt}
+\noindent
+\textbf{Some Data Details to Be Aware Of.}  You should download and look at the \texttt{a5KDsmallset.txt} file
+before you begin.  You'll see that the contents are sort of a pseudo-XML, where each text document begins
+with a \texttt{<doc id = ... >} tag, and ends with \texttt{</doc>}.  All documents are contained on a single line of text.
+
+Note that all of the studies that are obesity begin with an ``1"
+\texttt{<doc id = "1NCT...">}; that is, the doc
+id for an obesity study always starts with \texttt{1}.  You will be trying to figure out if the document
+is an obesity study by looking only at the contents of the document.
+
+\section{The Tasks}
+
+There are three separate tasks that you need to complete to finish the assignment.  As usual, it makes sense
+to implement these and run them on the small data set before moving to the larger one.
+
+\subsection{Task 1: Building a Dictionary}
+
+First, you need to write Spark code
+that builds a dictionary that includes the 20,000 most frequent words in the training
+corpus.  This dictionary is essentially
+an RDD that has the word as the key, and the relative frequency position of the word as the value.  For
+example, the value is zero
+for the most frequent word, and 19,999 for the least frequent word in the dictionary.  
+
+To get credit for this task, give us the frequency position of the words below. These should be values from 0 to 19,999, or -1 if the word is not in the dictionary, because it is not in the top 20,000.
+
+\texttt{["applicant","and","attack","protein","car"]}
+
+Note that accomplishing this will require you to use a variant of your  solution from your Spark-kNN assignment.
+If you do not trust your solution and would like ours, you can post a private request on Piazza.
+
+The top words dictionary MUST be an RDD.
+
+\subsection{Task 2: Implementing Logistic Regression}
+
+Here you will implement a logistic regression model to classify whether a
+document is an obesity study.  Your feature representation will be TF-IDF
+vectors (as usual), and you will derive and implement gradient descent for your
+model.  Your model should use $\ell_2$ regularization; you can play with
+things a bit to determine the parameter controlling the extent of the
+regularization.  We will have enough data that you might find that the
+regularization may not be \textit{too} important.
+
+\textbf{Do not} just look up the gradient descent algorithm on the Internet and
+implement it.  Start with the LLH function from class, and then derive the
+gradient update formula for gradient descent.  We can help with this if you get
+stuck.   
+
+To be clear, you are trying to optimize a function $f(\theta) : \mathbb{R}^d
+\mapsto \mathbb{R}$ with respect to a parameter vector $\theta \in
+\mathbb{R}^d$, where $d$ is the number of words in your TF-IDF vectorization
+(20,000).  This function is the log-likelihood of our model, logistic
+regression.  In class we discussed log-likelihoods for Generalized Linear
+Models; recall that Logistic Regression simply assumes Bernoulli data (p. 15 of
+GLM Lecture), resulting in the following LLH:
+
+\begin{equation}
+  \text{LLH}(\theta) = \sum_i y^{(i)} (x^{(i)}\theta) - \log{1 + \exp{x^{(i)}\theta}} \label{eqn:llh}
+\end{equation}
+
+We'd also like you to implement $\ell_2$ regularization, penalizing your
+objective function by the $\ell_2$ norm of your parameter vector scaled by a
+hyper-parameter $\lambda$:
+
+\begin{equation}
+  \text{LLH}(\theta) = 
+    \sum_i y^{(i)} (x^{(i)}\theta) - \log{1 + \exp{x^{(i)}\theta}}
+    - \lambda \norm{\theta}{2} \label{eqn:reg-llh}
+\end{equation}
+
+\begin{center}
+ \underline{It is recommended you get your model working without regularization
+   first.} \\ 
+\end{center}
+
+At the end of each iteration, compute the LLH of your model.  You should run
+your gradient descent until the change in LLH across iterations is very small.
+
+Once you have completed this task, you will get credit by (a) writing up your
+gradient update formula, and (b) giving us the fifty words with the largest
+regression coefficients.  That is, those fifty words that are most strongly
+related with a study on obesity.
+
+\subsection{Task 3: Evaluate your Model}
+
+Now that you have trained your model, it is time to evaluate it.  Here, you
+will use your model to predict whether or not each of the testing points
+correspond to obesity studies.  To get credit for this task, you need to
+compute for us the F1 score obtained by your classifier---we will use the F1
+score obtained as one of the ways in which we grade your Task 3 submission.
+
+Additionally, look at the text for three of the false positives that your model
+produced (that is, articles that your model thought were obesity studies but
+were not).  Write a paragraph describing why you think it is that your model was
+fooled.  Were the bad documents about obesity?  Other similar conditions?
+
+If you don't have three false positives, just use the ones that you had (if
+any) or use false negatives.
+
+\subsection{Improving your Model}
+
+If you want, you can try a number of things to improve your model's prediction. 
+
+You may
+\begin{itemize}
+\item Change the number of top words to use
+\item Over or undersample data in the TRAINING dataset, using custom rules (not cherry picked, be sure to tell us what rules you used)
+\item Move the cut-off between positive and negative cases
+\item Other items mentioned elsewhere in this document
+\item Experiment with the regularization constant
+\item Experiment with the gradient descent learning rate
+\end{itemize}
+
+For the purposed of this assignment, please do NOT
+\begin{itemize}
+\item Add additional features beyond the TF-IDF vectors
+\end{itemize}
+
+If you change the number of top words, you must still complete Task 1 as specified -- providing the counts for the list of words using the top 20,000 words.
+
+\section{Important Considerations}
+
+\vspace{5 pt}
+\noindent 
+\textbf{Some notes regarding training and implementation.}  As you implement and
+evaluate your gradient descent algorithm, here are a few
+things to keep in mind.  
+
+\begin{enumerate}
+
+\item To get good accuracy, you will need to center and normalize your data.
+  That is, transform your data so that the mean of each dimension is zero, and
+  the standard deviation is one.  That is, subtract the mean vector from each
+  data point, and then divide the result by the vector of standard deviations
+  computed over the data set.  Note that you will need to compute the mean and
+  standard deviation from the \textbf{training data only}, as that is known
+  apriori.  You will then transform the \textbf{training and the test data}
+  using the computed mean and standard deviation.
+
+\item When classifying new data, a data point whose dot product with the set of
+  regression coefficients is positive is a ``yes'', a negative is a ``no'' (see
+  slides in the GLM lecture).  You will be trying to maximize the F1 of your
+  classifier and you can often increase the F1 by choosing a different cutoff
+  between ``yes'' and ``no'' other than zero.  Another thing that you can do is
+  to add another dimension whose value is one in each data point (we discussed
+  this in class).  The learning process will then choose a regression
+  coefficient for this special dimension that tends to balance the ``yes'' and
+  ``no'' nicely at a cutoff of zero.  However, some students in the past have
+  reported that this can increase the training time.
+
+\item Students sometimes face overflow problems, both when computing the LLH
+  and when computing the gradient update.  Some things that you can do to avoid
+  this are, (1) use \texttt{np.exp()} which seems to be quite robust, and (2)
+  transform your data so that the standard deviation is smaller than one---if
+  you have problems with a standard deviation of one, you might try $10^{-2}$
+  or even $10^{-5}$.  You may need to experiment a bit.  Such are the wonderful
+  aspects of implementing data science algorithms in the real world!
+
+\item
+If you find that your training takes more than a few hours to run to convergence on the largest data set, 
+it likely means that you 
+are doing something that is inherently slow that you can speed up by looking at your code carefully.
+
+1. You might want to explicitly partition the data to fully make use of your powerful machines. Check relevant options for function \texttt{textFile}.
+
+2. Think about caching RDD(s). Although it is simply a function call of \texttt{.cache()}, you need to think about which RDD(s) to cache. It obviously does not make sense to cache everything.
+
+One more thing: there is no problem with first training your model on a small sample of the large data set (say,
+10\% of the documents)
+then using the result as an initialization, and continue training on the full data set.  This can 
+speed up the process of reaching convergence.
+\end{enumerate}
+\vspace{5 pt}
+\noindent 
+\textbf{Big data, small data, and grading.}  
+The first two tasks are worth 30 points each,  the last is worth 40 points.
+Since it can be challenging to run everything on a large data set, we'll offer you a \emph{small data}
+option.  
+If you \emph{train} your data on \texttt{a5KDtestingV2.txt}, and then
+\emph{test} your data on
+
+\noindent \texttt{a5KDsmallsubsetV2}, we'll take off 5 points on
+Task 2 and 5 points on Task 3.  This means you can still get an A, and you don't have to deal
+with the big data set.
+For the possibility of getting full credit, you can \emph{train} your data on the large 
+\noindent \texttt{a5KDtrainingV2.txt}
+data set, and then \emph{test} your data on 
+\noindent \texttt{a5KDtestingV2.txt}.
+
+\subsection{Machines to Use}
+
+If you decide to try for full credit on the big data set you
+should run your Spark jobs three to five c3.2xlarge machines as
+workers.  If you are not trying for the full credit, you can likely get away with running on a smaller cluster.
+Remember, the costs \textbf{WILL ADD UP QUICKLY IF YOU FORGET TO SHUT OFF YOUR MACHINES}.  Be very careful, and shut down
+your cluster as soon as you are done working.  You can always create a new one easily when you begin your work again.
+
+
+\subsection{Turn in}
+
+Create a single \textbf{pdf} document that has results for all three tasks.
+\textbf{Make sure to be very clear whether you tried the big data or small data
+  option.} Turn in this document as well as all of your code.  
+
+Please zip up all of your code and your document (use .gz or .zip only,
+please!), or else attach each piece of code as well as your document to your
+submission individually.  Do NOT turn in anything other than your Python code
+and the document that you create, i.e. please do not upload any data.
+
+\end{document}

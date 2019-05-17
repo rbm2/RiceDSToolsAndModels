@@ -1,0 +1,9 @@
+version: "3"
+services:
+  jupyter:
+    image: jupyter/pyspark-notebook
+    ports:
+      - "8888:8888"
+    volumes:
+      - ".:/home/jovyan/work/a4-tfidf-logreg"
+    command: "start.sh jupyter lab"
