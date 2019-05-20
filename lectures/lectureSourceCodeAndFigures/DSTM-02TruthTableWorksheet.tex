@@ -1,0 +1,152 @@
+%Copyright 2019 Christopher M. Jermaine (cmj4@rice.edu) and Risa B. Myers (rbm2@rice.edu)
+%
+%Licensed under the Apache License, Version 2.0 (the "License");
+%you may not use this file except in compliance with the License.
+%You may obtain a copy of the License at
+%
+%    https://www.apache.org/licenses/LICENSE-2.0
+%
+%Unless required by applicable law or agreed to in writing, software
+%distributed under the License is distributed on an "AS IS" BASIS,
+%WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+%See the License for the specific language governing permissions and
+%limitations under the License.
+%===============================================================
+\documentclass{article}
+
+% General document formatting
+\usepackage[margin=0.7in]{geometry}
+\usepackage[parfill]{parskip}
+\usepackage[utf8]{inputenc}
+\usepackage{multirow}
+\usepackage{xcolor,colortbl}
+\usepackage{subfig}
+
+% for copyright notice
+\usepackage{textcomp}
+
+\usepackage[shortlabels]{enumitem}
+
+% for graphics
+\usepackage{graphicx}
+% Related to math
+\usepackage{amsmath,amssymb,amsfonts,amsthm}
+
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+
+% clear the default header and footer
+\fancyhf{}
+%\rhead{Date:\hspace{10em}}
+%\lfoot{\textcopyright Copyright Us}
+\rfoot{\thepage}
+
+
+\title{Data Science Tools and Models\\ Truth Table Worksheet}
+\date{}
+
+% Set this length to 0pt if you don't want any lines!
+\renewcommand{\headrulewidth}{0pt}
+
+% Apply the fancy header style
+\begin{document}
+\maketitle
+\thispagestyle{fancy}
+
+
+\begin{figure*}[h]
+\centering
+\subfloat[AND Truth Table]{
+\begin{tabular}{|l|c||c| }  \hline
+\textbf{p} & \textbf{q} & \textbf{p $\wedge$ q}\\ \hline
+T & T & T\\ \hline
+T & F & F\\ \hline
+F & T & F\\ \hline
+F & F & F\\ \hline
+\end{tabular}
+}
+\subfloat[OR Truth Table]{
+\begin{tabular}{|l|c||c| }  \hline
+\textbf{p} & \textbf{q} & \textbf{p $\vee$ q}\\ \hline
+T & T & T\\ \hline
+T & F & T\\ \hline
+F & T & T\\ \hline
+F & F & F\\ \hline
+\end{tabular}
+}
+\subfloat[IMPLICATION Truth Table]{
+\begin{tabular}{|l|c||c| }  \hline
+\textbf{p} & \textbf{q} & \textbf{p $\rightarrow$ q}\\ \hline
+T & T & T\\ \hline
+T & F & F\\ \hline
+F & T & T\\ \hline
+F & F & T\\ \hline
+\end{tabular}
+}
+\end{figure*}
+
+\vspace{2em}
+{\Large
+Fill in the  truth tables} \\
+
+\begin{tabular}{|c|c|c||c||c|}  \hline
+\textbf{p} & \textbf{q}& \textbf{r} & \textbf{p $\wedge$ q} & \textbf{q $\wedge$ p  $\vee$ r}\\ \hline
+F & F & F &  & \\ \hline
+F & F & T & & \\ \hline
+F & T & F &  & \\ \hline
+F & T & T &  &  \\ \hline
+T & F & F &   & \\ \hline
+T & F & T &  & \\ \hline
+T & T & F & & \\ \hline
+T & T & T &  &  \\ \hline
+\end{tabular}
+
+%\begin{tabular}{|c|c|c||c||c|}  \hline
+%\textbf{p} & \textbf{q}& \textbf{r} & \textbf{p $\wedge$ q} & \textbf{q $\wedge$ p  $\vee$ r}\\ \hline
+%F & F & F &  F & F\\ \hline
+%F & F & T & F& T\\ \hline
+%F & T & F & F & F\\ \hline
+%F & T & T & F & T \\ \hline
+%T & F & F &  F & F\\ \hline
+%T & F & T & F & T\\ \hline
+%T & T & F & T & T\\ \hline
+%T & T & T & T & T \\ \hline
+%\end{tabular}
+%
+\vspace{2em}
+
+\begin{tabular}{|l|l|l|l|}  \hline
+	& &  & \textrm{Raining(X)} \\ 
+\textrm{Day} & \textrm{Rainy}& \textrm{Cloudy} & $\rightarrow$ \textrm{Cloudy(X)}\\ \hline
+ &  & &  \\ \hline
+ &  & &  \\ \hline
+ &  & &  \\ \hline \hline
+ \multicolumn{3}{|r|} {$\forall$} & \\ \hline
+\end{tabular}\\
+%
+%
+%\begin{tabular}{|l|l|l|l|}  \hline
+%	& &  & \textrm{Raining(X)} \\ 
+%\textrm{Day} & \textrm{Rainy}& \textrm{Cloudy} & $\rightarrow$ \textrm{Cloudy(X)}\\ \hline
+%Aug 22 & T & T &  T\\ \hline
+%Sept 18 & T &  T&  T\\ \hline
+% Oct 4 &  T& F &  F\\ \hline \hline
+% \multicolumn{3}{|r|} {$\forall$} & F\\ \hline
+%\end{tabular}\\
+%
+
+%
+%\newpage
+%\vspace{5em}
+%\Large{\ }\\
+%\vspace{5em}
+%\Large{Name:}\\
+%\vspace{5em}
+%\Large{NetId:}\\
+%\vspace{5em}
+%\Large{Date:}\\
+%\vspace{5em}
+%\Large{Course: 430/533 (Circle one)}
+%
+
+\end{document}
