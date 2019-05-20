@@ -1,0 +1,12 @@
+\frametitle{Types of Data Preparation / Feature Engineering}
+
+\begin{itemize}
+\item Mean normalization - mean 0
+$$x' = \frac{x - \textrm{average}(x)}{\textrm{max}(x) - \textrm{min}(x)}$$
+\item Standardization - mean 0, std dev = 1
+$$ x' = \frac{x -\bar{x}}{\sigma}$$
+\item Scaling - min -1, max 1
+$$x' = \frac{x - \textrm{min}(x)}{\textrm{max}(x) - \textrm{min}(x)}$$
+\item Scale feature vector to unit length across the features
+$$x' = \frac{x}{||x||}$$
+\end{itemize}

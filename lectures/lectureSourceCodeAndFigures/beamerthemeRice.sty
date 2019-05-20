@@ -1,0 +1,97 @@
+\ProvidesPackage{beamerthemeRice}[2008/10/10]
+\def\beamerRice@version{0.01}
+
+% Copyright 2003      by Till Tantau  <tantau@users.sourceforge.net>
+%       and 2008 by Daina Chiba <daina.chiba@gmail.com>
+%
+% This program can be redistributed and/or modified under the terms
+% of the GNU Public License, version 2.
+
+
+\mode<presentation>
+
+\newif\ifbeamer@minimal
+\newif\ifbeamer@nonav
+\newif\ifbeamer@bggray
+\newif\ifbeamer@bgricegray
+\newif\ifbeamer@ricegray
+\newif\ifbeamer@numbers
+\newif\ifbeamer@shadow
+\newif\ifbeamer@ricet
+\newif\ifbeamer@ricetm
+\newif\ifbeamer@ricets
+\newif\ifbeamer@riceb
+\newif\ifbeamer@nologo
+\newif\ifbeamer@smoothb
+
+\beamer@minimalfalse
+\beamer@nonavfalse
+\beamer@bggrayfalse
+\beamer@bgricegrayfalse
+\beamer@ricegrayfalse
+\beamer@numbersfalse
+\beamer@shadowtrue
+\beamer@ricetfalse
+\beamer@ricetmfalse
+\beamer@ricetsfalse
+\beamer@ricebfalse
+\beamer@nologotrue
+\beamer@smoothbfalse
+
+\DeclareOptionBeamer{compress}{\beamer@compresstrue}
+\DeclareOptionBeamer{minimal}{\beamer@minimaltrue}
+\DeclareOptionBeamer{nonav}{\beamer@nonavtrue}
+\DeclareOptionBeamer{bggray}{\beamer@bggraytrue}
+\DeclareOptionBeamer{bgricegray}{\beamer@bgricegraytrue}
+\DeclareOptionBeamer{ricegray}{\beamer@ricegraytrue}
+\DeclareOptionBeamer{numbers}{\beamer@numberstrue}
+\DeclareOptionBeamer{noshadow}{\beamer@shadowfalse}
+\DeclareOptionBeamer{ricet}{\beamer@ricettrue}
+\DeclareOptionBeamer{ricetm}{\beamer@ricetmtrue}
+\DeclareOptionBeamer{ricets}{\beamer@ricetstrue}
+\DeclareOptionBeamer{riceb}{\beamer@ricebtrue}
+\DeclareOptionBeamer{nologo}{\beamer@nologofalse}
+\DeclareOptionBeamer{smoothb}{\beamer@smoothbtrue}
+
+\ProcessOptionsBeamer
+
+\usecolortheme{riceowl}
+
+\ifbeamer@shadow
+  \useinnertheme[shadow=true]{rounded}
+\else
+  \useinnertheme{rounded}
+\fi
+
+\ifbeamer@bgricegray
+  \setbeamercolor{normal text}{fg=white,bg=ricegray}
+  \setbeamercolor{alerted text}{fg=yellow}
+  \setbeamercolor{block body}{parent=normal text,use=block title,bg=block title.bg!15!bg}
+\fi
+
+\ifbeamer@ricegray
+  \setbeamercolor{block title}{fg=white,bg=ricegray}
+  \setbeamercolor*{palette primary}{fg=white,bg=riceblue}
+\setbeamercolor*{palette secondary}{fg=white,bg=black}
+  \setbeamercolor*{palette tertiary}{fg=white,bg=ricegray!110}
+\setbeamercolor*{palette quaternary}{fg=white,bg=riceblue}
+  \setbeamercolor{titlelike}{fg=white, bg=ricegray}
+  \setbeamercolor{frametitle}{fg=white, bg=ricegray}
+  \setbeamercolor{frametitle right}{fg=white, bg=ricegray}
+  \setbeamercolor{sidebar}{bg=riceblue}
+\fi
+
+\ifbeamer@nonav
+  \setbeamertemplate{navigation symbols}{}  % Removes navigation symbols.
+\fi
+
+\ifbeamer@smoothb
+    \useoutertheme[subsection=false]{rice2}
+  \else
+    \useoutertheme{rice}
+\fi
+
+\setbeamerfont{block title}{size={}}
+
+\mode
+<all>

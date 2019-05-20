@@ -1,0 +1,24 @@
+\frametitle{What Is Novel about MapReduce?}
+
+\begin{itemize}
+\item  Novelty is in scalability and fault tolerance
+\item The functional model already existed
+\item Consider the map and reduce functions in Python
+\item Map:
+
+%\texttt{map(<function>, <inputs>)}
+
+\texttt{items = [ 1, 2, 3, 4, 5 ]}
+
+\texttt{mod2 = list(map(lambda x: x \% 2, items))}
+
+\hspace{4.75em}\texttt{[ 1, 0, 1, 0, 1 ]}
+
+\item Reduce:
+
+\texttt{from functools imoport reduce}
+
+\texttt{mySum = reduce((lambda x,y: x + y), items)}
+
+\texttt{15}
+\end{itemize}

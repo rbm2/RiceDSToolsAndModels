@@ -1,0 +1,996 @@
+%Copyright 2019 Christopher M. Jermaine (cmj4@rice.edu) and Risa B. Myers (rbm2@rice.edu)
+%
+%Licensed under the Apache License, Version 2.0 (the "License");
+%you may not use this file except in compliance with the License.
+%You may obtain a copy of the License at
+%
+%    https://www.apache.org/licenses/LICENSE-2.0
+%
+%Unless required by applicable law or agreed to in writing, software
+%distributed under the License is distributed on an "AS IS" BASIS,
+%WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+%See the License for the specific language governing permissions and
+%limitations under the License.%===============================================================%
+\documentclass[aspectratio=169]{beamer}
+\mode<presentation> 
+{
+\usetheme[noshadow, minimal,numbers,riceb,nonav]{Rice}
+
+\usefonttheme[onlymath]{serif}
+\setbeamercovered{transparent}
+}
+
+\useinnertheme{rectangles}
+\usepackage{colortbl}
+
+\usepackage[english]{babel}
+
+\usepackage{mathptmx}
+\usepackage{helvet}
+\usepackage{courier}
+\usepackage[T1]{fontenc}
+\usepackage{trajan}
+\usepackage{ textcomp }
+\usepackage{amssymb}
+
+%https://tex.stackexchange.com/questions/20740/symbols-for-outer-joins
+\def\ojoin{\setbox0=\hbox{$\bowtie$}%
+  \rule[-.02ex]{.25em}{.4pt}\llap{\rule[\ht0]{.25em}{.4pt}}}
+\def\leftouterjoin{\mathbin{\ojoin\mkern-5.8mu\bowtie}}
+\def\rightouterjoin{\mathbin{\bowtie\mkern-5.8mu\ojoin}}
+\def\fullouterjoin{\mathbin{\ojoin\mkern-5.8mu\bowtie\mkern-5.8mu\ojoin}}
+
+
+\usepackage{listings}
+
+\newenvironment{noindentitemize}
+{ \begin{itemize}
+ \setlength{\itemsep}{1.5ex}
+  \setlength{\parsep}{0pt}   
+  \setlength{\parskip}{0pt}
+ \addtolength{\leftskip}{-2em}
+ }
+{ \end{itemize} }
+
+\newenvironment{noindentitemize2}
+{ \begin{itemize}
+  \setlength{\itemsep}{0ex}
+  \setlength{\parskip}{0pt}
+  \setlength{\parsep}{0pt}   
+  \addtolength{\leftskip}{-2em}  }
+{ \end{itemize} }
+
+\lstnewenvironment{SQL}
+  {\lstset{
+        aboveskip=5pt,
+        belowskip=5pt,
+        escapechar=!,
+        mathescape=true,
+        upquote=true,
+        language=SQL,
+        basicstyle=\linespread{0.94}\ttfamily\footnotesize,
+        morekeywords={FOR, EACH, WITH, PARTITION, AND, ALL, TEST, WHETHER, PROBABILITY},
+        deletekeywords={VALUE, PRIOR},
+        showstringspaces=true}
+        \vspace{0pt}
+        \noindent\minipage{0.47\textwidth}}
+  {\endminipage\vspace{0pt}}
+
+
+\newcommand{\WHERE}{\texttt{WHERE}} 
+\newcommand{\ALL}{\texttt{ALL}} 
+\newcommand{\UNION}{\texttt{UNION}} 
+\newcommand{\EXCEPT}{\texttt{EXCEPT}} 
+\newcommand{\LIKES}{\textrm{LIKES}} 
+\newcommand{\FREQUENTS}{\textrm{FREQUENTS}} 
+\newcommand{\SERVES}{\textrm{SERVES}} 
+\newcommand{\CAFE}{\textrm{CAFE}} 
+\newcommand{\COFFEE}{\textrm{COFFEE}} 
+\newcommand{\DRINKER}{\textrm{DRINKER}} 
+\newcommand{\CB}{\textrm{\textquotesingle{Cold} Brew\textquotesingle}} 
+\newcommand{\CBGOOD}{\textrm{CBGOOD}} 
+\newcommand{\ALLPEEPS}{\textrm{ALLPEEPS}} 
+\newcommand{\ALLCOMBOS}{\textrm{ALLCOMBOS}} 
+\newcommand{\NOGOODCOFFEE}{\textrm{NOGOODCOFFEE}} 
+
+\setbeamerfont{block body}{size=\tiny}
+
+%===============================================================%
+
+\title[]
+{Tools \& Models for Data Science}
+
+\subtitle{SQL Set Operations and Subqueries}
+
+\author[]{Risa Myers \& Chris Jermaine}
+\institute
+{
+  Rice University
+}
+
+\date[]{}
+
+
+\begin{document}
+
+\begin{frame}
+ \titlepage
+\end{frame}
+
+
+%***********************************************************
+\begin{frame}{Set Operations in SQL}
+
+\begin{itemize}
+\item Results are unordered multisets/bag
+\item It could be useful to perform operations on these 
+\begin{itemize}
+\item Union
+\item Intersection
+\item Difference
+\end{itemize}
+\item Different RDBMs provide different levels of support
+
+\end{itemize}
+\end{frame}
+
+
+%***********************************************************
+\begin{frame}{\UNION\ and \UNION\ \ALL}
+
+\begin{itemize}
+\item \UNION - eliminates duplicates
+\item \UNION\ \ALL - does NOT eliminate duplicates
+\item Uses the column names from the first result set
+\item Data types must match
+\item Number of attributes must match
+\end{itemize}
+\end{frame}
+
+%***********************************************************
+\begin{frame}[fragile]{\UNION\ and \UNION\ \ALL\ Example}
+
+STUDENT(\underline{NETID}, FIRSTNAME, LASTNAME)\\
+FACULTY(\underline{NETID}, FIRSTNAME, LASTNAME)
+
+\begin{SQL}
+SELECT lastName, firstName, 'student' 
+FROM Student
+UNION 
+SELECT lastName, firstName, 'faculty' 
+FROM Faculty;
+\end{SQL}
+
+\end{frame}
+
+
+%***********************************************************
+\begin{frame}{Intersection and Difference}
+
+\begin{itemize}
+\item Intersection - Implemented via \texttt{INNER JOIN}
+\item Difference - Implemented via \texttt{EXCEPT} 
+\end{itemize}
+\end{frame}
+
+%***********************************************************
+\begin{frame}[fragile]{SELECT-FROM-{\textcolor{red}{WHERE}}}
+
+\begin{SQL}
+SELECT <attribute list>
+FROM <tables>
+WHERE <conditions>
+
+SELECT * 
+FROM FREQUENTS f
+WHERE f.drinker = 'Risa'
+\end{SQL}
+
+\begin{tabular}{|l|l| }  \hline
+\textrm{DRINKER} & \textrm{CAFE} \\ \hline
+Risa & Double Trouble \\ \hline
+Risa & Java Lava  \\ \hline
+\end{tabular}
+
+
+\end{frame}
+%***********************************************************
+\begin{frame}{\WHERE\ Clause}
+
+\begin{enumerate}
+\item $<$attribute$>$ = <value>
+\item $<$attribute$>$ BETWEEN [value1] AND [value2]
+\item $<$attribute$>$ IN ([value1], [value2], $\ldots$)
+\item $<$attribute$>$ LIKE \textquotesingle{SST\%}\textquotesingle
+\item $<$attribute$>$ LIKE \textquotesingle{SST\_}\textquotesingle
+\item $<$attribute$>$ IS NULL and [attribute] IS NOT NULL
+\item Logical combinations with AND and OR
+\item Mathematical functions <>, !=, >, <, $\ldots$
+\item Subqueries $\ldots$
+
+\end{enumerate}
+\end{frame}
+
+
+
+
+%***********************************************************
+\begin{frame}{Subqueries}
+
+\begin{itemize}
+\item We can have a subquery in the \texttt{WHERE} clause
+\item It's linked with keywords
+	\begin{itemize}
+	\item \texttt{EXISTS} /  \texttt{NOT EXISTS} 
+	\begin{itemize}
+	\item If the subquery returns at least one tuple, the EXISTS clause evaluates to TRUE
+	\end{itemize}
+	\end{itemize}
+	
+\end{itemize}
+\end{frame}
+%***********************************************************
+\begin{frame}{Subqueries}
+
+\begin{itemize}
+\item We can have a subquery in the \texttt{WHERE} clause
+\item It's linked with keywords
+	\begin{itemize}
+	\item {<operand>} \texttt{IN} / <operand> \texttt{NOT IN}
+	\end{itemize}
+	
+\item[?] How does IN work? (How else could the expression be written?)
+\end{itemize}
+\end{frame}
+%***********************************************************
+\begin{frame}{Subqueries}
+
+\begin{itemize}
+\item We can have a subquery in the \texttt{WHERE} clause
+\item It's linked with keywords
+	\begin{itemize}
+	\item {<operand>} \texttt{IN} / <operand> \texttt{NOT IN}
+	\end{itemize}
+	
+\item How does IN work? (How else could the expression be written?)
+\item Logical OR of the operand and each value returned by the subquery
+\end{itemize}
+\end{frame}
+
+
+
+%***********************************************************
+\begin{frame}{Subqueries}
+
+\begin{itemize}
+\item We can have a subquery in the \texttt{WHERE} clause
+\item It's linked with keywords
+	\begin{itemize}
+	\item {<operand>} <comparison operator> \texttt{ALL}
+	\item {<operand>} <comparison operator> \texttt{SOME/ANY}
+	\end{itemize}
+	
+\item[?] What is meant by an operand, in this context?
+\end{itemize}
+\end{frame}
+%***********************************************************
+\begin{frame}{Subqueries}
+
+\begin{itemize}
+\item We can have a subquery in the \texttt{WHERE} clause
+\item It's linked with keywords
+	\begin{itemize}
+	\item {<operand>} <comparison operator> \texttt{ALL}
+	\item {<operand>} <comparison operator> \texttt{SOME/ANY}
+	\end{itemize}
+	
+\item What is meant by an operand, in this context?
+\item An operand could be an attribute, a function or even a constant
+\end{itemize}
+\end{frame}
+
+
+%***********************************************************
+\begin{frame}{Subqueries - How do They Work?}
+
+\begin{itemize}
+\item Basically, we iterate over the tuples in the outer query and evaluate the inner query for each outer tuple
+\item Some can be evaluated once and the result is used in the outer query
+	\begin{itemize}
+	\item Ex: a subquery that returns the number of CAFES that are frequented
+	\end{itemize}
+
+\item Some require the subquery to be evaluated for every value assignment in the outer query (correlated subquery)
+	\begin{itemize}
+	\item Ex: a subquery that returns the number of CAFES that each  DRINKER frequents
+	\end{itemize}
+
+\end{itemize}
+\end{frame}
+
+
+%***********************************************************
+\begin{frame}[fragile]{Subquery Example 1 \texttt{IN}}
+
+LIKES (DRINKER, COFFEE)
+
+\begin{noindentitemize}
+\item Who likes \textquotesingle{Cold Brew}\textquotesingle and \textquotesingle{Espresso}\textquotesingle?
+\item Both subqueries return the same result
+\item Many (all?) subqueries can be written as JOINS, people tend to find it easier to reason about one way or the other
+\end{noindentitemize}
+
+\begin{columns}[T]
+\begin{column}{0.5\textwidth}
+\begin{SQL}
+SELECT DISTINCT l.DRINKER
+FROM LIKES l
+WHERE l.COFFEE = 'Cold Brew' 
+	AND l.DRINKER IN (
+		SELECT l2.DRINKER 
+		FROM LIKES l2 
+		WHERE l2.COFFEE = 'Espresso')
+\end{SQL}
+\end{column}
+\begin{column}{0.5\textwidth}
+\begin{SQL}
+SELECT DISTINCT l1.DRINKER
+FROM LIKES l1, LIKES l2
+WHERE l1.DRINKER = l2.DRINKER 
+	AND l1.COFFEE = 'Cold Brew'     
+	AND l2.COFFEE = 'Espresso'
+\end{SQL}
+\end{column}
+\end{columns}
+
+\end{frame}
+%***********************************************************
+\begin{frame}[fragile]{Subquery Example 2 \texttt{EXISTS}}
+
+LIKES (DRINKER, COFFEE)
+
+\begin{noindentitemize}
+\item[?] Who goes to a cafe that serves \textquotesingle{Cold Brew}\textquotesingle?
+\end{noindentitemize}
+
+\begin{columns}[T]
+\begin{column}{0.5\textwidth}
+\begin{SQL}
+SELECT DISTINCT f.DRINKER
+FROM FREQUENTS f, SERVES s
+WHERE f.CAFE = s.CAFE
+	AND s.COFFEE = 'Cold Brew'
+\end{SQL}
+\end{column}
+\begin{column}{0.5\textwidth}
+\begin{SQL}
+SELECT DISTINCT f.DRINKER
+FROM FREQUENTS f
+WHERE EXISTS (
+	-- Your code here
+	)
+\end{SQL}
+\end{column}
+\end{columns}
+
+\end{frame}
+
+
+%***********************************************************
+\begin{frame}[fragile]{Subquery Example 2 \texttt{EXISTS}}
+
+LIKES (DRINKER, COFFEE)
+
+\begin{noindentitemize}
+\item Who goes to a cafe that serves \textquotesingle{Cold Brew}\textquotesingle?
+\end{noindentitemize}
+
+\begin{columns}[T]
+\begin{column}{0.5\textwidth}
+\begin{SQL}
+SELECT DISTINCT f.DRINKER
+FROM FREQUENTS f, SERVES s
+WHERE f.CAFE = s.CAFE
+	AND s.COFFEE = 'Cold Brew'
+\end{SQL}
+\end{column}
+\begin{column}{0.5\textwidth}
+\begin{SQL}
+SELECT DISTINCT f.DRINKER
+FROM FREQUENTS f
+WHERE EXISTS (
+	SELECT s.CAFE
+	FROM SERVES s
+	WHERE s.COFFEE = 'Cold Brew' 
+	   AND f.CAFE = s.CAFE)
+\end{SQL}
+\end{column}
+\end{columns}
+
+\end{frame}
+
+
+
+%***********************************************************
+\begin{frame}{Subquery Example 3}
+
+LIKES (DRINKER, COFFEE)
+
+FREQUENTS (DRINKER, CAFE)
+
+SERVES (CAFE, COFFEE)
+
+
+\begin{noindentitemize}
+\item[?] Who likes all of the coffees that Risa likes?
+\end{noindentitemize}
+\end{frame}
+
+%***********************************************************
+\begin{frame}[fragile]{Subquery Example 3: Relational Calculus}
+
+LIKES (DRINKER, COFFEE)
+
+FREQUENTS (DRINKER, CAFE)
+
+SERVES (CAFE, COFFEE)
+
+
+\begin{noindentitemize}
+\item[?] Who likes all of the coffees that Risa likes?
+\item There doesn't exist a coffee Risa likes that is not also liked by these drinkers
+\item Every coffee Risa likes is liked by these drinkers BUT they might like other coffees as well
+\end{noindentitemize}
+
+
+
+\begin{noindentitemize}
+\item Same as:
+	%\begin{noindentitemize}
+	\item[] $\{l.\DRINKER | \LIKES(l) \wedge \neg \exists(l_2)(\LIKES(l_2) \wedge\ 
+	   l_2.\DRINKER = \textrm{\textquotesingle{Risa}\textquotesingle}$\\
+
+           \hspace{2em}$\wedge\ \neg \exists(l_3)(\LIKES(l_3) \wedge\
+		l_3.\DRINKER = l.\DRINKER $\\
+	\hspace{2em}$\wedge l_3.\COFFEE = l_2.\COFFEE))\}$
+%	\end{noindentitemize}
+\end{noindentitemize}
+\end{frame}
+
+
+%***********************************************************
+\begin{frame}[fragile]{Subquery Example 3 Component}
+
+LIKES (DRINKER, COFFEE)
+
+FREQUENTS (DRINKER, CAFE)
+
+SERVES (CAFE, COFFEE)
+
+
+\begin{noindentitemize}
+\item[?] Coffees that Risa likes
+\end{noindentitemize}
+\end{frame}
+
+%***********************************************************
+\begin{frame}[fragile]{Subquery Example 3 Component}
+
+LIKES (DRINKER, COFFEE)
+
+FREQUENTS (DRINKER, CAFE)
+
+SERVES (CAFE, COFFEE)
+
+
+\begin{noindentitemize}
+\item Coffees that Risa likes
+\end{noindentitemize}
+
+\begin{SQL}
+SELECT l2.COFFEE
+FROM LIKES l2
+WHERE l2.DRINKER = 'Risa' 
+\end{SQL}
+\end{frame}
+
+
+
+%***********************************************************
+\begin{frame}[fragile]{Subquery Example 3}
+
+LIKES (DRINKER, COFFEE)
+
+FREQUENTS (DRINKER, CAFE)
+
+SERVES (CAFE, COFFEE)
+
+
+\begin{noindentitemize}
+\item[?] Who likes all of the coffees that Risa likes?
+\end{noindentitemize}
+
+\begin{SQL}
+SELECT DISTINCT l.DRINKER
+FROM LIKES l
+WHERE NOT EXISTS ($\textrm{a coffee Risa likes that is not also liked by l.DRINKER}$)
+\end{SQL}
+\begin{noindentitemize}
+	%\begin{noindentitemize}
+	\item[] $\{l.\DRINKER | \LIKES(l) \wedge \neg \exists(l_2)(\LIKES(l_2) \wedge\ 
+	   l_2.\DRINKER = \textrm{\textquotesingle{Risa}\textquotesingle}$\\
+
+           \hspace{2em}$\wedge\ \neg \exists(l_3)(\LIKES(l_3) \wedge\
+		l_3.\DRINKER = l.\DRINKER $\\
+	\hspace{2em}$\wedge l_3.\COFFEE = l_2.\COFFEE))\}$
+%	\end{noindentitemize}
+\end{noindentitemize}
+
+
+\end{frame}
+
+%***********************************************************
+\begin{frame}[fragile]{Subquery Example 3}
+
+LIKES (DRINKER, COFFEE)
+
+FREQUENTS (DRINKER, CAFE)
+
+SERVES (CAFE, COFFEE)
+
+
+\begin{noindentitemize}
+\item[?] Who likes all of the coffees that Risa likes?
+\end{noindentitemize}
+
+\begin{SQL}
+SELECT DISTINCT l.DRINKER
+FROM LIKES l
+WHERE NOT EXISTS (
+  SELECT l2.COFFEE 
+  FROM LIKES l2
+  WHERE l2.DRINKER = 'Risa' AND l2.COFFEE NOT IN (
+    $\textrm{the set of coffees liked by l.DRINKER}$))
+\end{SQL}
+
+\begin{noindentitemize}
+\item There doesn't exist a coffee that Risa likes where that coffee is not \ldots
+	%\begin{noindentitemize}
+	\item[] $\{l.\DRINKER | \LIKES(l) \wedge \neg \exists(l_2)(\LIKES(l_2) \wedge\ 
+	   l_2.\DRINKER = \textrm{\textquotesingle{Risa}\textquotesingle}$\\
+
+           \hspace{2em}$\wedge\ \neg \exists(l_3)(\LIKES(l_3) \wedge\
+		l_3.\DRINKER = l.\DRINKER $\\
+	\hspace{2em}$\wedge l_3.\COFFEE = l_2.\COFFEE))\}$
+%	\end{noindentitemize}
+\end{noindentitemize}
+
+
+
+\end{frame}
+
+
+%***********************************************************
+\begin{frame}[fragile]{Subquery Example 3 Final}
+
+LIKES (DRINKER, COFFEE)
+
+FREQUENTS (DRINKER, CAFE)
+
+SERVES (CAFE, COFFEE)
+
+
+\begin{noindentitemize}
+\item[?] Who likes all of the coffees that Risa likes?
+\item Still need: A coffee Risa likes that is not also liked by l.DRINKER
+\end{noindentitemize}
+
+\begin{SQL}
+SELECT DISTINCT l.DRINKER
+FROM LIKES l
+WHERE NOT EXISTS (
+  SELECT l2.COFFEE 
+  FROM LIKES l2
+  WHERE l2.DRINKER = 'Risa' 
+    AND that coffee is also not liked by l.DRINKER)
+\end{SQL}
+\end{frame}
+
+%***********************************************************
+\begin{frame}[fragile]{Subquery Example 3 Final}
+
+LIKES (DRINKER, COFFEE)
+
+FREQUENTS (DRINKER, CAFE)
+
+SERVES (CAFE, COFFEE)
+
+
+\begin{noindentitemize}
+\item[?] Who likes all of the coffees that Risa likes?
+\item Still need: A coffee Risa likes that is not also liked by l.DRINKER
+\end{noindentitemize}
+
+\begin{SQL}
+SELECT DISTINCT l.DRINKER
+FROM LIKES l
+WHERE NOT EXISTS (
+  SELECT l2.COFFEE 
+  FROM LIKES l2
+  WHERE l2.DRINKER = 'Risa' 
+    AND l2.COFFEE NOT IN (coffees liked by l.DRINKER)
+\end{SQL}
+\end{frame}
+
+
+%***********************************************************
+\begin{frame}[fragile]{Subquery Example 3 Final}
+
+LIKES (DRINKER, COFFEE)
+
+FREQUENTS (DRINKER, CAFE)
+
+SERVES (CAFE, COFFEE)
+
+
+\begin{noindentitemize}
+\item[?] Who likes all of the coffees that Risa likes?
+\item Still need: A coffee Risa likes that is not also liked by l.DRINKER
+\end{noindentitemize}
+
+\begin{SQL}
+SELECT DISTINCT l.DRINKER
+FROM LIKES l
+WHERE NOT EXISTS (
+  SELECT l2.COFFEE 
+  FROM LIKES l2
+  WHERE l2.DRINKER = 'Risa' 
+    AND l2.COFFEE NOT IN (
+      SELECT l3.COFFEE
+      FROM LIKES l3
+      WHERE l3.DRINKER = l.DRINKER))
+\end{SQL}
+\end{frame}
+
+%***********************************************************
+\begin{frame}[fragile]{Subquery Example 3 vs. Relational Calculus}
+
+\begin{SQL}
+SELECT DISTINCT l.DRINKER
+FROM LIKES l
+WHERE NOT EXISTS (
+  SELECT l2.COFFEE 
+  FROM LIKES l2
+  WHERE l2.DRINKER = 'Risa' AND l2.COFFEE NOT IN (
+    SELECT l3.COFFEE
+    FROM LIKES l3
+    WHERE l3.DRINKER = l.DRINKER))
+\end{SQL}
+
+\begin{noindentitemize}
+\item l.DRINKER = l3.DRINKER
+\item l2.DRINKER = `Risa'
+\item Same as:
+	%\begin{noindentitemize}
+	\item[] $\{l.\DRINKER | \LIKES(l) \wedge \neg \exists(l_2)(\LIKES(l_2) \wedge\ 
+	   l_2.\DRINKER = \textrm{\textquotesingle{Risa}\textquotesingle}$\\
+
+           \hspace{2em}$\wedge\ \neg \exists(l_3)(\LIKES(l_3) \wedge\
+		l_3.\DRINKER = l.\DRINKER $\\
+	\hspace{2em}$\wedge l_3.\COFFEE = l_2.\COFFEE))\}$
+%	\end{noindentitemize}
+\end{noindentitemize}
+\end{frame}
+
+%***********************************************************
+\begin{frame}{\texttt{SOME}/\texttt{ANY} predicate}
+
+
+\begin{noindentitemize}
+\item \texttt{SOME}/\texttt{ANY} is used like ``\texttt{expression boolOp \{SOME, ANY \}(subquery)}''
+\item \texttt{SOME}/\texttt{ANY} returns TRUE if there is at least 1 item in the subquery can make the boolOp evaluate to true
+\end{noindentitemize}
+\end{frame}
+
+% SOME vs EXISTS - WHERE EXISTS vs comparison with SOME / ANY
+
+%***********************************************************
+\begin{frame}{\texttt{SOME}/\texttt{ANY} Example}
+
+Given the relation:\\
+RATES (DRINKER, COFFEE, SCORE)\\
+
+\begin{noindentitemize}
+\item Ratings go from low to high, with increasing values indicating higher levels of liking the coffee.
+\item[?] Of the coffees Risa has rated, list the coffees that are not Risa's favorite. 
+\item[?] What does it mean, in terms of RATES, when we say favorite?
+\end{noindentitemize}
+
+\end{frame}
+
+%***********************************************************
+\begin{frame}[fragile]{\texttt{SOME}/\texttt{ANY} Example}
+
+Given the relation:\\
+RATES (DRINKER, COFFEE, SCORE)\\
+
+\begin{itemize}
+\item Of the coffees Risa has rated, list the coffees that are not Risa's favorite. 
+\end{itemize}
+
+
+\begin{SQL}
+SELECT r.COFFEE
+FROM RATES r
+WHERE r.DRINKER = 'Risa' AND r.SCORE < SOME (
+  SELECT r2.SCORE 
+  FROM RATES r2
+  WHERE r2.DRINKER = 'Risa' )
+\end{SQL}
+
+\end{frame}
+
+%***********************************************************
+\begin{frame}[fragile]{\texttt{SOME}/\texttt{ANY} Example Unpacked}
+
+Given the relation:\\
+RATES (DRINKER, COFFEE, SCORE)\\
+
+\begin{itemize}
+\item Of the coffees Risa has rated, list the coffees that are not Risa's favorite. 
+\end{itemize}
+
+
+\begin{SQL}
+SELECT r.COFFEE
+FROM RATES r
+WHERE r.DRINKER = 'Risa' AND r.SCORE < SOME (
+  SELECT r2.SCORE 
+  FROM RATES r2
+  WHERE r2.DRINKER = 'Risa' )
+\end{SQL}
+
+\begin{itemize}
+\item The subquery returns the multiset of all the scores that Risa has given to coffees
+\item The r.SCORE < SOME clause evaluates to TRUE if the multiset is not empty
+\end{itemize}
+
+
+\end{frame}
+
+
+%***********************************************************
+\begin{frame}[fragile]{\ALL\ predicate}
+
+
+\begin{noindentitemize}
+\item \texttt{ALL} is used like ``\texttt{expression boolOp ALL (subquery)}''
+\item Similar to \texttt{SOME}
+\item BoolOp must evaluate to true for \textbf{everything} in the subquery
+\end{noindentitemize}
+
+\end{frame}
+
+%***********************************************************
+\begin{frame}[fragile]{\ALL\ Example}
+
+RATES (DRINKER, COFFEE, SCORE)
+
+\begin{SQL}
+SELECT DISTINCT r.DRINKER
+FROM RATES r
+WHERE r.SCORE < ALL (
+ SELECT r2.SCORE
+  FROM RATES r2
+  WHERE r2.DRINKER = 'Risa')
+\end{SQL}
+
+\begin{itemize}
+\item[?] What does this query return? %Drinkers who rated a coffee lower than all of Risa's scores
+\end{itemize}
+\end{frame}
+
+%***********************************************************
+\begin{frame}[fragile]{\ALL\ Example}
+
+RATES (DRINKER, COFFEE, SCORE)
+
+\begin{SQL}
+SELECT DISTINCT r.DRINKER
+FROM RATES r
+WHERE r.SCORE < ALL (
+ SELECT r2.SCORE
+  FROM RATES r2
+  WHERE r2.DRINKER = 'Risa')
+\end{SQL}
+
+\begin{itemize}
+\item What does this query return? 
+\item Drinkers who rated a coffee lower than all of Risa's scores
+\end{itemize}
+\end{frame}
+
+
+%***********************************************************
+\begin{frame}[fragile]{Subqueries in \texttt{FROM} Clause}
+
+FREQUENTS (DRINKER, CAFE)
+
+\begin{itemize}
+\item Can have a subquery in FROM clause
+\item Treated as a temporary table
+\item MUST be assigned an alias
+\item[?] Who goes to a cafe that serves 'Cold Brew'?
+\end{itemize}
+
+\begin{columns}[T]
+\begin{column}{0.5\textwidth}
+Old way\\
+\begin{SQL}
+SELECT DISTINCT f.DRINKER
+FROM FREQUENTS f, SERVES s
+WHERE f.CAFE = s.CAFE 
+	AND s.COFFEE = 'Cold Brew'
+\end{SQL}
+\end{column}
+\begin{column}{0.5\textwidth}
+New way\\
+\begin{SQL}
+SELECT DISTINCT f.DRINKER
+FROM FREQUENTS f, 
+   (SELECT s.CAFE FROM SERVES s 			
+    WHERE s.COFFEE = 'Cold Brew') s2
+WHERE f.CAFE = s2.CAFE
+\end{SQL}
+\end{column}
+\end{columns}
+\end{frame}
+
+
+%***********************************************************
+\begin{frame}[fragile]{Subquery in \texttt{FROM} Clause}
+
+FREQUENTS (DRINKER, CAFE)
+
+\begin{noindentitemize}
+\item Note: The code is a lot cleaner with a view!
+\end{noindentitemize}
+
+\begin{SQL}
+CREATE VIEW CB_COFFEE AS
+SELECT s.CAFE FROM SERVES s 			
+    WHERE s.COFFEE = 'Cold Brew'
+\end{SQL}
+
+\begin{SQL}
+SELECT DISTINCT f.DRINKER
+FROM FREQUENTS f, CB_COFFEE c
+WHERE f.CAFE = c.CAFE
+\end{SQL}
+\end{frame}
+
+%***********************************************************
+\begin{frame}[fragile]{Views}
+
+\begin{noindentitemize}
+\item ``Common'' (non-materialized) views are just macros
+\item Query definition
+\item Unexecuted query 
+\item Virtual table
+\item Can be used in place of a table
+\item Convenient way to simplify a query
+\item Is executed when called (results are NOT stored)
+
+\item[?] List the coffees that are not Risa's favorite.
+\end{noindentitemize}
+
+\end{frame}
+
+%***********************************************************
+\begin{frame}[fragile]{Views}
+
+\begin{noindentitemize}
+\item ``Common'' (non-materialized) views are just macros
+\item List the coffees that are not Risa's favorite.
+\end{noindentitemize}
+
+\begin{SQL}
+CREATE VIEW RISA_COFFEES AS
+SELECT * 
+FROM RATES r
+WHERE r.DRINKER = 'Risa'
+\end{SQL}
+
+\begin{SQL}
+SELECT r.COFFEE
+FROM RISA_COFFEES r
+WHERE r.SCORE < SOME (
+  SELECT r2.SCORE
+  FROM RISA_COFFEES r2)
+\end{SQL}
+\end{frame}
+
+%***********************************************************
+\begin{frame}[fragile]{Materialized Views}
+
+\begin{noindentitemize}
+\item[?] What's different?
+\end{noindentitemize}
+\end{frame}
+%***********************************************************
+\begin{frame}[fragile]{Materialized Views}
+
+\begin{noindentitemize}
+\item What's different?
+\begin{noindentitemize2}
+\item Query is run when the view is created
+\item Results are stored until the view is \texttt{REFRESHED}
+\end{noindentitemize2}
+\end{noindentitemize}
+
+\end{frame}
+
+
+%***********************************************************
+\begin{frame}{Some Notes}
+
+\begin{itemize}
+	\item Declarative SQL code tends to be very short
+	\item Good: because effort \& bugs $\propto$ code length
+	\item Bad: because it can be difficult to understand!
+\end{itemize}
+\end{frame}
+
+%***********************************************************
+\begin{frame}{Some Notes on Style}
+
+\begin{itemize}
+\item Hence, style is important.  Some suggestions
+	\begin{itemize}
+	\item Always alias tuple variables and relations
+	\item Always indent carefully
+	\item Only one major keyword per line (\texttt{SELECT}, \texttt{FROM}, etc.)
+	\item Pick a capitalization scheme and religiously stick to it
+	\item Make frequent use of views...
+	\end{itemize}
+\end{itemize}
+\end{frame}
+
+%***********************************************************
+\begin{frame}{Defensive SQL}
+
+\begin{itemize}
+\item Explicitly list all attributes
+\item Specify the relation attribute for each attribute
+\item Left  outer join / Right outer join - CHOOSE 1
+\end{itemize}
+\end{frame}
+
+%***********************************************************
+\begin{frame}{True/False Questions}
+
+\begin{enumerate}
+\item Every SQL query must contain a WHERE clause %F
+\item  By default, a VIEW stores the data retrieved from the query %F
+\item Subqueries  isolate parts of queries % T
+\item Using VIEWs makes it harder to figure out what's going on in a query %F
+\item Subqueries can only return a single value % F in ex 1 we returned a list of drinkers
+\item Subqueries must reference an attribute from the outer query %F they may
+\item Subqueries can only appear in the WHERE clause % F, can be in FROM clause as well
+\end{enumerate}
+
+\end{frame}
+
+
+%***********************************************************
+
+\begin{frame}{Wrap up}
+\begin{itemize}
+	\item[?] How can we use what we learned today?
+	\vspace{2em}
+	\item[?] What do we know now that we didn't know before?
+\end{itemize}
+
+\end{frame}
+
+\end{document}

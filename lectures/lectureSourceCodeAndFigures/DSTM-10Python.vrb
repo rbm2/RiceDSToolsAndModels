@@ -1,0 +1,17 @@
+\frametitle{Shape}
+
+\begin{itemize}
+\item Get a tuple of array dimensions
+
+\begin{SQL}
+>>> a
+
+array([[10, 2,  3, 4, 5],
+       [ 2, 3, 13, 5, 6],
+       [ 3, 4,  5, 6, 7]])
+
+>>> a.shape
+
+(3, 5)
+\end{SQL}
+\end{itemize}

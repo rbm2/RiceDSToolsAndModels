@@ -1,0 +1,935 @@
+%Copyright 2019 Christopher M. Jermaine (cmj4@rice.edu) and Risa B. Myers (rbm2@rice.edu)
+%
+%Licensed under the Apache License, Version 2.0 (the "License");
+%you may not use this file except in compliance with the License.
+%You may obtain a copy of the License at
+%
+%    https://www.apache.org/licenses/LICENSE-2.0
+%
+%Unless required by applicable law or agreed to in writing, software
+%distributed under the License is distributed on an "AS IS" BASIS,
+%WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+%See the License for the specific language governing permissions and
+%limitations under the License.
+%
+%===============================================================%
+\documentclass[aspectratio=169]{beamer}
+
+\mode<presentation> 
+{
+\usetheme[noshadow, minimal,numbers,riceb,nonav]{Rice}
+\usefonttheme[onlymath]{serif}
+
+\setbeamercovered{transparent}
+}
+\useinnertheme{rectangles}
+\usepackage{colortbl}
+
+\usepackage[english]{babel}
+
+\usepackage{mathptmx}
+\usepackage{helvet}
+\usepackage{courier}
+\usepackage[T1]{fontenc}
+\usepackage{trajan}
+\usepackage{ textcomp }
+\usepackage{amssymb}
+
+%https://tex.stackexchange.com/questions/20740/symbols-for-outer-joins
+\def\ojoin{\setbox0=\hbox{$\bowtie$}%
+  \rule[-.02ex]{.25em}{.4pt}\llap{\rule[\ht0]{.25em}{.4pt}}}
+\def\leftouterjoin{\mathbin{\ojoin\mkern-5.8mu\bowtie}}
+\def\rightouterjoin{\mathbin{\bowtie\mkern-5.8mu\ojoin}}
+\def\fullouterjoin{\mathbin{\ojoin\mkern-5.8mu\bowtie\mkern-5.8mu\ojoin}}
+
+
+\usepackage{listings}
+
+\newenvironment{noindentitemize}
+{ \begin{itemize}
+ \setlength{\itemsep}{1.5ex}
+  \setlength{\parsep}{0pt}   
+  \setlength{\parskip}{0pt}
+ \addtolength{\leftskip}{-2em}
+ }
+{ \end{itemize} }
+
+\newenvironment{noindentitemize2}
+{ \begin{itemize}
+  \setlength{\itemsep}{0ex}
+  \setlength{\parskip}{0pt}
+  \setlength{\parsep}{0pt}   
+  \addtolength{\leftskip}{-2em}  }
+{ \end{itemize} }
+
+\lstnewenvironment{SQL}
+  {\lstset{
+        aboveskip=5pt,
+        belowskip=5pt,
+        escapechar=!,
+        mathescape=true,
+        upquote=true,
+        language=SQL,
+        basicstyle=\linespread{0.94}\ttfamily\footnotesize,
+        morekeywords={FOR, EACH, WITH, PARTITION, AND, ALL, TEST, WHETHER, PROBABILITY},
+        deletekeywords={VALUE, PRIOR},
+        showstringspaces=true}
+        \vspace{0pt}%
+        \noindent\minipage{0.75\textwidth}}
+  {\endminipage\vspace{0pt}}
+
+
+\newcommand{\ALL}{\texttt{ALL}} 
+\newcommand{\LIKES}{\textrm{LIKES}} 
+\newcommand{\FREQUENTS}{\textrm{FREQUENTS}} 
+\newcommand{\SERVES}{\textrm{SERVES}} 
+\newcommand{\CAFE}{\textrm{CAFE}} 
+\newcommand{\COFFEE}{\textrm{COFFEE}} 
+\newcommand{\DRINKER}{\textrm{DRINKER}} 
+\newcommand{\CB}{\textrm{\textquotesingle{Cold} Brew\textquotesingle}} 
+\newcommand{\CBGOOD}{\textrm{CBGOOD}} 
+\newcommand{\ALLPEEPS}{\textrm{ALLPEEPS}} 
+\newcommand{\ALLCOMBOS}{\textrm{ALLCOMBOS}} 
+\newcommand{\NOGOODCOFFEE}{\textrm{NOGOODCOFFEE}} 
+
+\setbeamerfont{block body}{size=\tiny}
+
+%===============================================================%
+
+\title[]
+{Tools \& Models for Data Science}
+
+
+\subtitle{SQL 1}
+
+\author[]{Chris Jermaine \& Risa Myers}
+\institute
+{
+  Rice University
+}
+
+\date[]{}
+
+\begin{document}
+		
+\begin{frame}
+ \titlepage
+\end{frame}
+
+%***********************************************************
+
+\begin{frame}{SQL}
+
+\begin{noindentitemize}
+\item De-facto standard DB programming language
+	\begin{noindentitemize2}
+	\item First proposed by IBM researchers in 1970's
+	\item Oracle first to offer commercial version in 1979
+	\item IBM soon after
+	\end{noindentitemize2}
+\end{noindentitemize}
+\end{frame}
+
+%***********************************************************
+\begin{frame}{SQL}
+
+\begin{noindentitemize}
+\item SQL is a H U G E language!!
+	\begin{noindentitemize2}
+	\item Current standard runs to 100s of pages
+	\item Consists of a declarative DML
+	\item And an imperative DML
+	\item And a DDL
+	\end{noindentitemize2}
+\item We begin with the heart and soul of SQL: the declarative DML
+\end{noindentitemize}
+\end{frame}
+%***********************************************************
+\begin{frame}{Relational Algebra vs. SQL}
+
+\begin{itemize}
+\item Duplicates are not automatically eliminated (Multi-sets vs. sets)
+\item Not all SQL implementations support all RA operators
+\begin{itemize}
+\item e.g. Difference operator
+\end{itemize}
+\item SQL extends RA
+\begin{itemize}
+\item with aggregate functions
+\item with schema modifications
+\end{itemize}
+\end{itemize}
+
+\end{frame}
+%***********************************************************
+\begin{frame}{Relational Algebra Operators to SQL}
+
+\begin{tabular}{|l|l|l|} \hline
+RA Name & RA symbol & SQL term \\ \hline
+Projection & $\pi$ & SELECT [L: attribute list] \\\hline
+Join & $\times \ \bowtie *$ & FROM [R: Relation list] \\ \hline
+Selection & $\sigma$ & WHERE [C: Condition list] \\ \hline
+\end{tabular}
+
+
+\vspace{2em}
+{\Large 
+ $\pi_L(\sigma_C(R))$}
+\end{frame}
+
+%***********************************************************
+\begin{frame}{Relational Algebra Operators to SQL}
+
+\begin{tabular}{|l|l|l|} \hline
+RA Name & RA Symbol &  SQL equivalent \\ \hline
+Union & $\cup$ & UNION or UNION ALL \\\hline
+Intersection & $\cap$ & JOIN or EXISTS or IN \\ \hline
+Difference & $-$ & JOIN with NULL test or EXCEPT \\ \hline
+Rename & $\rho$ & AS \\ \hline
+Assignment & $\leftarrow$ & INTO \\ \hline
+\end{tabular}
+
+\end{frame}
+
+
+%***********************************************************
+\begin{frame}[fragile]{Our First Query}
+\begin{itemize}
+\item Given the following relations:
+\end{itemize}
+
+
+LIKES (DRINKER, COFFEE)
+
+FREQUENTS (DRINKER, CAFE)
+
+SERVES (CAFE, COFFEE)
+
+\begin{itemize}
+\item Who goes to a cafe serving Cold Brew?  %(\textquotesingle{}EK\textquotesingle{})
+\end{itemize}
+
+\begin{SQL}
+SELECT
+
+FROM
+
+WHERE
+\end{SQL}
+\end{frame}
+
+%***********************************************************
+\begin{frame}[fragile]{Our First Query}
+\begin{noindentitemize}
+\item Given the following relations:
+\end{noindentitemize}
+	
+
+LIKES (DRINKER, COFFEE)
+
+FREQUENTS (DRINKER, CAFE)
+SERVES (CAFE, COFFEE)
+
+\begin{noindentitemize}
+\item Who goes to a cafe serving Cold Brew?  %(\textquotesingle{}EK\textquotesingle{})
+\end{noindentitemize}
+
+\begin{SQL}
+SELECT DISTINCT f.DRINKER
+FROM FREQUENTS AS f, SERVES AS s
+WHERE f.CAFE = s.CAFE AND s.COFFEE = 'Cold Brew'
+\end{SQL}
+
+\begin{noindentitemize}
+\item[?] What happens without \texttt{DISTINCT}? % we get repeats of drinkers who frequent more than 1 cafe
+\end{noindentitemize}
+\end{frame}
+	
+%***********************************************************
+\begin{frame}[fragile]{Our First Query}
+
+LIKES (DRINKER, COFFEE)
+
+FREQUENTS (DRINKER, CAFE)
+
+SERVES (CAFE, COFFEE)
+
+\begin{itemize}
+\item Who goes to a cafe serving Cold Brew?  %(\textquotesingle{}EK\textquotesingle{})
+\end{itemize}
+
+\begin{SQL}
+SELECT DISTINCT f.DRINKER
+FROM FREQUENTS AS f, SERVES AS s
+WHERE f.CAFE = s.CAFE AND s.COFFEE = 'Cold Brew'
+\end{SQL}
+
+\begin{itemize}
+\item Closely related to RC!  Same as:
+\item[] $\{f.\DRINKER | \FREQUENTS(f) \wedge \SERVES(s) $\\
+\hspace{2em}$\wedge\ f.\CAFE = s.\CAFE \wedge s.\COFFEE = 
+		\CB\}$
+\end{itemize}
+\end{frame}
+
+%***********************************************************
+\begin{frame}[fragile]{AS}
+
+\begin{SQL}
+SELECT DISTINCT f.DRINKER
+FROM FREQUENTS AS f, SERVES AS s
+WHERE f.CAFE = s.CAFE AND s.COFFEE = 'Cold Brew'
+\end{SQL}
+
+\begin{itemize}
+\item What does \texttt{AS} do?
+\begin{itemize}
+\item Rename ($\rho$) from Relational Algebra!
+\item Works on tables as well as attributes
+\item Actual key word is optional
+\item Why bother? To create a more meaningful name
+\end{itemize}
+\end{itemize}
+
+\begin{SQL}
+SELECT DISTINCT f.DRINKER "Best Customers"
+FROM FREQUENTS  f, SERVES  s
+WHERE f.CAFE = s.CAFE AND s.COFFEE = 'Cold Brew'
+\end{SQL}
+\end{frame}
+
+
+%***********************************************************
+\begin{frame}[fragile]{JOIN}
+
+\begin{SQL}
+SELECT f.*
+FROM FREQUENTS  AS f, SERVES  AS s
+WHERE f.CAFE = s.CAFE AND s.COFFEE = 'Cold Brew'
+\end{SQL}
+
+
+\begin{itemize}
+\item What kind of join is this? % theta
+\begin{enumerate}[A]
+\item Cartesian product / Cross join
+\item Theta join
+\item Natural join
+\end{enumerate}
+
+\end{itemize}
+\end{frame}
+
+%***********************************************************
+\begin{frame}[fragile]{SELECT-FROM-WHERE}
+
+\begin{SQL}
+SELECT <attibute list>
+FROM <tables>
+WHERE <conditions>
+
+SELECT f.* 
+FROM FREQUENTS f
+\end{SQL}
+
+
+\begin{tabular}{|l|l|} \hline
+\textbf{DRINKER} & \textbf{CAFE} \\ \hline
+Chris & Double Trouble \\\hline
+Chris & Tout Suite \\\hline
+Risa & Java Lava \\ \hline
+Risa & Double Trouble \\ \hline
+\end{tabular}
+
+\end{frame}
+
+%***********************************************************
+\begin{frame}[fragile]{SELECT Clauses}
+
+\begin{tabular}{|l|l|l|} \hline
+\textbf{Attribute} & \textbf{Example} & \textbf{Explanation} \\ \hline
+Attibute list & $d$.lastName, $d$.firstName & Only the specified attributes \\\hline
+* &* & All attributes from all relations \\\hline
+<table name>.* & \FREQUENTS.* & All the attributes from relation \\
+& &  <table name>\\ \hline
+<alias name>.* & $f$.* & All the attributes from the relation \\
+& & aliased to $f$\\ \hline
+<math equation> & 1 + 3 & Evaluates the expression \\\hline
+<constant> & \textquotesingle{CPA}\textquotesingle & Returns the specified constant \\
+& 3 & \\ \hline
+\end{tabular}
+
+\end{frame}
+
+%***********************************************************
+\begin{frame}[fragile]{More SELECT Clauses}
+
+\begin{tabular}{|l|l|l|} \hline
+\textbf{Attribute} & \textbf{Example} & \textbf{Explanation} \\ \hline
+<function> & \texttt{NOW}() & Current datetime \\
+& \texttt{CONCAT}(<attribute and string constants) & Concatenates the values \\
+& \texttt{COALESCE}(<attributes and constants>) & Returns the first non-NULL \\
+&& argument \\ \hline
+\texttt{DISTINCT} & & Eliminates duplicates \\ \hline
+\end{tabular}
+
+\end{frame}
+
+
+%***********************************************************
+\begin{frame}[fragile]{\texttt{CONCAT}}
+
+DRINKER(FIRSTNAME, LASTNAME, DATEOFBIRTH)
+
+\begin{SQL}
+SELECT CONCAT(firstName, ' ', lastName) AS name
+FROM DRINKER
+\end{SQL}
+
+\vspace{1em}
+
+Also
+
+\vspace{1em}
+
+\begin{SQL}
+SELECT firstName ||  ' ' || lastName AS name
+FROM DRINKER
+\end{SQL}
+
+\end{frame}
+%***********************************************************
+\begin{frame}[fragile]{\texttt{COALESCE}}
+
+	
+\begin{itemize}
+\item Returns the first non-NULL value in the list
+\end{itemize}
+
+\begin{SQL}
+COALESCE(FIELDA, FIELDB, 'UNKNOWN')
+\end{SQL}
+
+\end{frame}
+
+%***********************************************************
+\begin{frame}[fragile]{\texttt{CASE}}
+
+DRINKER(FIRSTNAME, LASTNAME, DATEOFBIRTH)
+
+\begin{SQL}
+SELECT CONCAT(firstName, ' ', lastName),
+	CASE WHEN dateOfBirth IS NULL THEN 'Unknown' ELSE dateOfBirth::VARCHAR END  
+	AS checkOver21
+FROM Drinker
+\end{SQL}
+
+COURSE(CRN, COURSENAME, ROOMID)
+\begin{SQL}
+SELECT crn, 
+	CASE crn
+		WHEN 16671 THEN 'Grad Databases' 
+   		WHEN 16670 THEN 'Undergrad Databases'
+    		ELSE 'Unimportant' 
+	END  AS "Course Type"
+FROM Course
+\end{SQL}
+
+\end{frame}
+
+%***********************************************************
+\begin{frame}[fragile]{\texttt{FROM} Clause}
+
+\begin{enumerate}
+\item List Relation(s)/Table(s)/View(s)
+\item Specify how they are related
+\item Be explicit!
+\begin{itemize}
+\item (otherwise you get the Cartesian Product / Cross Join)
+\end{itemize}
+\end{enumerate}
+\end{frame}
+%%***********************************************************
+%\begin{frame}{Join Visualization}
+%
+%{\centering \includegraphics[width=1\textwidth]{./lect06/joins3.pdf}}
+%
+%%{\centering \includegraphics[width=.7\textwidth]{./lect06/joinsSO.png}}
+%%\url {https://stackoverflow.com/questions/406294/left-join-vs-left-outer-join-in-sql-server}
+%\end{frame}
+%
+%***********************************************************
+\begin{frame}{INNER JOIN}
+
+R \texttt{INNER JOIN} S \texttt{ON} R.<att> = S.<att>
+
+R \texttt{JOIN} S \texttt{ON} R.<att> = S.<att>
+
+R  \texttt{NATURAL JOIN}  S
+
+\begin{itemize}
+\item Used to match up tuples from different relations
+\item Includes only the relations with matching attribute values 
+\end{itemize}
+
+\end{frame}
+%***********************************************************
+\begin{frame}{Example: Inner Join}
+
+COURSE (\underline{CRN}, NAME)
+
+ENROLL (\underline{NETID}, \underline{CRN})
+
+STUDENT (\underline{NETID})
+
+\begin{columns}[T]
+\begin{column}{0.3\textwidth}
+STUDENT\\
+\begin{tabular}{|l|l|} \hline
+\textbf{NETID} & \textbf{NAME} \\ \hline
+rbm2 & Risa \\\hline
+abc1 & Andre \\\hline
+bcd2 & Betty \\ \hline
+cde4 & Chris \\ \hline
+\end{tabular}\\
+\end{column}
+\begin{column}{0.3\textwidth}
+ENROLL\\
+\begin{tabular}{|l|l|} \hline
+\textbf{NETID} & \textbf{CRN} \\ \hline
+abc1 & 123 \\\hline
+abc1 & 345\\\hline
+cde4 & 123 \\ \hline
+\end{tabular}
+\end{column}
+\begin{column}{0.3\textwidth}
+COURSE\\
+\begin{tabular}{|l|l|} \hline
+\textbf{CRN} & \textbf{NAME} \\ \hline
+123 & COMP 430 \\\hline
+234 & COMP 533 \\\hline
+345 & COMP 530 \\ \hline
+\end{tabular}\\
+\end{column}
+\end{columns}
+
+
+\begin{itemize}
+\item[?] Which students have enrolled in a course?
+\end{itemize}
+
+\end{frame}
+%***********************************************************
+\begin{frame}[fragile]{Example: Inner Join}
+
+COURSE (\underline{CRN}, NAME)
+
+ENROLL (\underline{NETID}, \underline{CRN})
+
+
+STUDENT (\underline{NETID}, \underline{NAME})
+
+
+\begin{itemize}
+\item Which students have enrolled in a course?
+\item STUDENT $\bowtie_{NETID = NETID}$ ENROLL
+
+\begin{SQL}
+SELECT *
+FROM STUDENT s INNER JOIN ENROLL e ON s.NETID = e.NETID
+\end{SQL}
+
+RESULTS\\
+\begin{tabular}{|l|l|l|l|} \hline
+\textbf{NETID} & \textbf{NAME} & \textbf{NETID} & \textbf{CRN}\\ \hline
+abc1 & Andre & abc1  & 123 \\\hline
+abc1 & Andre  & abc1 & 345 \\\hline
+cde4 & Chris & cde4 & 123 \\ \hline
+\end{tabular}\\
+\item[?] How is a natural join different?
+\end{itemize}
+\end{frame}
+%***********************************************************
+\begin{frame}[fragile]{Example: Natural Join}
+
+COURSE (\underline{CRN}, NAME)
+
+ENROLL (\underline{NETID}, \underline{CRN})
+
+
+STUDENT (\underline{NETID}, \underline{NAME})
+
+
+\begin{itemize}
+\item Which students have enrolled in a course?
+\item STUDENT * ENROLL
+\end{itemize}
+
+\begin{SQL}
+SELECT *
+FROM STUDENT s NATURAL JOIN ENROLL e 
+\end{SQL}
+
+RESULTS\\
+\begin{tabular}{|l|l|l|} \hline
+\textbf{NETID} & \textbf{NAME} & \textbf{CRN}\\ \hline
+abc1 & Andre   & 123 \\\hline
+abc1 & Andre   & 345 \\\hline
+cde4 & Chris  & 123 \\ \hline
+\end{tabular}\\
+\end{frame}
+%***********************************************************
+\begin{frame}{Left / Right Outer Join}
+
+R \texttt{LEFT OUTER JOIN} S \texttt{ON} R.<att> = S.<att>
+
+R \texttt{RIGHT OUTER JOIN} S \texttt{ON} R.<att> = S.<att>
+
+\begin{itemize}
+\item Used to match up tuples from different relations
+\item Includes all the relations from the "outer" side 
+\item If there is no matching tuple, assigns NULLs
+\item Returns a relation with all the attributes of R $\bullet$ all the attributes of S
+\item Tip: Pick one direction and use it consistently
+\end{itemize}
+
+\end{frame}
+
+%***********************************************************
+\begin{frame}{Example: Left Outer Join}
+
+COURSE (\underline{CRN}, NAME)
+
+ENROLL (\underline{NETID}, \underline{CRN})
+
+STUDENT (\underline{NETID}, \underline{NAME})
+
+\begin{columns}[T]
+\begin{column}{0.3\textwidth}
+STUDENT\\
+\begin{tabular}{|l|l|} \hline
+\textbf{NETID} & \textbf{NAME} \\ \hline
+rbm2 & Risa \\\hline
+abc1 & Andre \\\hline
+bcd2 & Betty \\ \hline
+cde4 & Chris \\ \hline
+\end{tabular}\\
+\end{column}
+\begin{column}{0.3\textwidth}
+ENROLL\\
+\begin{tabular}{|l|l|} \hline
+\textbf{NETID} & \textbf{CRN} \\ \hline
+abc1 & 123 \\\hline
+abc1 & 345\\\hline
+cde4 & 123 \\ \hline
+\end{tabular}
+\end{column}
+\begin{column}{0.3\textwidth}
+COURSE\\
+\begin{tabular}{|l|l|} \hline
+\textbf{CRN} & \textbf{NAME} \\ \hline
+123 & COMP 430 \\\hline
+234 & COMP 533 \\\hline
+345 & COMP 530 \\ \hline
+\end{tabular}\\
+\end{column}
+\end{columns}
+
+
+\begin{itemize}
+\item[?] Which students haven't enrolled in any courses?
+\end{itemize}
+
+\end{frame}
+
+%***********************************************************
+\begin{frame}[fragile]{Example: Left Outer Join}
+
+COURSE (\underline{CRN}, NAME)
+
+ENROLL (\underline{CRN}, \underline{NETID})
+
+STUDENT (\underline{NETID}, \underline{NAME})
+
+
+\begin{itemize}
+\item Which students haven't enrolled in any courses?
+\item STUDENT $\leftouterjoin_{NETID = NETID}$ ENROLL
+
+\begin{SQL}
+SELECT *
+FROM STUDENT s LEFT OUTER JOIN ENROLL e ON s.NETID = e.NETID
+WHERE e.CRN IS NULL
+\end{SQL}
+\end{itemize}
+
+RESULTS\\
+\begin{tabular}{|l|l|l|l|} \hline
+\textbf{NETID} & \textbf{NAME} & \textbf{NETID} & \textbf{CRN} \\ \hline
+rbm2 & Risa & NULL & NULL\\\hline
+bcd2 & Betty & NULL & NULL \\ \hline
+\end{tabular}\\
+
+
+\end{frame}
+
+
+%***********************************************************
+\begin{frame}[fragile]{Example: Right Outer Join}
+
+COURSE (\underline{CRN}, NAME)
+
+ENROLL (\underline{NETID}, \underline{CRN})
+
+STUDENT (\underline{NETID}, \underline{NAME})
+
+
+\begin{itemize}
+\item[?] What question does this query answer?
+\item ENROLL $\rightouterjoin_{NETID = NETID}$ COURSE
+
+\begin{SQL}
+SELECT *
+FROM ENROLL e RIGHT OUTER JOIN COURSE c ON e.CRN = c.CRN
+WHERE e.CRN IS NULL
+\end{SQL}
+\end{itemize}
+
+
+\end{frame}
+%***********************************************************
+\begin{frame}[fragile]{Example: Right Outer Join}
+
+COURSE (\underline{CRN}, NAME)
+
+ENROLL (\underline{NETID}, \underline{CRN})
+
+STUDENT (\underline{NETID}, \underline{NAME})
+
+\begin{itemize}
+\item What question does this query answer?
+\item ENROLL $\rightouterjoin_{NETID = NETID}$ COURSE
+% which classes have no students?
+\begin{SQL}
+SELECT *
+FROM ENROLL e RIGHT OUTER JOIN COURSE c ON e.CRN = c.CRN
+WHERE e.CRN IS NULL
+\end{SQL}
+\end{itemize}
+
+RESULTS\\
+\begin{tabular}{|l|l|l|l|} \hline
+\textbf{NETID} & \textbf{CRN} & \textbf{CRN} & \textbf{NAME}\\ \hline
+NULL & NULL  & 234 & COMP 533\\\hline
+\end{tabular}\\
+
+
+\end{frame}
+
+%***********************************************************
+\begin{frame}{Full Outer Join}
+
+R \texttt{FULL OUTER JOIN} S \texttt{ON} R.<att> = S.<att>
+
+R $\fullouterjoin_{R.<att> = S.<att>}$ S
+
+\begin{itemize}
+\item Used to match up tuples from different relations
+\item Includes all the relations from both sides 
+\item If there is no matching tuple, assigns NULLs
+\item Returns a relation with all the attributes of R $\bullet$ all the attributes of S
+\end{itemize}
+\end{frame}
+
+%***********************************************************
+\begin{frame}[fragile]{Example: Full Outer Join}
+
+STUDENT (\underline{NETID}, NAME)
+
+TEAM (\underline{TEAMNAME}, CAPTAINNETID)
+
+
+\begin{columns}[T]
+\begin{column}{0.4\textwidth}
+STUDENT\\
+\begin{tabular}{|l|l|} \hline
+\textbf{NETID} & NAME  \\ \hline
+ghi8 & Gary  \\\hline
+hij2 & Holly \\\hline
+ ijk12 & Isabel  \\ \hline
+\end{tabular}\\
+\end{column}
+\begin{column}{0.4\textwidth}
+
+TEAM\\
+\begin{tabular}{|l|l|} \hline
+\textbf{TEAMNAME} & CAPTAINNETID  \\ \hline
+Peanut butter & ghi8  \\\hline
+Jelly & NULL \\\hline
+\end{tabular}\\
+\end{column}
+\end{columns}
+
+\begin{SQL}
+SELECT s.NAME, t.TEAMNAME
+FROM STUDENT s FULL OUTER JOIN TEAM t ON s.NETID = t.CAPTAINNETID
+\end{SQL}
+\begin{itemize}
+\item[?] What does this expression represent?
+% students who are team captains and teams  without captains
+\item[?] How might it be useful?
+\end{itemize}
+
+
+%create table team(
+% teamname varchar(20),
+% CAPTAINNETID varchar(10)
+%);
+%
+%insert into team values
+%('Peanut butter', 'ghi8'),
+%('Jelly', NULL);
+%
+%insert into student values
+%('ghi8', 'Gary'),
+%('hij2', 'Holly'),
+%('ijk12', 'Isabel');
+\end{frame}
+
+
+%***********************************************************
+\begin{frame}[fragile]{Example: Full Outer Join}
+
+STUDENT (\underline{NETID}, NAME)
+
+TEAM (\underline{TEAMNAME}, CAPTAINNETID)
+
+\begin{SQL}
+SELECT s.NAME, t.TEAMNAME
+FROM STUDENT s FULL OUTER JOIN TEAM t ON s.NETID = t.NETID
+\end{SQL}
+
+RESULT\\
+\begin{tabular}{|l|l|} \hline
+\textbf{NAME} & \textbf{NAME}  \\ \hline
+Gary & Peanut butter \\\hline
+NULL & Jelly \\\hline
+ Holly & NULL  \\ \hline
+ Isabel & NULL  \\ \hline
+\end{tabular}\\
+
+\end{frame}
+
+%***********************************************************
+\begin{frame}[fragile]{Self Join}
+
+\begin{SQL}
+R AS R1 JOIN R AS R2 ON R1.<att> = R2.<att>
+\end{SQL}
+
+\begin{itemize}
+\item Used to match up tuples from relation R back to itself
+\item Any type of JOIN may be used 
+\item Returns a relation with all the attributes of R $\bullet$ all the attributes of R
+\end{itemize}
+\end{frame}
+
+%***********************************************************
+\begin{frame}[fragile]{Example: Self Join}
+
+FACULTY (\underline{NETID}, NAME, MGRNETID )
+
+FACULTY\\
+\begin{tabular}{|l|l|l|} \hline
+\textbf{NETID} & \textbf{NAME} & \textbf{MGRNETID} \\ \hline
+rbm2 & Risa & abc1 \\\hline
+abc1 & Andre & bcd2 \\\hline
+bcd2 & Betty & abc1  \\ \hline
+cde4 & Chris & NULL\\ \hline
+\end{tabular}\\
+
+%create table faculty(
+% netid varchar(10),
+% name varchar(10),
+% mgrnetid varchar(10)
+%)
+
+%insert into faculty values
+%	('rbm2', 'risa', 'bcd2'),
+%	('abc1', 'Andre', 'bcd2'),
+%	('bcd2', 'betty', 'cde4'),
+%	('cde4', 'Chris', NULL);
+
+\begin{SQL}
+SELECT f.NAME, Mgr.Name
+FROM FACULTY f JOIN FACULTY Mgr ON f.MGRNETID = Mgr.NETID
+\end{SQL}
+
+\begin{itemize}
+\item[?] What does this expression represent?
+\begin{enumerate}[A]
+\item Every faculty member paired with every manager
+\item Every faculty member who has. a manager, paired with that manager % this one
+\end{enumerate}
+\end{itemize}
+
+\end{frame}
+
+%***********************************************************
+\begin{frame}[fragile]{Example: Self Join}
+
+FACULTY (\underline{NETID}, NAME, MGRNETID )
+
+FACULTY\\
+\begin{tabular}{|l|l|l|} \hline
+\textbf{NETID} & \textbf{NAME} & \textbf{MGRNETID} \\ \hline
+rbm2 & Risa & bcd2 \\\hline
+abc1 & Andre & bcd2 \\\hline
+bcd2 & Betty & cde4  \\ \hline
+cde4 & Chris & NULL\\ \hline
+\end{tabular}\\
+
+
+\begin{SQL}
+SELECT f.NAME, Mgr.Name
+FROM FACULTY f JOIN FACULTY Mgr ON f.MGRNETID = Mgr.NETID
+\end{SQL}
+
+RESULT\\
+\begin{tabular}{|l|l|} \hline
+\textbf{NAME} & \textbf{NAME}  \\ \hline
+Risa & Betty \\\hline
+Andre & Betty \\\hline
+ Betty & Chris  \\ \hline
+\end{tabular}\\
+
+\end{frame}
+
+%***********************************************************
+\begin{frame}{True / False Questions}
+
+\begin{enumerate}
+\item SQL queries typically start with a SELECT clause %T
+\item SELECT clauses must contain at least one attribute %F - could be a constant or function
+\item Every LEFT JOIN expression can be written as a RIGHT JOIN expression %T
+\item A Cartesian Product is also known as a CROSS JOIN or CROSS PRODUCT % T
+\item SELF JOINs run the query twice %F
+\item SELF JOINs use the same table more than once % T
+\item SQL statements ignore whitespace %T
+\item Attributes can be renamed to "user friendly" labels %T
+\end{enumerate}
+\end{frame}
+	
+%***********************************************************
+
+\begin{frame}{Wrap up}
+\begin{itemize}
+	\item[?] How can we use what we learned today?
+	\vspace{2em}
+	\item[?] What do we know now that we didn't know before?
+\end{itemize}
+
+
+\end{frame}
+
+\end{document}

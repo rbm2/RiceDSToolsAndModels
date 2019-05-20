@@ -1,0 +1,10 @@
+\frametitle{Materialized Views}
+
+\begin{noindentitemize}
+\item What's different?
+\begin{noindentitemize2}
+\item Query is run when the view is created
+\item Results are stored until the view is \texttt{REFRESHED}
+\end{noindentitemize2}
+\end{noindentitemize}
+

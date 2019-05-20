@@ -1,0 +1,640 @@
+%Copyright 2019 Christopher M. Jermaine (cmj4@rice.edu) and Risa B. Myers (rbm2@rice.edu)
+%
+%Licensed under the Apache License, Version 2.0 (the "License");
+%you may not use this file except in compliance with the License.
+%You may obtain a copy of the License at
+%
+%    https://www.apache.org/licenses/LICENSE-2.0
+%
+%Unless required by applicable law or agreed to in writing, software
+%distributed under the License is distributed on an "AS IS" BASIS,
+%WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+%See the License for the specific language governing permissions and
+%limitations under the License.
+%===============================================================%
+\documentclass[aspectratio=169]{beamer}
+\mode<presentation> 
+{
+\usetheme[noshadow, minimal,numbers,riceb,nonav]{Rice}
+\usefonttheme[onlymath]{serif}
+\setbeamercovered{transparent}
+}
+\useinnertheme{rectangles}
+\usepackage{colortbl}
+
+\usepackage[english]{babel}
+
+\usepackage{mathptmx}
+\usepackage{helvet}
+\usepackage{courier}
+\usepackage[T1]{fontenc}
+\usepackage{trajan}
+\usepackage{ textcomp }
+\usepackage{amssymb}
+
+%https://tex.stackexchange.com/questions/20740/symbols-for-outer-joins
+\def\ojoin{\setbox0=\hbox{$\bowtie$}%
+  \rule[-.02ex]{.25em}{.4pt}\llap{\rule[\ht0]{.25em}{.4pt}}}
+\def\leftouterjoin{\mathbin{\ojoin\mkern-5.8mu\bowtie}}
+\def\rightouterjoin{\mathbin{\bowtie\mkern-5.8mu\ojoin}}
+\def\fullouterjoin{\mathbin{\ojoin\mkern-5.8mu\bowtie\mkern-5.8mu\ojoin}}
+
+
+\usepackage{listings}
+
+\newenvironment{noindentitemize}
+{ \begin{itemize}
+ \setlength{\itemsep}{1.5ex}
+  \setlength{\parsep}{0pt}   
+  \setlength{\parskip}{0pt}
+ \addtolength{\leftskip}{-2em}
+ }
+{ \end{itemize} }
+
+\newenvironment{noindentitemize2}
+{ \begin{itemize}
+  \setlength{\itemsep}{0ex}
+  \setlength{\parskip}{0pt}
+  \setlength{\parsep}{0pt}   
+  \addtolength{\leftskip}{-2em}  }
+{ \end{itemize} }
+
+\lstnewenvironment{SQL}
+  {\lstset{
+        aboveskip=5pt,
+        belowskip=5pt,
+        escapechar=!,
+        mathescape=true,
+        upquote=true,
+        language=SQL,
+        basicstyle=\linespread{0.94}\ttfamily\footnotesize,
+        morekeywords={FOR, EACH, WITH, PARTITION, AND, ALL, TEST, WHETHER, PROBABILITY},
+        deletekeywords={VALUE, PRIOR},
+        showstringspaces=true}
+        \vspace{0pt}%
+        \noindent\minipage{0.47\textwidth}}
+  {\endminipage\vspace{0pt}}
+
+
+\newcommand{\NULL}{\texttt{NULL}} 
+\newcommand{\WHERE}{\texttt{WHERE}} 
+\newcommand{\ALL}{\texttt{ALL}} 
+\newcommand{\UNION}{\texttt{UNION}} 
+\newcommand{\EXCEPT}{\texttt{EXCEPT}} 
+\newcommand{\LIKES}{\textrm{LIKES}} 
+\newcommand{\FREQUENTS}{\textrm{FREQUENTS}} 
+\newcommand{\SERVES}{\textrm{SERVES}} 
+\newcommand{\CAFE}{\textrm{CAFE}} 
+\newcommand{\COFFEE}{\textrm{COFFEE}} 
+\newcommand{\DRINKER}{\textrm{DRINKER}} 
+\newcommand{\CB}{\textrm{\textquotesingle{Cold} Brew\textquotesingle}} 
+\newcommand{\CBGOOD}{\textrm{CBGOOD}} 
+\newcommand{\ALLPEEPS}{\textrm{ALLPEEPS}} 
+\newcommand{\ALLCOMBOS}{\textrm{ALLCOMBOS}} 
+\newcommand{\NOGOODCOFFEE}{\textrm{NOGOODCOFFEE}} 
+
+\setbeamerfont{block body}{size=\tiny}
+
+%===============================================================%
+
+\title[]
+{Tools \& Models for Data Science}
+
+\subtitle{SQL Aggregations and Grouping}
+
+\author[]{Risa Myers}
+\institute
+{
+  Rice University
+}
+
+\date[]{}
+
+
+\begin{document}
+
+\begin{frame}
+ \titlepage
+\end{frame}
+
+%***********************************************************
+\begin{frame}{Aggregations}
+
+\begin{itemize}
+\item Can compute simple statistics using built-in SQL functions
+	\begin{itemize}
+	\item \texttt{SUM}
+	\item \texttt{AVG}
+	\item \texttt{COUNT}
+	\item \texttt{MAX}
+	\item \texttt{MIN}
+	\item etc.
+	\end{itemize}
+\item[?] What do all of these aggregates have in common?
+\end{itemize}
+\end{frame}
+
+%***********************************************************
+\begin{frame}{Our First Aggregation}
+
+RATES (DRINKER, COFFEE, SCORE)
+
+\begin{itemize}
+\item[?]  What is the average coffee rating given by Risa?
+\end{itemize}
+\end{frame}
+
+%***********************************************************
+\begin{frame}[fragile]{Our First Aggregation}
+
+RATES (DRINKER, COFFEE, SCORE)
+
+\begin{itemize}
+\item What is the average coffee rating given by Risa?
+\end{itemize}
+
+\begin{SQL}
+SELECT AVG (r.SCORE)
+FROM RATES r
+WHERE r.DRINKER = 'Risa'
+\end{SQL}
+\end{frame}
+
+%***********************************************************
+
+\begin{frame}{\texttt{COUNT DISTINCT}}
+
+
+\begin{itemize}
+\item[] RATES (DRINKER, COFFEE, SCORE)
+\item[?] How many coffees has Risa rated?
+\item Note: RATES does not have a primary key
+\item[?] What are the reperecussions? % there can be duplicate tuples
+\end{itemize}
+\end{frame}
+
+%***********************************************************
+\begin{frame}[fragile]{\texttt{COUNT DISTINCT}}
+
+RATES (DRINKER, COFFEE, SCORE)
+
+\begin{itemize}
+\item How many coffees has Risa rated?
+\item[?] Does this work?
+\end{itemize}
+
+\begin{SQL}
+SELECT COUNT (*)
+FROM RATES r
+WHERE r.DRINKER = 'Risa'
+\end{SQL}
+
+\end{frame}
+
+%***********************************************************
+\begin{frame}[fragile]{\texttt{COUNT DISTINCT}}
+
+RATES (DRINKER, COFFEE, SCORE)
+
+\begin{itemize}
+\item How many coffees has Risa rated?
+\item Does this work?
+\end{itemize}
+
+\begin{SQL}
+SELECT COUNT (*)
+FROM RATES r
+WHERE r.DRINKER = 'Risa'
+\end{SQL}
+
+\begin{itemize}
+	\item Counts the number of ratings due to Risa.
+	\item[?] Count the number of different types of coffee drinks that Risa has rated
+\end{itemize}
+\end{frame}
+
+%***********************************************************
+\begin{frame}[fragile]{\texttt{COUNT DISTINCT}}
+
+RATES (DRINKER, COFFEE, SCORE)
+
+\begin{itemize}
+\item How many coffees has Risa rated?
+\item This gives us the actual number rated:
+\end{itemize}
+
+\begin{SQL}
+SELECT COUNT (DISTINCT r.COFFEE)
+FROM RATES r
+WHERE r.DRINKER = 'Risa'
+\end{SQL}
+\end{frame}
+
+%***********************************************************
+\begin{frame}{\texttt{GROUP BY}}
+
+RATES (DRINKER, COFFEE, SCORE)
+
+\begin{itemize}
+\item It is often desirable to compute an aggregate at a finer level of granularity.
+\item[?] What is the average rating for each coffee?
+\end{itemize}
+\end{frame}
+
+%***********************************************************
+\begin{frame}[fragile]{\texttt{GROUP BY}}
+
+RATES (DRINKER, COFFEE, SCORE)
+
+\begin{itemize}
+\item It is often desirable to compute an aggregate at a finer level of granularity.
+\item What is the average rating for each coffee?
+\end{itemize}
+
+\begin{SQL}
+SELECT r.COFFEE, AVG (r.SCORE)
+FROM RATES r
+GROUP BY r.COFFEE
+\end{SQL}
+
+\begin{itemize}
+	\item This first groups the relation into subgroups
+	\item Every tuple in the subgroup has the same value for r.COFFEE
+	\item Then the aggregate runs over each subgroup independently
+\end{itemize}	
+\end{frame}
+
+%***********************************************************
+\begin{frame}[fragile]{\texttt{GROUP BY}}
+
+\begin{SQL}
+SELECT r.COFFEE, AVG (r.SCORE)
+FROM RATES r
+GROUP BY r.COFFEE
+\end{SQL}
+
+\begin{noindentitemize}
+	\item Example input: 
+\end{noindentitemize}	
+
+\begin{SQL}
+('Chris', 'Cold Brew', 1)
+('Chris', 'Turkish Coffee', 5)
+('Jorge', 'Cold Brew', 1)
+('Jorge', 'Chai Latte', 3)
+('Risa', 'Cold Brew', 4)
+('Risa', 'Cold Brew', 5)
+('Risa', 'Espresso', 2)
+\end{SQL}
+
+\begin{noindentitemize}
+	\item[?]  What is the output? 
+\end{noindentitemize}	
+
+\end{frame}
+
+%***********************************************************
+\begin{frame}[fragile]{\texttt{GROUP BY}}
+
+\begin{SQL}
+SELECT r.COFFEE, AVG (r.SCORE)
+FROM RATES r
+GROUP BY r.COFFEE
+\end{SQL}
+
+\begin{noindentitemize}
+	\item Example input: 
+\end{noindentitemize}	
+
+\begin{SQL}
+('Chris', 'Cold Brew', 1)
+('Chris', 'Turkish Coffee', 5)
+('Jorge', 'Cold Brew', 1)
+('Jorge', 'Chai Latte', 3)
+('Risa', 'Cold Brew', 4)
+('Risa', 'Cold Brew', 5)
+('Risa', 'Espresso', 2)
+\end{SQL}
+
+\begin{noindentitemize}
+	\item  What is the output? 
+\end{noindentitemize}	
+
+\begin{SQL}
+('Turkish Coffee', 5)
+('Chai Latte', 3)
+('Cold Brew', 2.75)
+('Espresso', 2)
+\end{SQL}
+
+\begin{noindentitemize}
+	\item Take care with integer arithmetic! 
+\end{noindentitemize}	
+\end{frame}
+
+%***********************************************************
+\begin{frame}[fragile]{\texttt{GROUP BY}}
+
+\begin{SQL}
+SELECT r.COFFEE, AVG (R.SCORE)
+FROM RATES r
+GROUP BY r.COFFEE
+\end{SQL}
+
+\begin{itemize}
+	\item Note: If you have an attribute outside of an aggregate function in an aggregate query
+	\item Example: r.COFFEE here
+	\item Then you must have grouped by that attribute
+	\item Or the query will not compile
+	\item[?] Why?
+\end{itemize}	
+
+\end{frame}
+
+%***********************************************************
+\begin{frame}{\texttt{GROUP BY} Conceptually}
+\footnotesize{
+\begin{itemize}
+\item Given the following data
+\begin{tabular}{|l|c|c| }  \hline
+\textrm{DRINKER} & \textrm{COFFEE} & \textrm{SCORE}\\ \hline
+Risa & Espresso & 2\\ \hline
+Chris & Cold Brew & 1\\ \hline
+Chris & Turkish Coffee & 5 \\ \hline
+Risa & Cold Brew & 4 \\ \hline
+Risa & Cold Brew & 5 \\ \hline
+\end{tabular}
+\item[?] What is each drinker's average coffee rating?
+\end{itemize}
+
+}
+\end{frame}
+
+\begin{frame}{\texttt{GROUP BY} Conceptually}
+\footnotesize{
+\begin{itemize}
+\item Given the following data
+\begin{tabular}{|l|c|c| }  \hline
+\textrm{DRINKER} & \textrm{COFFEE} & \textrm{SCORE}\\ \hline
+Risa & Espresso & 2\\ \hline
+Chris & Cold Brew & 1\\ \hline
+Chris & Turkish Coffee & 5 \\ \hline
+Risa & Cold Brew & 4 \\ \hline
+Risa & Cold Brew & 5 \\ \hline
+\end{tabular}
+\item[?] What is each drinker's average coffee rating?
+\end{itemize}
+\begin{enumerate}
+\item \texttt{GROUP BY} DRINKER
+\begin{tabular}{|l|c|c| }  \hline
+\textrm{DRINKER} & \textrm{COFFEE} & \textrm{SCORE}\\ \hline
+Chris & Cold Brew & 1\\ \hline
+Chris & Turkish Coffee & 5 \\ \hline \hline
+Risa & Espresso & 2\\ \hline
+Risa & Cold Brew & 4 \\ \hline
+Risa & Cold Brew & 5 \\ \hline
+\end{tabular}
+\item Aggregate
+\begin{tabular}{|l|c| }  \hline
+\textrm{DRINKER} & \textrm{AVGSCORE}\\ \hline
+Chris & 3\\ \hline
+Risa & 3.67 \\ \hline
+\end{tabular}
+\end{enumerate}
+}
+\end{frame}
+
+%***********************************************************
+\begin{frame}[fragile]{\texttt{HAVING}}
+
+RATES (DRINKER, COFFEE, SCORE)
+\begin{noindentitemize}
+\item[?] What is the highest rated type of coffee, on average, considering only coffees that have at least 3 ratings?\\ 
+\item From last class:
+\end{noindentitemize}
+
+\begin{SQL}
+CREATE VIEW COFFEE_AVG_RATING AS
+   SELECT r.COFFEE, AVG (r.SCORE) AS AVG_RATING
+   FROM RATES r
+   GROUP BY r.COFFEE
+\end{SQL}
+
+\begin{SQL}
+SELECT a.COFFEE
+FROM COFFEE_AVG_RATING a
+WHERE a.AVG_RATING = (SELECT MAX(a.AVG_RATING)
+                      FROM COFFEE_AVG_RATING a)
+\end{SQL}
+\begin{noindentitemize}
+\item[?] How do we check for at least 3 ratings?
+\end{noindentitemize}
+
+\end{frame}
+
+%***********************************************************
+\begin{frame}[fragile]{\texttt{HAVING}}
+
+RATES (DRINKER, COFFEE, SCORE)
+
+\begin{noindentitemize}
+\item What is the highest rated type of coffee, on average, considering only coffees that have at least 3 ratings?\\ 
+\end{noindentitemize}
+\begin{noindentitemize}
+\item Change COFFEE\_AVG\_RATING to:
+\end{noindentitemize}
+
+\begin{SQL}
+CREATE VIEW COFFEE_AVG_RATING AS
+   SELECT r.COFFEE, AVG(r.SCORE) AS AVG_RATING
+   FROM RATES r
+   GROUP BY COFFEE
+   HAVING COUNT(*) >= 3
+\end{SQL}
+\end{frame}
+% added the HAVING CLAUSE
+
+%***********************************************************
+\begin{frame}{\texttt{HAVING} Conceptually}
+\scriptsize{
+\begin{noindentitemize}
+\item Given the following data
+\begin{tabular}{|l|c|c| }  \hline
+\textrm{DRINKER} & \textrm{COFFEE} & \textrm{SCORE}\\ \hline
+Risa & Espresso & 2\\ \hline
+Chris & Cold Brew & 1\\ \hline
+Chris & Turkish Coffee & 5 \\ \hline
+Risa & Cold Brew & 4 \\ \hline
+Risa & Cold Brew & 5 \\ \hline
+\end{tabular}
+\item[?] What is the highest rated type of coffee, on average, considering only coffees that have at least 3 ratings?\\
+\end{noindentitemize}
+\begin{enumerate}
+\item \texttt{GROUP BY} COFFEE
+\begin{tabular}{|l|c|c| }  \hline
+\textrm{DRINKER} & \textrm{COFFEE} & \textrm{SCORE}\\ \hline
+Chris & Cold Brew & 1\\ \hline
+Risa & Cold Brew & 4 \\ \hline
+Risa & Cold Brew & 5 \\ \hline \hline
+Chris & Turkish Coffee & 5 \\ \hline \hline
+Risa & Espresso & 2\\ \hline
+\end{tabular}
+\item Aggregate
+\begin{tabular}{|l|c| }  \hline
+\textrm{COFFEE} & \textrm{AVGSCORE}\\ \hline 
+Cold Brew & 3.33\\ \hline\hline
+ Turkish Coffee & 5 \\ \hline \hline
+ Espresso & 2 \\ \hline 
+\end{tabular}
+\item \texttt{HAVING} COUNT(*) >=  3
+\begin{tabular}{|l|c| }  \hline
+\textrm{DRINKER} & \textrm{AVGSCORE}\\ \hline
+Cold Brew & 3.33\\ \hline
+\end{tabular}
+
+\end{enumerate}
+
+}
+\end{frame}
+
+%***********************************************************
+%\begin{frame}{HAVING}
+%
+%RATES (DRINKER, COFFEE, SCORE)
+%
+%\begin{itemize}
+%\item Example: What is the highest rated coffee, on average, considering only coffees that have at least 10 ratings?
+%\end{itemize}
+
+%***********************************************************
+\begin{frame}{Aggregate Functions  \& NULL}
+
+What about NULL?
+
+
+\begin{itemize}
+\item \texttt{COUNT}(1) or \texttt{COUNT}(*) will count every row
+\item \texttt{COUNT}(<attribute>) will count NON-NULL values
+\item \texttt{AVG, MIN, MAX}, etc. ignore \NULL\ values
+\item \texttt{GROUP BY} includes a row for \NULL
+\end{itemize}
+\end{frame}
+
+
+
+%***********************************************************
+\begin{frame}{Subquery in \texttt{FROM} Revisited}
+
+RATES (DRINKER, COFFEE, SCORE)
+
+\begin{itemize}
+\item Can have a subquery in \texttt{FROM} clause, treated as a temporary table
+\item[?] What is the highest rated coffee, on average?
+\end{itemize}
+\end{frame}
+
+%***********************************************************
+\begin{frame}[fragile]{Subquery in \texttt{FROM} Revisited}
+
+RATES (DRINKER, COFFEE, SCORE)
+
+\begin{itemize}
+\item Can have a subquery in \texttt{FROM} clause, treat as a temporary table
+\item What is the highest rated coffee, on average?
+\end{itemize}
+
+\begin{SQL}
+SELECT a.COFFEE
+FROM (SELECT r.COFFEE, AVG (r.SCORE) AS AVG_RATING
+      FROM RATES r
+      GROUP BY r.COFFEE) a
+WHERE a.AVG_RATING = (SELECT MAX(a.AVG_RATING)
+                      FROM (SELECT r.COFFEE, AVG (r.SCORE) 
+                               AS AVG_RATING
+                            FROM RATES r
+                            GROUP BY r.COFFEE) a)
+\end{SQL}
+\end{frame}
+
+%***********************************************************
+\begin{frame}[fragile]{Subquery in \texttt{FROM} Revisited}
+
+RATES (DRINKER, COFFEE, SCORE)
+
+\begin{noindentitemize}
+\item Note: The code is a lot cleaner with a view!
+\end{noindentitemize}
+
+\begin{SQL}
+CREATE VIEW COFFEE_AVG_RATING AS
+SELECT r.COFFEE, AVG (r.SCORE) AS AVG_RATING
+FROM RATES r
+GROUP BY r.COFFEE
+\end{SQL}
+
+\begin{SQL}
+SELECT a.COFFEE
+FROM COFFEE_AVG_RATING a
+WHERE a.AVG_RATING = (SELECT MAX(a.AVG_RATING)
+                      FROM COFFEE_AVG_RATING a)
+\end{SQL}
+\end{frame}
+
+
+%***********************************************************
+\begin{frame}[fragile]{\texttt{TOP} k / \texttt{LIMIT} k}
+
+RATES (DRINKER, COFFEE, SCORE)
+
+\begin{itemize}
+\item What is the highest rated coffee, on average?
+\item Actually, can be a lot easier with \texttt{LIMIT} k.
+\end{itemize}
+
+\begin{SQL}
+CREATE VIEW COFFEE_AVG_RATING AS
+SELECT r.COFFEE, AVG (r.SCORE) AS AVG_RATING
+FROM RATES r
+GROUP BY r.COFFEE
+\end{SQL}
+
+\begin{SQL}
+SELECT  a.COFFEE
+FROM COFFEE_AVG_RATING a
+ORDER BY a.AVG_RATING DESC LIMIT 1;
+\end{SQL}
+\end{frame}
+
+%***********************************************************
+\begin{frame}[fragile]{\texttt{TOP} k / \texttt{LIMIT} k}
+
+\begin{itemize}
+\item What is the highest rated coffee, on average?
+\item Actually, can be a lot easier with \texttt{LIMIT} k.
+\end{itemize}
+
+\begin{itemize}
+	\item Can choose \texttt{ASC} or \texttt{DESC}
+	\item Finally: note that \texttt{ORDER BY} can be used without \texttt{LIMIT}
+	\item[]
+	\item[?] Will this approach always work?
+\end{itemize}
+\end{frame}
+%***********************************************************
+\begin{frame}{More True/False Questions}
+
+\begin{enumerate}
+\item ORDER BY only sorts by a single attribute %F 
+\item All attributes in the ORDER BY clause are sorted by the same ASC or DESC rule %F
+\item GROUP BY ignores NULL values %F
+\item Aggregate functions ignore NULL values  %T
+\item Aggregate functions are a pain to use and are slow. You are better off implementing your own version of them %F
+
+\end{enumerate}
+
+\end{frame}
+
+%***********************************************************
+\begin{frame}{Questions?}
+\end{frame}
+\end{document}

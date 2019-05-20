@@ -1,0 +1,27 @@
+\frametitle{Example: Self Join}
+
+FACULTY (\underline{NETID}, NAME, MGRNETID )
+
+FACULTY\\
+\begin{tabular}{|l|l|l|} \hline
+\textbf{NETID} & \textbf{NAME} & \textbf{MGRNETID} \\ \hline
+rbm2 & Risa & bcd2 \\\hline
+abc1 & Andre & bcd2 \\\hline
+bcd2 & Betty & cde4  \\ \hline
+cde4 & Chris & NULL\\ \hline
+\end{tabular}\\
+
+
+\begin{SQL}
+SELECT f.NAME, Mgr.Name
+FROM FACULTY f JOIN FACULTY Mgr ON f.MGRNETID = Mgr.NETID
+\end{SQL}
+
+RESULT\\
+\begin{tabular}{|l|l|} \hline
+\textbf{NAME} & \textbf{NAME}  \\ \hline
+Risa & Betty \\\hline
+Andre & Betty \\\hline
+ Betty & Chris  \\ \hline
+\end{tabular}\\
+

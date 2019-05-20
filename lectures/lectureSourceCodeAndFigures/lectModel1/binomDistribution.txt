@@ -1,0 +1,42 @@
+n, p = 10, .5  # number of trials, probability of each trial
+s = np.random.binomial(n, p, 100)
+# result of flipping a coin 10 times, tested 100 times.
+
+https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.binom.html
+import numpy as np
+from scipy.stats import binom
+import matplotlib.pyplot as plt
+
+fig, ax = plt.subplots(1, 1)
+
+n, p = 100, 0.5
+x = np.arange(binom.ppf(0.01, n, p),binom.ppf(0.99, n, p))
+y = binom.pmf(x, n, p)
+ax.plot(x, y, 'bo', ms=8, label='binom pmf')
+ax.vlines(x, 0, binom.pmf(x, n, p), colors='b', lw=5, alpha=0.5)
+plt.show()
+
+38	0.00447288
+39	0.00711073
+40	0.01084387
+41	0.01586907
+42	0.02229227
+43	0.03006864
+44	0.03895256
+45	0.0484743
+46	0.0579584
+47	0.0665905
+48	0.07352701
+49	0.07802866
+50	0.07958924
+51	0.07802866
+52	0.07352701
+53	0.0665905
+54	0.0579584
+55	0.0484743
+56	0.03895256
+57	0.03006864
+58	0.02229227
+59	0.01586907
+60	0.01084387
+61	0.00711073

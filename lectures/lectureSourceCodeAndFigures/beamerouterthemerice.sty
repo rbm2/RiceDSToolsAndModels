@@ -1,0 +1,243 @@
+% Outer Theme for Rice Beamer Style ver. 0.01 (2008/10/10)
+% Copyright 2003      by Till Tantau   <tantau@users.sourceforge.net>
+%       and 2008 by Daina Chiba <daina.chiba@gmail.com>
+%
+% This program can be redistributed and/or modified under the terms
+% of the GNU Public License, version 2.
+
+\ProvidesPackage{beamerouterthemerice}[2008/10/10]
+
+\mode<presentation>
+
+%=========================================================%
+% Logo
+%=========================================================%
+\pgfdeclareimage[height=2em,interpolate=true]{ricelogotext}{rice-logo}
+
+\ifbeamer@nologo
+  \titlegraphic{\pgfuseimage{ricelogotext}}
+\fi
+
+%=========================================================%
+% Colors and Shades
+%=========================================================%
+
+\setbeamercolor{section in head/foot}{parent=palette primary}
+\setbeamercolor{subsection in head/foot}{parent=palette secondary}
+
+\setbeamercolor{author in head/foot}{parent=section in head/foot}
+\setbeamercolor{title in head/foot}{parent=subsection in head/foot}
+\setbeamercolor{date in head/foot}{parent=palette tertiary}
+
+\setbeamercolor{frametitle}{parent=subsection in head/foot}
+\setbeamercolor{frametitle right}{parent=section in head/foot}
+
+\usesectionheadtemplate
+  {\hfill\insertsectionhead}
+  {\hfill\color{fg!50!bg}\insertsectionhead}
+
+\pgfdeclarehorizontalshading[frametitle.bg,frametitle right.bg]{beamer@frametitleshade}{\paperheight}{%
+  color(0pt)=(frametitle.bg);
+  color(\paperwidth)=(frametitle right.bg)}
+
+\AtBeginDocument{
+  \pgfdeclareverticalshading{beamer@topshade}{\paperwidth}{%
+    color(0pt)=(bg);
+    color(4pt)=(black!50!bg)}
+}
+
+
+
+
+%=========================================================%
+% Header
+%=========================================================%
+
+\ifbeamer@compress
+  \defbeamertemplate*{headline}{rice theme}
+  {%
+    \leavevmode%
+    \begin{beamercolorbox}[wd=.5\paperwidth,ht=2.5ex,dp=1.125ex,right]{section in head/foot}%
+      \usebeamerfont{section in head/foot}\insertsectionhead\hspace*{2ex}
+    \end{beamercolorbox}%
+    \begin{beamercolorbox}[wd=.5\paperwidth,ht=2.5ex,dp=1.125ex,left]{subsection in head/foot}%
+      \usebeamerfont{subsection in head/foot}\hspace*{2ex}\insertsubsectionhead
+    \end{beamercolorbox}%
+  }
+
+\else
+
+  \ifbeamer@minimal
+    \defbeamertemplate*{headline}{rice theme}{}
+
+  \else
+    \defbeamertemplate*{headline}{rice theme}
+    {%
+      \leavevmode%
+      \@tempdimb=2.4375ex%
+      \ifnum\beamer@subsectionmax<\beamer@sectionmax%
+        \multiply\@tempdimb by\beamer@sectionmax%
+      \else%
+        \multiply\@tempdimb by\beamer@subsectionmax%
+      \fi%
+      \ifdim\@tempdimb>0pt%
+        \advance\@tempdimb by 1.125ex%
+        \begin{beamercolorbox}[wd=.5\paperwidth,ht=\@tempdimb]{section in head/foot}%
+          \vbox to\@tempdimb{\vfil\insertsectionnavigation{.5\paperwidth}\vfil}%
+        \end{beamercolorbox}%
+        \begin{beamercolorbox}[wd=.5\paperwidth,ht=\@tempdimb]{subsection in head/foot}%
+          \vbox to\@tempdimb{\vfil\insertsubsectionnavigation{.5\paperwidth}\vfil}%
+        \end{beamercolorbox}%
+      \fi%
+    }
+
+  \fi
+
+\fi
+
+\ifbeamer@shadow
+  \addtobeamertemplate{headline}
+  {}
+  {%
+    \vskip-0.2pt
+    \pgfuseshading{beamer@topshade}
+    \vskip-2pt
+  }
+\fi
+
+
+%=========================================================%
+% Footer
+%=========================================================%
+
+\ifbeamer@smoothb
+	\useoutertheme[subsection=false]{smoothbars}
+\else
+
+\ifbeamer@numbers
+\defbeamertemplate*{footline}{rice theme}
+{%
+  \leavevmode%
+  \hbox{\begin{beamercolorbox}[wd=.5\paperwidth,ht=2.5ex,dp=1.125ex,leftskip=.3cm,rightskip=.3cm]{author in head/foot}%
+   \ifbeamer@riceb {\footnotesize \trjnfamily RICE} \fi \hfill 
+    \usebeamerfont{author in head/foot} \hfill\insertshortauthor
+  \end{beamercolorbox}%
+  \begin{beamercolorbox}[wd=.5\paperwidth,ht=2.5ex,dp=1.125ex,leftskip=.3cm,rightskip=.3cm plus1fil]{title in head/foot}%
+    \usebeamerfont{title in head/foot}\insertshorttitle \hfill \insertframenumber{}
+  \end{beamercolorbox}}%
+  \vskip0pt%
+}
+
+\else
+
+\defbeamertemplate*{footline}{rice theme}
+{%
+  \leavevmode%
+%  \hbox{\begin{beamercolorbox}[wd=.5\paperwidth,ht=2.5ex,dp=1.125ex,leftskip=.3cm plus1fill,rightskip=.3cm]{author in head/foot}%
+  \hbox{\begin{beamercolorbox}[wd=.5\paperwidth,ht=2.5ex,dp=1.125ex,leftskip=.3cm,rightskip=.3cm]{author in head/foot}   \ifbeamer@riceb {\footnotesize \trjnfamily RICE} \fi \hfill 
+    \usebeamerfont{author in head/foot}\insertshortauthor
+  \end{beamercolorbox}%
+  \begin{beamercolorbox}[wd=.5\paperwidth,ht=2.5ex,dp=1.125ex,leftskip=.3cm,rightskip=.3cm plus1fil]{title in head/foot}%
+    \usebeamerfont{title in head/foot}\insertshorttitle
+  \end{beamercolorbox}}%
+  \vskip0pt%
+}
+\fi
+\fi
+
+%=========================================================%
+% Frame Title
+%=========================================================%
+
+\defbeamertemplate*{frametitle}{rice theme}
+{%
+  \nointerlineskip%
+  \ifbeamer@shadow
+    \vskip-2pt%
+  \fi
+  \hbox{\leavevmode
+    \advance\beamer@leftmargin by -12bp%
+    \advance\beamer@rightmargin by -12bp%
+    \beamer@tempdim=\textwidth%
+    \advance\beamer@tempdim by \beamer@leftmargin%
+    \advance\beamer@tempdim by \beamer@rightmargin%
+    \hskip-\Gm@lmargin\hbox{%
+      \setbox\beamer@tempbox=\hbox{\begin{minipage}[b]{\paperwidth}%
+          \vbox{}\vskip-.75ex%
+          \leftskip0.3cm%
+          \rightskip0.3cm plus1fil\leavevmode
+            \insertframetitle 
+            \ifbeamer@ricet \hfill {\Large \trjnfamily RICE} 
+            \else \ifbeamer@ricetm \hfill {\large \trjnfamily RICE} 
+            \else \ifbeamer@ricets \hfill {\small \trjnfamily RICE} \fi \fi
+            \fi%
+          \ifx\insertframesubtitle\@empty%
+            \strut\par%
+          \else
+            \par{\usebeamerfont*{framesubtitle}{\usebeamercolor[fg]{framesubtitle}\insertframesubtitle}\strut\par}%
+          \fi%
+          \nointerlineskip
+          \vbox{}%
+          \end{minipage}}%
+      \beamer@tempdim=\ht\beamer@tempbox%
+      \advance\beamer@tempdim by 2pt%
+      \begin{pgfpicture}{0pt}{0pt}{\paperwidth}{\beamer@tempdim}
+        \usebeamercolor{frametitle right}
+        \pgfpathrectangle{\pgfpointorigin}{\pgfpoint{\paperwidth}{\beamer@tempdim}}
+        \pgfusepath{clip}
+        \pgftext[left,base]{\pgfuseshading{beamer@frametitleshade}}
+      \end{pgfpicture}
+      \hskip-\paperwidth%
+      \box\beamer@tempbox%
+    }%
+    \hskip-\Gm@rmargin%
+  }%
+  \nointerlineskip
+  \ifbeamer@shadow
+    \vskip-0.2pt
+    \hbox to\textwidth{\hskip-\Gm@lmargin\pgfuseshading{beamer@topshade}\hskip-\Gm@rmargin}
+    \vskip-2pt
+  \fi
+}
+
+%=========================================================%
+% Compressed title page
+%=========================================================%
+
+\newcommand{\compressedtitle}{%
+  {
+  \setbeamertemplate{headline}
+  {
+    \leavevmode%
+    \begin{beamercolorbox}[wd=.5\paperwidth,ht=2.5ex,dp=1.125ex,right]{section in head/foot}%
+    \end{beamercolorbox}%
+    \begin{beamercolorbox}[wd=.5\paperwidth,ht=2.5ex,dp=1.125ex,left]{subsection in head/foot}%
+    \end{beamercolorbox}%
+    \ifbeamer@shadow
+      \vskip-0.2pt
+      \pgfuseshading{beamer@topshade}
+      \vskip-2pt
+    \fi
+  }
+  \beamer@calculateheadfoot
+
+  \begin{frame}
+  \titlepage
+  \end{frame}
+  }
+
+  \setbeamertemplate{headline}[rice theme]
+  \ifbeamer@shadow
+    \addtobeamertemplate{headline}
+    {}
+    {%
+      \vskip-0.2pt
+      \pgfuseshading{beamer@topshade}
+      \vskip-2pt
+    }
+  \fi
+  \beamer@calculateheadfoot
+}
+
+\mode
+<all>
