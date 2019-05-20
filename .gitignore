@@ -6,7 +6,11 @@
 *.aux
 *.log
 *.gz
+*.nav
 *.out
 *.pygtex
 *.pygstyle
+*.snm
+*.toc
+*.vrb
 labs/NumpyArrayPerformance/.ipynb_checkpoints/NumpyArrayPerformance-checkpoint.ipynb
