@@ -1,0 +1,1 @@
+This lab is only needed if you need to install Jupyter Notebook software on student machines.
