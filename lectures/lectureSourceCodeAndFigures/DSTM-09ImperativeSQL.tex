@@ -1,0 +1,411 @@
+%Copyright 2019 Christopher M. Jermaine (cmj4@rice.edu) and Risa B. Myers (rbm2@rice.edu)
+%
+%Licensed under the Apache License, Version 2.0 (the "License");
+%you may not use this file except in compliance with the License.
+%You may obtain a copy of the License at
+%
+%    https://www.apache.org/licenses/LICENSE-2.0
+%
+%Unless required by applicable law or agreed to in writing, software
+%distributed under the License is distributed on an "AS IS" BASIS,
+%WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+%See the License for the specific language governing permissions and
+%limitations under the License.
+\documentclass[aspectratio=169]{beamer}
+\mode<presentation> 
+{
+\usetheme[noshadow, minimal,numbers,riceb,nonav]{Rice}
+\usefonttheme[onlymath]{serif}
+\setbeamercovered{transparent}
+}
+\useinnertheme{rectangles}
+\usepackage{colortbl}
+
+\usepackage[english]{babel}
+
+\usepackage{mathptmx}
+\usepackage{helvet}
+\usepackage{courier}
+\usepackage[T1]{fontenc}
+\usepackage{trajan}
+\usepackage{ textcomp }
+\usepackage{amssymb}
+\usepackage{tikz}   
+
+
+\usepackage{mathptmx}
+\usepackage{helvet}
+\usepackage{courier}
+
+\usepackage[T1]{fontenc}
+\usepackage{trajan}
+\usepackage{ textcomp }
+\usepackage{listings}
+
+\newenvironment{noindentitemize}
+{ \begin{itemize}
+  \setlength{\itemsep}{1.5ex}
+  \setlength{\parskip}{0pt}
+  \setlength{\parsep}{0pt}   
+  \addtolength{\itemindent}{-2em}  }
+{ \end{itemize} }
+
+\newenvironment{noindentitemize2}
+{ \begin{itemize}
+  \setlength{\itemsep}{0ex}
+  \setlength{\parskip}{0pt}
+  \setlength{\parsep}{0pt}   
+  \addtolength{\itemindent}{-2em}  }
+{ \end{itemize} }
+
+
+\lstnewenvironment{SQL}
+  {\lstset{
+        aboveskip=5pt,
+        belowskip=5pt,
+        escapechar=!,
+        mathescape=true,
+        upquote=true,
+        language=SQL,
+        basicstyle=\linespread{0.94}\ttfamily\footnotesize,
+        morekeywords={PRINT, CURSOR, OPEN, FETCH, CLOSE, DECLARE, BEGIN, END, PROCEDURE, FOR, EACH, WITH, PARTITION, TEST, WHETHER, PROBABILITY, OUT,LOOP,IF,CONTINUE, HANDLER,CALL, FUNCTION, RETURNS, LANGUAGE,BODY,RETURN, REPLACE,plpgsql,
+        EXIT, TEXT, REFCURSOR, QUOTE_LITERAL, DELIMITER,CONCAT,FOUND,LEAVE },
+        deletekeywords={VALUE, PRIOR},
+        showstringspaces=true}
+        \vspace{0pt}%
+        \noindent\minipage{0.47\textwidth}}
+  {\endminipage\vspace{0pt}}
+
+\lstnewenvironment{SQLtiny}
+  {\lstset{
+        aboveskip=5pt,
+        belowskip=5pt,
+        escapechar=!,
+        mathescape=true,
+        upquote=true,
+        language=SQL,
+        basicstyle=\linespread{0.94}\ttfamily\tiny,
+        morekeywords={PRINT, CURSOR, OPEN, FETCH, CLOSE, DECLARE, BEGIN, END, PROCEDURE, FOR, EACH, WITH, PARTITION, TEST, WHETHER, PROBABILITY, OUT,LOOP,IF,CONTINUE, HANDLER,CALL, FUNCTION, RETURNS, LANGUAGE,BODY,RETURN,REPLACE,plpgsql,
+        EXIT, TEXT, REFCURSOR, QUOTE_LITERAL, DELIMITER,CONCAT,FOUND,LEAVE },
+        deletekeywords={VALUE, PRIOR},
+        showstringspaces=true}
+        \vspace{0pt}%
+        \noindent\minipage{0.47\textwidth}}
+  {\endminipage\vspace{0pt}}
+
+  
+\newcommand{\LIKES}{\textrm{LIKES}} 
+\newcommand{\FREQUENTS}{\textrm{FREQUENTS}} 
+\newcommand{\SERVES}{\textrm{SERVES}} 
+\newcommand{\CAFE}{\textrm{CAFE}} 
+\newcommand{\COFFEE}{\textrm{COFFEE}} 
+\newcommand{\DRINKER}{\textrm{DRINKER}} 
+\newcommand{\ALLPEEPS}{\textrm{ALLPEEPS}} 
+\newcommand{\ALLCOMBOS}{\textrm{ALLCOMBOS}} 
+\newcommand{\NOGOODCOFFEE}{\textrm{NOGOODCOFFEE}} 
+
+
+\setbeamerfont{block body}{size=\tiny}
+
+
+%===============================================================%
+
+\title[]
+{Tools \& Models for Data Science}
+
+\subtitle{Imperative SQL}
+
+\author[]{Chris Jermaine \& Risa Myers}
+\institute
+{
+  Rice University 
+}
+
+\date[]{}
+
+
+\subject{Beamer}
+
+
+\begin{document}
+
+
+\begin{frame}
+ \titlepage
+\end{frame}
+
+
+
+%***********************************************************
+\begin{frame}{In SQL, We Can Write Imperative Code}
+
+\begin{itemize}
+\item[?] Why is this useful?
+\end{itemize}
+\end{frame}
+%***********************************************************
+\begin{frame}{In SQL, We Can Write Imperative Code}
+
+\begin{itemize}
+\item Why useful?
+	\begin{itemize}
+		\item Encapsulation --- make it easy for the programmer
+		\item Safety --- protect the database from the programmer
+		\item Performance --- fewer end-to-end trips
+		\item Reuse
+		\item Can process records sequentially
+		\item Can respond to events
+	\end{itemize}
+\end{itemize}
+\end{frame}
+
+%***********************************************************
+\begin{frame}{Stored Procedure / Function}
+
+\begin{itemize}
+\item Common form of imperative code: stored procedure and / or function 
+	\begin{itemize}
+	\item Code stored in the DB
+	\item Can be invoked from
+	\begin{itemize}
+	\item A query
+	\item An external program
+	\item Another stored procedure / function
+	\item A trigger
+	\end{itemize}
+	\end{itemize}
+\end{itemize}
+\end{frame}
+
+%***********************************************************
+\begin{frame}[fragile]{Basic Form}
+
+\begin{SQL}
+CREATE FUNCTION myFunc(/* list params */)
+   RETURNS <datatype> AS
+$\textbf{\$\$}$
+DECLARE
+/* declarations here */
+BEGIN
+/* code here */
+END;
+$\textbf{\$\$}$
+LANGUAGE plpgsql ;
+\end{SQL}
+
+\end{frame}
+
+%***********************************************************
+
+\begin{frame}[fragile]{First Stored Procedure Example}
+
+\begin{SQL}
+PEAK (NAME, ELEV, DIFF, MAP, REGION)
+\end{SQL}
+
+\begin{itemize}
+\item[?] Write a stored procedure to get the peak count in a region
+	\begin{itemize}
+	\item But if no region given...
+	\item Return the count overall
+	\end{itemize}
+\end{itemize}
+\end{frame}
+ 
+%***********************************************************
+
+\begin{frame}[fragile]{First Stored Procedure Example}
+
+\begin{SQL}
+PEAK (NAME, ELEV, DIFF, MAP, REGION)
+
+CREATE OR REPLACE FUNCTION getNumPeaks(whichRegion CHARACTER VARYING)
+  RETURNS INTEGER AS
+$\textbf{\$\$}$
+DECLARE
+	/* declarations here */
+BEGIN
+	/* code here */
+END;
+$\textbf{\$\$}$
+LANGUAGE plpgsql;\end{SQL}
+\end{frame}
+
+%***********************************************************
+
+\begin{frame}[fragile]{First Stored Procedure Example}
+
+\begin{SQL}
+CREATE OR REPLACE FUNCTION 
+   getNumPeaks(whichRegion character varying)
+   RETURNS integer AS
+$\textbf{\$\$}$
+DECLARE
+  queryString TEXT;
+  numPeaks INTEGER;
+BEGIN
+  numPeaks = 0;
+  -- build the query
+  queryString = 'SELECT COUNT(*) FROM peak ' $||$ 
+      COALESCE (' WHERE Region=' $||$ 
+         QUOTE_LITERAL(whichRegion) ,'');
+  -- run the query
+  EXECUTE queryString INTO numPeaks;
+  RETURN numPeaks;
+END;
+$\textbf{\$\$}$
+LANGUAGE plpgsql;
+\end{SQL}
+\end{frame}
+%***********************************************************
+
+\begin{frame}[fragile]{Thoughts on First Stored Procedure Example}
+
+
+\begin{itemize}
+	\item All local variables need to be declared
+	\item Code is bounded by $\textbf{\$\$}$ 
+	\item Language is specified at the end
+	\item[?] What's the deal with \texttt{QUOTE\_LITERAL}?
+	\item[?] What's \texttt{COALESCE}?
+	\item[?] \texttt{EXECUTE}: common, powerful, dangerous! Why?
+\end{itemize}
+\end{frame}
+
+%***********************************************************
+\begin{frame}[fragile]{First Stored Procedure Example}
+
+\begin{noindentitemize}
+	\item[] Then to call
+\end{noindentitemize}
+
+\begin{SQL}
+SELECT * FROM getNumPeaks('Corocoran to Whitney');
+\end{SQL}
+
+and 
+
+\begin{SQL}
+SELECT * FROM getNumPeaks(NULL);
+\end{SQL}
+\end{frame}
+
+
+%***********************************************************
+\begin{frame}[fragile]{Next Stored Procedure Example}
+
+\begin{itemize}
+\item Like before, but now we'll use a cursor
+\end{itemize}
+
+\end{frame}
+
+%***********************************************************
+\begin{frame}[fragile]{Next Stored Procedure Example}
+
+\begin{SQL}
+CREATE OR REPLACE FUNCTION 
+   getNumPeaks(whichRegion CHARACTER VARYING) RETURNS INTEGER AS
+$\textbf{\$\$}$
+DECLARE
+  myCursor REFCURSOR;
+  queryString TEXT;
+  numPeaks INTEGER;
+BEGIN
+  numPeaks = 0;
+  -- build the query
+  queryString = 'SELECT COUNT(*) FROM peak ' || COALESCE (' WHERE Region=' || 
+       QUOTE_LITERAL(whichRegion) ,'');
+  -- run the query
+  OPEN myCursor FOR EXECUTE queryString;
+  FETCH  myCursor INTO numPeaks;
+  CLOSE myCursor;
+  RETURN numPeaks;
+END;
+$\textbf{\$\$}$
+LANGUAGE plpgsql;
+\end{SQL}
+\end{frame}
+
+%***********************************************************
+\begin{frame}[fragile]{Next Stored Procedure Example}
+
+\begin{SQL}
+BEGIN
+  numPeaks = 0;
+  -- build the query
+  queryString = 'SELECT COUNT(*) FROM peak ' || COALESCE (' WHERE Region=' || 
+       QUOTE_LITERAL(whichRegion) ,'');
+  -- run the query
+  OPEN myCursor FOR EXECUTE queryString;
+  FETCH  myCursor INTO numPeaks;
+  CLOSE myCursor;
+  RETURN numPeaks;
+END;
+\end{SQL}
+
+\begin{itemize}
+\item What's new here: a ``cursor''
+\begin{itemize}
+	\item Standard abstraction for dealing with record sets
+	\item Essentially an iterator
+\end{itemize}
+\end{itemize}
+\end{frame}
+%***********************************************************
+\begin{frame}[fragile]{Steps for Using a Cursor}
+\begin{enumerate}
+\item Declare
+\item Open
+\item Loop
+\begin{enumerate}
+\item[3.1] Fetch 
+\item[3.2] Check for done
+\item[3.3] Repeat from 3.1
+\end{enumerate}
+\item Close
+\end{enumerate}
+\end{frame}
+
+%***********************************************************
+\begin{frame}[fragile]{Cursor Options / Variations}
+\begin{itemize}
+\item \texttt{FETCH / MOVE} options
+\begin{itemize}
+\item \texttt{NEXT / PRIOR}
+\item \texttt{FIRST / LAST}
+\item \texttt{ABSOLUTE / RELATIVE} n
+\item \texttt{FORWARD / BACKWARD} n
+\item ...
+\end{itemize}
+\item Explicit vs. Implicit
+\item[] \texttt{FOR} rowData \texttt{IN SELECT ... LOOP ... END LOOP}
+\item[] \texttt{SELECT INTO}...
+\end{itemize}
+\end{frame}
+
+%***********************************************************
+\begin{frame}[fragile]{How to Debug Imperative SQL}
+\begin{itemize}
+\item It's primitive
+\item Use \texttt{RAISE NOTICE} \textquotesingle{Step 1}\textquotesingle;
+\item Use \texttt{RAISE NOTICE} \textquotesingle{\%}\textquotesingle, <var>;
+\item e.g. \texttt{RAISE NOTICE} \textquotesingle{\%}\textquotesingle, queryString;
+\item Start simple 
+\item Consider writing data to an external (temporary table)
+\end{itemize}
+\end{frame}
+
+
+%***********************************************************
+
+\begin{frame}{Wrap up}
+\begin{itemize}
+	\item[?] How can we use what we learned today?
+	\vspace{2em}
+	\item[?] What do we know now that we didn't know before?
+\end{itemize}
+
+\end{frame}
+
+\end{document}

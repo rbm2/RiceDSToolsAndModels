@@ -1,0 +1,483 @@
+%Copyright 2019 Christopher M. Jermaine (cmj4@rice.edu) and Risa B. Myers (rbm2@rice.edu)
+%
+%Licensed under the Apache License, Version 2.0 (the "License");
+%you may not use this file except in compliance with the License.
+%You may obtain a copy of the License at
+%
+%    https://www.apache.org/licenses/LICENSE-2.0
+%
+%Unless required by applicable law or agreed to in writing, software
+%distributed under the License is distributed on an "AS IS" BASIS,
+%WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+%See the License for the specific language governing permissions and
+%limitations under the License.
+%===============================================================
+\documentclass[aspectratio=169]{beamer}
+\mode<presentation> 
+{
+\usetheme[noshadow, minimal,numbers,riceb,nonav]{Rice}
+\usefonttheme[onlymath]{serif}
+\setbeamercovered{transparent}
+}
+\useinnertheme{rectangles}
+
+\usepackage[english]{babel}
+
+\usepackage{mathptmx}
+\usepackage{helvet}
+\usepackage{courier}
+\usepackage[T1]{fontenc}
+\usepackage{trajan}
+\usepackage{ textcomp }
+\usepackage{listings}
+
+\newenvironment{noindentitemize}
+{ \begin{itemize}
+ \setlength{\itemsep}{1.5ex}
+  \setlength{\parsep}{0pt}   
+  \setlength{\parskip}{0pt}
+ \addtolength{\leftskip}{-2em}
+ }
+{ \end{itemize} }
+
+\newenvironment{noindentitemize2}
+{ \begin{itemize}
+  \setlength{\itemsep}{0ex}
+  \setlength{\parskip}{0pt}
+  \setlength{\parsep}{0pt}   
+  \addtolength{\leftskip}{-2em}  }
+{ \end{itemize} }
+
+
+
+\lstnewenvironment{SQL}
+  {\lstset{
+        aboveskip=5pt,
+        belowskip=5pt,
+        escapechar=!,
+        mathescape=true,
+        upquote=true,
+        language=SQL,
+        basicstyle=\linespread{0.94}\ttfamily\footnotesize,
+        morekeywords={PRINT, CURSOR, OPEN, FETCH, CLOSE, DECLARE, BEGIN, END, PROCEDURE, FOR, EACH, WITH, PARTITION, 	TEST, WHETHER, PROBABILITY, OUT,LOOP,IF,CONTINUE, HANDLER,CALL, FUNCTION, RETURNS, LANGUAGE,BODY,RETURN, REPLACE,plpgsql,
+        RAISE, NOTICE,
+        REPLACE, ROW, BEFORE, EXIT, TEXT, REFCURSOR, QUOTE_LITERAL, DELIMITER,CONCAT,FOUND,LEAVE },
+        deletekeywords={VALUE, PRIOR},
+        showstringspaces=true}
+        \vspace{0pt}%
+        \noindent\minipage{0.65\textwidth}}
+  {\endminipage\vspace{0pt}}
+  
+  
+\lstnewenvironment{SQLtiny}
+  {\lstset{
+        aboveskip=5pt,
+        belowskip=5pt,
+        escapechar=!,
+        mathescape=true,
+        upquote=true,
+        language=SQL,
+        basicstyle=\linespread{0.94}\ttfamily\tiny,
+        morekeywords={PRINT, CURSOR, OPEN, FETCH, CLOSE, DECLARE, BEGIN, END, PROCEDURE, FOR, EACH, WITH, PARTITION, 	TEST, WHETHER, PROBABILITY, OUT,LOOP,IF,CONTINUE, HANDLER,CALL, FUNCTION, RETURNS, LANGUAGE,BODY,RETURN, REPLACE,plpgsql,
+        RAISE, NOTICE,
+        REPLACE, ROW, BEFORE, EXIT, TEXT, REFCURSOR, QUOTE_LITERAL, DELIMITER,CONCAT,FOUND,LEAVE },
+       deletekeywords={VALUE, PRIOR},
+        showstringspaces=true}
+        \vspace{0pt}
+        \noindent\minipage{0.47\textwidth}}
+  {\endminipage\vspace{0pt}}
+
+
+\newcommand{\LIKES}{\textrm{LIKES}} 
+\newcommand{\FREQUENTS}{\textrm{FREQUENTS}} 
+\newcommand{\SERVES}{\textrm{SERVES}} 
+\newcommand{\CAFE}{\textrm{CAFE}} 
+\newcommand{\COFFEE}{\textrm{COFFEE}} 
+\newcommand{\DRINKER}{\textrm{DRINKER}} 
+\newcommand{\ALLPEEPS}{\textrm{ALLPEEPS}} 
+\newcommand{\ALLCOMBOS}{\textrm{ALLCOMBOS}} 
+\newcommand{\NOGOODCOFFEE}{\textrm{NOGOODCOFFEE}} 
+
+
+\setbeamerfont{block body}{size=\tiny}
+
+%===============================================================%
+
+\title[]
+{ Tools \& Models for Data Science}
+
+\subtitle{Imperative SQL 2}
+
+\author[]{Chris Jermaine \& Risa Myers}
+\institute
+{
+  Rice University 
+}
+
+\date[]{}
+
+\subject{Beamer}
+
+
+\begin{document}
+\begin{frame}
+ \titlepage
+\end{frame}
+%***********************************************************
+
+\begin{frame}[fragile]{More Interesting Cursor Example}
+
+\begin{noindentitemize}
+\item[?] Write a stored procedure giving the name and height of the tallest peak in a region.
+\end{noindentitemize}
+
+\begin{SQL}
+CREATE OR REPLACE FUNCTION  
+   getTallestPeak(whichRegion TEXT, 
+      OUT finalBestName TEXT, finalBestHeight INTEGER) AS
+$\textbf{\$\$}$
+BEGIN
+...
+END;
+$\textbf{\$\$}$
+LANGUAGE plpgsql ;
+\end{SQL}
+\end{frame}
+
+%***********************************************************
+\begin{frame}[fragile]{More Interesting Cursor Example}
+
+\begin{noindentitemize}
+\item Body 1: Declare control variables as well as the cursor
+\end{noindentitemize}
+
+\begin{SQL}
+CREATE OR REPLACE FUNCTION  
+   getTallestPeak(whichRegion TEXT, 
+      OUT finalBestName TEXT, finalBestHeight INTEGER) AS
+$\textbf{\$\$}$
+DECLARE 
+   peakName TEXT;
+   bestName TEXT;
+   peakHeight INTEGER DEFAULT -1;
+   bestHeight INTEGER DEFAULT -1;
+   peakCursor CURSOR FOR SELECT name, elev 
+	FROM Peak WHERE Region = whichRegion;
+BEGIN
+END;
+$\textbf{\$\$}$
+LANGUAGE plpgsql;\end{SQL}
+\end{frame}
+
+%***********************************************************
+\begin{frame}[fragile]{More Interesting Cursor Example}
+
+\begin{noindentitemize}
+\item Body 2: Open cursor and loop to find the tallest peak
+\end{noindentitemize}
+
+\begin{SQL}   
+BEGIN
+OPEN peakCursor;
+LOOP
+	FETCH peakCursor INTO peakname, peakHeight;	
+	EXIT WHEN NOT FOUND;
+	IF peakHeight > bestHeight THEN
+		bestHeight = peakHeight;
+		bestName = peakName;
+	END IF;
+END LOOP;
+CLOSE peakCursor;
+\end{SQL}
+\end{frame}
+
+%***********************************************************
+
+\begin{frame}[fragile]{More Interesting Cursor Example}
+
+\begin{noindentitemize}
+\item Body 3: return the result
+\end{noindentitemize}
+
+\begin{SQL}
+finalBestName = bestName;
+finalBestHeight = bestHeight;
+END;
+$\textbf{\$\$}$
+LANGUAGE plpgsql;
+\end{SQL}
+
+\begin{noindentitemize}
+\item To call:
+\end{noindentitemize}
+
+\begin{SQL}
+SELECT * FROM getTallestPeak('Corocoran to Whitney');
+\end{SQL}
+
+or 
+
+\begin{SQL}
+SELECT getTallestPeak('Corocoran to Whitney');
+\end{SQL}
+\end{frame}
+
+
+%***********************************************************
+
+\begin{frame}{Important: Don't EVER Write Such Code!}
+
+\begin{itemize}
+\item I wrote code that looped to find the tallest
+	\begin{itemize}
+	\item Terrible idea!
+	\item LIMIT k would be shorter, easier, faster
+	\item Rule: use AS MUCH declarative code as possible
+	\item Only use loops, etc. when you MUST
+	\item Sometimes 3+ orders of magnitude speed difference
+	\end{itemize}	
+\end{itemize}
+\end{frame}
+
+
+%***********************************************************
+
+\begin{frame}[fragile]{Implicit Cursor Version}
+
+\begin{SQL}
+CREATE OR REPLACE FUNCTION  
+   getTallestPeakImplicit(whichRegion TEXT, OUT finalBestName TEXT, 
+      OUT finalBestHeight INTEGER)  AS
+$\textbf{\$\$}$
+DECLARE 
+   bestName TEXT;
+   bestHeight INTEGER DEFAULT -1;
+   row_data RECORD;
+BEGIN
+  FOR row_data IN SELECT name, elev FROM Peak WHERE Region = whichRegion
+  LOOP
+      IF row_data.elev > bestHeight THEN
+        bestHeight = row_data.elev;
+        bestName = row_data.name;
+      END IF;
+  END LOOP;
+  finalBestName = bestName;
+  finalBestHeight = bestHeight;
+END;
+$\textbf{\$\$}$
+LANGUAGE plpgsql;
+\end{SQL}
+\end{frame}
+
+%***********************************************************
+
+\begin{frame}{Implicit or Explicit?}
+\begin{noindentitemize}
+\item Implicit cursors are unique(ish?) to Postgres
+	\begin{noindentitemize2}
+	\item Less portable
+	\end{noindentitemize2}
+\item But they are easier to use
+	\item Limitations?
+	\begin{noindentitemize2}
+	 \item One direction only (?)
+	\end{noindentitemize2}
+\end{noindentitemize}
+
+\end{frame}
+
+%***********************************************************
+\begin{frame}[fragile]{Returning Relations}
+
+\begin{noindentitemize}
+	\item \texttt{RETURNS TABLE}(<list of names, type pairs>)
+\end{noindentitemize}
+
+\begin{SQL}
+CREATE OR REPLACE FUNCTION  
+   tableValuedFunctionPLSQL(x INTEGER)
+   RETURNS TABLE (f1 INTEGER, f2 TEXT ) AS
+$\textbf{\$\$}$
+BEGIN
+	RETURN QUERY SELECT x, CAST(x AS TEXT) || ' is text';
+END;
+$\textbf{\$\$}$
+LANGUAGE plpgsql;
+
+SELECT * FROM tableValuedFunctionPLSQL(5)
+\end{SQL}
+
+\end{frame}
+
+%***********************************************************
+\begin{frame}[fragile]{Returning Relations using SQL language}
+
+\begin{noindentitemize}
+	\item \texttt{RETURNS TABLE}(<list of names, type pairs>)
+\end{noindentitemize}
+
+\begin{SQL}
+CREATE OR REPLACE FUNCTION  
+   tableValuedFunction(x INTEGER)
+   RETURNS TABLE (f1 INTEGER, f2 TEXT )
+AS
+$\textbf{\$\$}$
+  SELECT x, CAST(x AS TEXT) || ' is text';
+$\textbf{\$\$}$
+LANGUAGE sql;
+
+
+SELECT * FROM tableValuedFunction(5)
+\end{SQL}
+
+\end{frame}
+
+
+%***********************************************************
+\begin{frame}{Triggers}
+\begin{noindentitemize}
+	\item Stored procedures that fire in response to some event
+	\item Standard options
+\begin{noindentitemize2}
+	\item Events: UPDATE, INSERT, DELETE
+	\item Timing: BEFORE/AFTER: run only once triggering action succeeds
+\end{noindentitemize2}
+\item Some RDBMSs
+\begin{noindentitemize2}
+\item Triggers: Typically not run when TRUNCATE is called on a table
+\end{noindentitemize2}
+\end{noindentitemize}
+
+\end{frame}
+
+%***********************************************************
+\begin{frame}{Trigger Special Variables}
+
+\begin{noindentitemize}
+	\item old: table containing old versions of records
+	\item new: table containing new versions
+\end{noindentitemize}
+
+\footnotesize{
+\begin{tabular}{|l|l|l|c|l|l|l|c|l|l|l|c|}
+    \cline{1-3}  \cline{5-7} \cline{9-11}
+    & \multicolumn{2}{c|}{INSERT} & & & \multicolumn{2}{|c|}{UPDATE} & & & \multicolumn{2}{|c|}{DELETE} \\ \cline{2-3}  \cline{6-7} \cline{10-11}
+    & Before& After & & & Before& After &  & & Before& After  \\  \cline{1-3} \cline{5-7} \cline{9-11}
+    old. & N/A & N/A & & old. & old & old & & old. & old & old\\ \cline{2-3} \cline{5-7} \cline{9-11}
+    new. & new & new & & new. & new & new  & & new. & N/A & N/A \\ \cline{2-3} \cline{5-7} \cline{9-11}
+    \cline{1-3}  \cline{5-7} \cline{9-11}
+\end{tabular}
+}
+\end{frame}
+
+
+%***********************************************************
+\begin{frame}[fragile]{Trigger Example}
+
+\begin{noindentitemize}
+	\item Write a trigger that catches updates to peak table, prints an error message and does not process
+	\item Write the function first
+	\item Then create a trigger that calls the function
+\end{noindentitemize}
+
+
+\end{frame}
+
+%***********************************************************
+\begin{frame}[fragile]{Trigger: Function Framework}
+
+\begin{noindentitemize}
+	\item NOTE: Return type of \texttt{TRIGGER}
+	\item NOTE: No arguments
+\end{noindentitemize}
+
+
+\begin{SQL}
+CREATE OR REPLACE FUNCTION  
+   ignorePeakUpdate() RETURNS TRIGGER AS
+$\textbf{\$\$}$
+DECLARE 
+	...
+BEGIN
+	...
+END;
+$\textbf{\$\$}$
+LANGUAGE plpgsql;
+\end{SQL}
+\end{frame}
+
+% NOTE RETURN TYPE
+
+%***********************************************************
+\begin{frame}[fragile]{Trigger: Function Body}
+
+
+\begin{SQL}
+BEGIN
+   RAISE NOTICE 'You changed the height of \% ', old.name ;
+   RAISE NOTICE 'from \% to \%.', old.elev, new.elev ;
+   RAISE NOTICE 'I am ignoring it.';
+
+   RETURN OLD;
+END;
+\end{SQL}
+
+\begin{noindentitemize}
+	\item NOTE: Multiple lines used here only for formatting reasons. Can all be done on one line
+\end{noindentitemize}
+
+
+\end{frame}
+% multiple lines is only for formatting reasons. Can all be done on one line
+
+
+%***********************************************************
+\begin{frame}[fragile]{Trigger Example}
+
+\begin{noindentitemize}
+	\item Write a trigger that catches updates to peak table, prints error message and does not process
+\end{noindentitemize}
+
+\begin{SQL}
+CREATE TRIGGER checkHeight 
+BEFORE UPDATE ON peak 
+FOR EACH ROW
+EXECUTE PROCEDURE ignorePeakUpdate()
+\end{SQL}
+\end{frame}
+
+
+%***********************************************************
+\begin{frame}[fragile]{Temporary Tables}
+
+\begin{SQL}
+CREATE TEMPORARY TABLE myMap (
+  myKey INTEGER,
+  myValue VARCHAR(200),
+  PRIMARY KEY(myKey)
+);
+\end{SQL}
+
+\begin{itemize}
+	\item When to use 
+	\begin{itemize}
+		\item Passing lots of data
+		\item Short life span (current session only)
+		\item Debugging
+	\end{itemize}
+\end{itemize}
+\end{frame}
+
+%***********************************************************
+
+\begin{frame}{Wrap up}
+\begin{itemize}
+	\item[?] How can we use what we learned today?
+	\vspace{2em}
+	\item[?] What do we know now that we didn't know before?
+\end{itemize}
+\end{frame}
+
+
+
+\end{document}

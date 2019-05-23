@@ -1,0 +1,26 @@
+All questions should be answered in your own words. You may paraphrase the authors and include no more than two direct quotes from the source papers. Each quote must not exceed a single sentence. Your write-up should be 1-2 pages long, with reasonable (e.g. 12 pt) font and margins. Do NOT exceed 2 pages. 
+
+Honor Code: You may have someone not in the class review your responses for minor grammatical errors, word use, and misspellings, but the writing must be your own.
+
+1. What is the key need for this algorithm/approach/system? What are some short comings of existing approaches?
+ 
+
+2. What is the key object (term) that is the solution to this need? (e.g. tweet, RDD, Tensor) Describe this object in a few sentences. This is the fundamental concept or “thing” proposed to solve the need addressed in question #1.
+ 
+
+3. What has the author identified as a weakness or limitation of the proposed algorithm / approach / system? Or what has the author proposed as next steps? If the author does not provide this information, what do you think could be improved?
+ 
+
+4. What is something interesting your learned from this paper, or your thoughts about its strengths and/or weaknesses. Is there anything else interesting about this paper, or your interpretation of it that you want to share?
+
+ 
+
+5. Read an additional related paper. Provide a citation for this paper. How does this paper relate to the assigned one? What new information did you learn by reading it? This answer should be a decent sized paragraph describing the content of this paper (be specific) and how it relates to the assigned paper.
+
+ 
+
+Grading Rubric (10 points total)
+
+(5) Were the questions answered correctly, based on the paper's content, in the student's own words?
+(3) Is an additional paper discussed, and is it relevant?
+(2) Was the paper well-written - proper grammar, no misspellings, etc.?
