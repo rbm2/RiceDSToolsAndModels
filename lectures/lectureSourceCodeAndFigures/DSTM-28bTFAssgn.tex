@@ -104,13 +104,36 @@
 \begin{frame}{This Lecture...}
 
 \begin{itemize}
-        \item Is meant to de-mystify RNNA6.py
+        \item Is meant to de-mystify RNN.py
         \begin{itemize}
-	\item RNNA6.py is the code we give you with A6
+	\item RNN.py is the code we give you with the TensorFlow lab
         \item Use this lecture + the Internet when you puzzle over the code
         \end{itemize}
 
 \end{itemize}
+\end{frame}
+%***********************************************************
+\begin{frame}{What is the lab implementing?}
+
+\begin{itemize}
+        \item Classifying sequences of raw text
+        \item Using a recurrent neural network    (RNN)
+\end{itemize}
+\end{frame}
+%***********************************************************
+\begin{frame}{What's an RNN?}
+
+\begin{columns}
+\begin{column}{0.5\textwidth}
+\begin{itemize}
+        \item Covered in the next lecture!
+        \item Basically, a neural network architecture that  maintains state information and feeds that back into the network
+\end{itemize}
+\end{column}
+\begin{column}{0.5\textwidth}
+\includegraphics[width=1\textwidth]{lectRNN/Elman.pdf}
+\end{column}
+\end{columns}
 \end{frame}
 %***********************************************************
 \begin{frame}{What Is TensorFlow?}
@@ -186,7 +209,7 @@ inputX = tf.placeholder
 \begin{itemize}
 \item These are tensors whose value will be learned
 \item They are computed during the backward process
-\item Declared like 
+\item Declared like this for the bias
 \end{itemize}
 \end{itemize}
 \begin{SQL} 
@@ -237,7 +260,7 @@ sequenceOfLetters = tf.unstack(inputX, axis=2)
         \item Takes a $d$ dimension tensor 
 	\item And converts it to a list of $d$, $d-1$ dimension tensors
 	\item Useful if you want to iterate through a tensor
-        \item In RNNA6, we want to iterate through the lines of text
+        \item In RNN, we want to iterate through the lines of text
         \end{itemize}
 \end{column}
 \begin{column}{0.4\textwidth}
@@ -246,16 +269,16 @@ sequenceOfLetters = tf.unstack(inputX, axis=2)
 \end{columns}
 
 \end{frame}
-%***********************************************************
-\begin{frame}[fragile]{Alternative to Unstack}
-
-\begin{itemize}
-\item Could have ``maxSeqLen'' different 2-$d$ tensors
-\item Then would not have to unstack
-\item But this may be less convenient
-\end{itemize}
-
-\end{frame}
+%%***********************************************************
+%\begin{frame}[fragile]{Alternative to Unstack}
+%
+%\begin{itemize}
+%\item Could have ``maxSeqLen'' different 2-$d$ tensors
+%\item Then would not have to unstack
+%\item But this may be less convenient
+%\end{itemize}
+%
+%\end{frame}
 %***********************************************************
 \begin{frame}[fragile]{Input Data}
 
@@ -300,29 +323,29 @@ $$H(p, q) = -\sum_x p(x) \log q (x)$$
 
 %http://rdipietro.github.io/friendly-intro-to-cross-entropy-loss/
 \end{frame}
-%***********************************************************
-\begin{frame}{Cross Entropy Loss for Classification}
-
-\begin{columns}
-\begin{column}{0.5\textwidth}
-\begin{itemize}
-\item For probability distribution $q$ spit out by the learner
-	\begin{itemize}
-        \item Where (for example) $q(2) = .3$ means the learner thinks there is a $.3$ chance class is $2$
-	\item And an answer distribution $p$
-	\item Where $p(i) = 1$ if answer is class $i$, $0$ otherwise
-	\end{itemize}
-\item Cross entropy is:
-$$H(p, q) = -\sum_x p(x) \log q (x)$$
-\end{itemize}
-\end{column}
-\begin{column}{0.5\textwidth}
-\includegraphics[width=1\textwidth]{lectTF/crossEntropy.pdf}
-\end{column}
-\end{columns}
-
-%http://rdipietro.github.io/friendly-intro-to-cross-entropy-loss/
-\end{frame}
+%%***********************************************************
+%\begin{frame}{Cross Entropy Loss for Classification}
+%
+%\begin{columns}
+%\begin{column}{0.5\textwidth}
+%\begin{itemize}
+%\item For probability distribution $q$ spit out by the learner
+%	\begin{itemize}
+%        \item Where (for example) $q(2) = .3$ means the learner thinks there is a $.3$ chance class is $2$
+%	\item And an answer distribution $p$
+%	\item Where $p(i) = 1$ if answer is class $i$, $0$ otherwise
+%	\end{itemize}
+%\item Cross entropy is:
+%$$H(p, q) = -\sum_x p(x) \log q (x)$$
+%\end{itemize}
+%\end{column}
+%\begin{column}{0.5\textwidth}
+%\includegraphics[width=1\textwidth]{lectTF/crossEntropy.pdf}
+%\end{column}
+%\end{columns}
+%
+%%http://rdipietro.github.io/friendly-intro-to-cross-entropy-loss/
+%\end{frame}
 %***********************************************************
 \begin{frame}[fragile]{Cross-Entropy in TensorFlow}
 \begin{itemize}
@@ -422,7 +445,7 @@ _totalLoss, _trainingAlg, _currentState,
 sess.run (W)
 \end{SQL}
 \begin{itemize}
-	\item Will return last val of W as a NumPy array
+	\item Will return last value of W as a NumPy array
 \end{itemize}
 \end{frame}
 %***********************************************************
@@ -462,6 +485,118 @@ saver.restore(sess, 'checkPoint.tf')
 \item Check the number of hidden units
 \item Print out information at each iteration
 \item Restructure the code to be able to work with it interactively
+\end{itemize}
+\end{frame}
+%***********************************************************
+\begin{frame}[fragile]{A6: Keras vs. TensorFlow}
+
+\begin{itemize}
+% some of this functionality could be implemented in TF, just isn't
+% learn what goes on
+\item Don't have to declare variables and placeholders
+\item Running the model uses a slightly different API
+\end{itemize}
+%\item Batches are handled more simply \footnote{also possible in TF, but not used in lab code}
+%\item Callbacks
+\begin{enumerate}
+\item \texttt{compile} 
+\item Data generator to handle batches
+\item Iteration control
+\item \texttt{fit\_generator}
+\item \texttt{predict}
+\item \texttt{confusion\_matrix}
+\end{enumerate}
+\end{frame}
+%***********************************************************
+\begin{frame}[fragile]{\texttt{compile}}
+
+\begin{itemize}
+\item Prepares the model for training 
+\begin{itemize}
+\item Creates a TF session
+\item Initializes variables in that session
+\item Create the specified loss function for the network 
+\end{itemize}
+\end{itemize}
+\end{frame}
+%***********************************************************
+\begin{frame}[fragile]{\texttt{ImageDataGenerator}}
+
+\begin{itemize}
+\item Creates a generator (a data preprocessor)
+\begin{itemize}
+\item \texttt{flow} tells Keras how the data flows through the generator
+\item We are using the defaults
+\item Tells Keras the training data, labels, and batch size
+\end{itemize}
+\end{itemize}
+\end{frame}
+ %***********************************************************
+\begin{frame}[fragile]{\texttt{Iteration control}}
+
+
+TF
+\begin{itemize}
+\item Explicit
+\item We are specifying exactly what outputs we want
+\item Running one epoch at a time
+\item Have visibility into the hidden node values
+\end{itemize}
+
+Keras
+\begin{itemize}
+\item Implicit
+\item Running $n\_epochs$ epochs
+\item Only see final output
+\end{itemize}
+
+\end{frame}
+%***********************************************************
+\begin{frame}[fragile]{\texttt{fit\_generator}}
+
+\begin{itemize}
+\item Learn the prepared model
+\item Batches
+\item Could add in code to validate the model 
+\end{itemize}
+\end{frame}
+%***********************************************************
+\begin{frame}[fragile]{\texttt{predict}}
+
+\begin{itemize}
+\item Analogous to session \texttt{run} in TF
+\item Run the test data through the trained model
+\item Returns output from final layer (should be softmax) as a numpy array
+\item \texttt{argmax} returns the highest value
+\end{itemize}
+\end{frame}
+%***********************************************************
+\begin{frame}[fragile]{\texttt{confusion\_matrix}}
+
+\begin{itemize}
+\item Built-in scikit learn function
+\item Returns the confusion matrix
+\item \url{https://scikit-learn.org/stable/modules/generated/sklearn.metrics.confusion\_matrix.html}
+\end{itemize}
+\end{frame}
+
+%***********************************************************
+\begin{frame}[fragile]{A6: Image data}
+
+\begin{itemize}
+\item RGB images provided
+\item Initial size is 320 $\times$ 240
+\item Be careful of the data types - it is integer, TF and Keras all expect floats
+\item \texttt{nx, ny} are the initial image resolution
+\item {\textcolor{red}{\textbf{Use average pooling to downsample by a factor of 4}}}
+\end{itemize}
+\end{frame}
+%***********************************************************
+\begin{frame}[fragile]{A6:Dictionary of models}
+
+\begin{itemize}
+\item Mechanism provided to easily run multiple models
+\item Add / remove models from the dictionary to have them run / not run
 \end{itemize}
 \end{frame}
 %***********************************************************

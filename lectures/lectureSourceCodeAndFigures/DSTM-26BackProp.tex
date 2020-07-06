@@ -24,6 +24,7 @@
 \usepackage[english]{babel}
 
 \usepackage{amsmath}
+\usepackage{ mathrsfs }
 \usepackage{mathptmx}
 \usepackage{helvet}
 \usepackage{courier}
@@ -58,7 +59,7 @@
         upquote=true,
         language=C,
         basicstyle=\linespread{0.94}\ttfamily\footnotesize,
-        morekeywords={WHILE, DO, END},
+        morekeywords={WHILE, DO, END, OR},
         deletekeywords={VALUE, PRIOR},
         showstringspaces=true}
         \vspace{0pt}%
@@ -82,7 +83,7 @@
 \title[]
 { Tools \& Models for Data Science}
 
-\subtitle{Deep Neural Networks (2): Learning}
+\subtitle{Neural Networks (2): Learning}
 
 \author[]{Chris Jermaine \& Risa Myers}
 \institute
@@ -99,9 +100,61 @@
 \begin{frame}
  \titlepage
 \end{frame}
+%***********************************************************
+\begin{frame}{What Do We Need to Learn?}
+
+\begin{itemize}
+	\item What is our optimization problem?
+	\item We have
+	\begin{itemize}
+	\item Labeled data
+	\item Network architecture
+	\end{itemize}
+\item How do we ``fit'' or ``learn'' our NN to get good predictions/classifications on data \textbf{SIMILAR} to our training data?
+\end{itemize}
+\end{frame}
+%***********************************************************
+\begin{frame}{What Do We Mean by ``Fit'' and ``Learn''?}
+
+\begin{itemize}
+\item This is just learning the weights
+	\begin{itemize}
+	\item Such that we minimize the prediction/classification error
+	\item aka a loss / objective function
+	\end{itemize}
+\item If your new data is not \textbf{SIMILAR} (aka from the same population) as your training data, the model will not perform well
+\end{itemize}
+\end{frame}
 
 %***********************************************************
-\begin{frame}{Learning Is Accomplished Via GD}
+\begin{frame}{Our Optimization Problem}
+
+$$\begin{matrix} {\textrm{Min}}\\{\{w_i, b_i\}}\\ \end{matrix} L\big( NN(x_n), y_n\big)$$
+
+\centerline{where}
+$$NN(x_n) \thicksim \{w_n, b_n\} $$
+
+\centerline{and}
+
+$$i = \textrm{layer and } n= \textrm{Training data}\{x_n, y_n\}$$
+
+\begin{itemize}
+\item This is an optimization problem (learning the weights)
+\item[?] How do we solve optimization problems?
+% with gradient descent
+\end{itemize}
+\end{frame}
+%***********************************************************
+\begin{frame}{Solving Optimization Problems}
+
+\begin{itemize}
+\item[?] How do we solve optimization problems?
+\item ... with gradient descent
+\end{itemize}
+\end{frame}
+
+%***********************************************************
+\begin{frame}{Learning Is Accomplished Via Gradient Descent}
 
 \begin{itemize}
 	\item GD in the context of a NN gives rise to the ``back-propagation'' algorithm
@@ -111,10 +164,19 @@
 	\item ``Learning'' involves tweaking values of those matrices
 	\item $\ldots$ to minimize a loss function
 	\end{itemize}
-%\item Prior to back-propagation NN viewed as a computational model
-%\item After: viewed as a way to fit a function to a dataset
+\item Prior to back-propagation NN viewed as a computational model
+\item After: viewed as a way to fit a function to a dataset
 %\item Note: Neuron functions are fixed
 %\item Weights are learned
+\end{itemize}
+\end{frame}
+%***********************************************************
+\begin{frame}{Learning Is Accomplished Via Gradient Descent}
+
+\begin{itemize}
+\item NN: viewed as a way to fit a function to a dataset
+\item Neuron functions are fixed
+\item Weights are learned
 \end{itemize}
 \end{frame}
 %***********************************************************
@@ -130,12 +192,14 @@
 \item $i = $ layer
 \item $j = $ input neuron
 \item $k = $ output neuron
+\item $W$ is a non-uniform tensor
+\item Each layer's dimensions are based on the inputs to and outputs from that layer
 \end{itemize}
 \end{column}
 \end{columns}
 \end{frame}
 %***********************************************************
-\begin{frame}[fragile]{GD for Deep NNs}
+\begin{frame}[fragile]{GD for NNs}
 
 \begin{itemize}
 	\item Just like all GD algorithms, it is iterative
@@ -143,44 +207,156 @@
 	\item Assume loss function $L(W)$
 	\item with learning rate, $\lambda$ 
 	\item and where $W$ is a tensor of 2D weight matrices
-	\item Then we have
+	\item Then we have, for some number of training epochs, $N$ and some small value $\epsilon$
 	\end{itemize}
 \end{itemize}
 
 \begin{SQL}
+numIter = 0;
 $\textrm{Make a non-stupid guess for each } W_i$;
 repeat {
   $W \leftarrow W - \lambda \nabla L (W)$;
-} while (change in loss $> \epsilon$)
+  numIter++;
+} while (change in loss $> \epsilon$ or numIters < N)
 \end{SQL}
 \end{frame}
 %***********************************************************
-\begin{frame}{Choosing a Loss Function}
+\begin{frame}[fragile]{Non-stupid Guess for a Weight}
+
+\begin{columns}
+\begin{column}{0.4\textwidth}
+\begin{SQL}
+numIter = 0;
+$\textrm{Make a non-stupid guess for each } W_i$;
+repeat {
+  $W \leftarrow W - \lambda \nabla L (W)$;
+  numIter++;
+} while (change in loss $> \epsilon$ 
+		or numIters < N)
+\end{SQL}
+\end{column}
+\begin{column}{0.6\textwidth}
 
 \begin{itemize}
-	\item There are many possible loss functions
-	\item Let's assume one output neuron, one input data point; 
-	\begin{itemize}
-		\item Use $y_{i,k}$ to denote output from layer $i$, neuron $k$
-		\item So in layer $t$ (``top'') just have $y_{t,1}$
-		\item Hoped-for value is $y^{*}$
-		\item Let's use squared loss: $L(W) = (y_{t,1} - y^{*})^2$
-	\end{itemize}
-	\item Extension to many data points, many outputs straightforward.                                                                          
+	\item Don't make them all the same
+	\item Don't make them too different in magnitude % otherwise the algorithm has to work too hard
+	\item Something random is a good idea
+	\item Choose a distribution! (based on ...? active field of research)
+	\item Distribution can be based on network structure
+	\item One choice  is standard N(0,1)
+	\item Another is a truncated normal distribution  (Glorot Normal)
 \end{itemize}
+\end{column}
+\end{columns}
+
+\end{frame}
+
+%%***********************************************************
+\begin{frame}[fragile]{Choosing $\epsilon$}
+
+\begin{columns}
+\begin{column}{0.4\textwidth}
+\begin{SQL}
+numIter = 0;
+$\textrm{Make a non-stupid guess for each } W_i$;
+repeat {
+  $W \leftarrow W - \lambda \nabla L (W)$;
+  numIter++;
+} while (change in loss $> \epsilon$ 
+		or numIters < N)
+\end{SQL}
+\end{column}
+\begin{column}{0.6\textwidth}
+
+\begin{itemize}
+\item As $\epsilon$ gets smaller, you will run more iterations
+\item Depends on your application's tolerance for error
+\item ``Coarser'' problems will have bigger  $\epsilon$s
+\item Scientific computing: $\epsilon$ is as small as possible
+\item Facial recognition: 0.1 or 0.01
+\end{itemize}
+\end{column}
+\end{columns}
+
+\end{frame}
+%%***********************************************************
+\begin{frame}[fragile]{Choosing $N$}
+
+\begin{columns}
+\begin{column}{0.4\textwidth}
+\begin{SQL}
+numIter = 0;
+$\textrm{Make a non-stupid guess for each } W_i$;
+repeat {
+  $W \leftarrow W - \lambda \nabla L (W)$;
+  numIter++;
+} while (change in loss $> \epsilon$ 
+		or numIters < N)
+\end{SQL}
+\end{column}
+\begin{column}{0.6\textwidth}
+
+\begin{itemize}
+\item How much time do you have?
+\item Are you making progress - is your Loss function improving?
+\end{itemize}
+\end{column}
+\end{columns}
+
+\end{frame}
+
+%%***********************************************************
+%\begin{frame}[fragile]{Non-stupid Guess}
+%
+%\begin{itemize}
+%	\item Don't make them all the same
+%	\item Don't make them too different in magnitude
+%	\item Something random is a good idea
+%	\item Choose a distribution! (based on ...? active field of research)
+%	\item Distribution can be based on network structure
+%	\item One choice  is standard N(0,1)
+%	\item Another is a truncated normal distribution  (Glorot Normal)
+%\end{itemize}
+%\end{frame}
+%***********************************************************
+\begin{frame}{Choosing a Loss Function}
+
+\begin{enumerate}
+\item Use the arbitrary accuracy metric given based on the problem
+	\begin{itemize}
+	\item E.g. Jaccard or Dice similarity for image segmentation
+	\end{itemize}
+\item Use a matching loss function if the training model follows a distribution
+	\begin{itemize}
+	\item Normal data: L$_2$ loss
+	\item Multinomial data: Categorical cross entropy
+	\item Binomial data: Binomial cross entropy
+	\end{itemize}
+\item Recall GLM: LLH form matches the data - Mean Squared Error \Big($\frac{L_2}{n}$\Big)
+%	\item Let's assume one output neuron, one input data point; 
+%	\begin{itemize}
+%		\item Use $y_{i,k}$ to denote output from layer $i$, neuron $k$
+%		\item So in layer $t$ (``top'') just have $y_{t,1}$
+%		\item Hoped-for value is $y^{*}$
+%		\item Let's use squared loss: $L(W) = (y_{t,1} - y^{*})^2$
+%	\end{itemize}
+%	\item Extension to many data points, many outputs straightforward.                                                                          
+\end{enumerate}
 \end{frame}
 %***********************************************************
-\begin{frame}{Our 1 I/O NN}
-
-\includegraphics[width=1\textwidth]{lectBP/nnbp.pdf}
-\end{frame}
+%\begin{frame}{Our 1 I/O NN}
+%
+%\includegraphics[width=1\textwidth]{lectBP/nnbp.pdf}
+%\end{frame}
 %***********************************************************
 \begin{frame}{Big Picture}
 
+$$W \leftarrow W - \lambda \nabla L (W)$$
+
 \begin{enumerate}
-	\item Make a non-stupid guess for the weights
-	\item Compute the value of the Loss function
-	\item Redistribute the error from the Loss function among the weights 
+	\item Make a non-stupid guess for the weights (initialize $W$)
+	\item Compute the value of the Loss function ($L(W$))
+	\item Redistribute the error from the Loss function among the weights  $W \leftarrow W - \lambda \nabla L (W)$
 \end{enumerate}
 \begin{itemize}
 	\item Weights that cause the error to increase will have larger activation values ($y$)
@@ -191,31 +367,42 @@ repeat {
 %***********************************************************
 \begin{frame}{Push Back Loss}
 
-\includegraphics[width=.65\textwidth]{lectBP/pushBackLoss.pdf}
+\begin{columns}
+\begin{column}{0.4\textwidth}
+\includegraphics[width=1\textwidth]{lectBP/pushBackLoss.pdf}
 % kind of reminds me of PageRank
-\end{frame}
-%***********************************************************
-\begin{frame}{From Inputs to Outputs to Weights}
-
+\end{column}
+\begin{column}{0.6\textwidth}
 \begin{itemize}
-	\item Each input data point contributes to the cost and to the gradient
-	\item Each ``pulls'' gradient descent in a certain direction
-	\item Sum together the contribution to determine the overall direction of the gradient
-	\item Move the weights that way
+\item Neuron 4 has a large contribution to the error
+\item Neuron 3 has a small contribution to the error
+\item $t$ is the top layer
 \end{itemize}
+\end{column}
+\end{columns}
+% SAY this stuff
+%	\item Each input data point contributes to the loss and to the gradient
+%	\item Each ``pulls'' gradient descent in a certain direction
+%	\item Sum together the contribution to determine the overall direction of the gradient
+%	\item Move the weights that way
+
 \end{frame}
+
 
 %***********************************************************
 \begin{frame}{Computing the Gradient}
 
 \begin{itemize}
-	\item Need to be able to differentiate $L$ wrt each weight
+	\item Need to be able to differentiate $L$ wrt each weight in the entire network!
 	\item Done by applying the chain rule:
 	$$ \frac{\partial L}{\partial w_{i,j,k}} = \frac{\partial L}{\partial y_{i,k}} 
 						\frac{\partial y_{i,k}}{\partial v_{i,k}}
 						\frac{\partial v_{i,k}}{\partial w_{i,j,k}}$$
 	\item $v_{i,k}$ is the weighted sum of activations sent into layer $i$, neuron $k$
 	\item $v_{i,k} = \sum_{j'} w_{i,j',k} y_{i-1,j'}$
+	\item $y_{i+1, k} = f(v_{i,k})$
+	\item $y_{i,k}$ is the output of neuron $k$, layer $i$
+%	\item This is in terms of $k$ because we are working backwards
 \end{itemize}
 \end{frame}
 %***********************************************************
@@ -238,6 +425,7 @@ repeat {
 		\item neuron output $y_{i,k}$ used to compute the loss
 		\item neuron input $v_{i,k}$ used to compute neuron output $y_{i,k}$
 		\item weight $w_{i,j,k}$ used to compute neuron input $v_{i,k}$
+		\item where $i$ = layer, $j$ = input neuron index, $k$ = output neuron index
 	\end{itemize}
 	\item Note: No one actually does the math!
 \end{itemize}
@@ -260,8 +448,8 @@ repeat {
 	$$ \frac{\partial L}{\partial w_{i,j,k}} = \frac{\partial L}{\partial y_{i,k}} 
 						\frac{\partial y_{i,k}}{\partial v_{i,k}}
 						\frac{\partial v_{i,k}}{\partial w_{i,j,k}}$$
-	$$ \frac{\partial L}{\partial w_{i,j,k}} = 3 \times 1 \times 2 $$
-\end{itemize}
+	$$ \frac{\partial L}{\partial w_{i,j,k}} = 3 \times 1 \times 2$$ % order of explanation
+	\end{itemize}
 \begin{enumerate} 
 	\item Start with differentiating neuron output
 	\item Then differentiating the neuron input
@@ -269,41 +457,41 @@ repeat {
 \end{enumerate}
 \end{frame}
 %***********************************************************
-\begin{frame}{Differentiating Neuron Output}
+\begin{frame}{Step 1: Differentiating Neuron Output}
 
 \begin{itemize}
         \item We start with neuron output
-	\item That is, $$\frac{\partial y_{i,j}}{\partial v_{i,j}}$$
+	\item That is, $$\frac{\partial y_{i,k}}{\partial v_{i,k}}$$
 \end{itemize}
 \end{frame}
 %***********************************************************
-\begin{frame}{Computing the Gradient - Neuron Output}
+\begin{frame}{Step 1: Computing the Gradient - Neuron Output}
 
-\includegraphics[width=1\textwidth]{lectBP/nnbpStep1.pdf}
+\includegraphics[width=1\textwidth]{lectBP/nnbpStep1V2.pdf}
 \end{frame}
 %***********************************************************
-\begin{frame}{Differentiating Neuron Output}
+\begin{frame}{Step 1:  Differentiating Neuron Output}
 
 \begin{itemize}
 	\item Assume activation function is the logistic function
-	$$f(v_{i,j}) = \frac{1}{1 + e^{-v_{i,j}}}$$
+	$$f(v_{i,k}) = \frac{1}{1 + e^{-v_{i,k}}}$$
 	\item Popular because result is magically simple
 	\item Will skip algebra, but differentiating the logistic function gives us:
-	$$\frac{df}{dv_{i,j}} = f(v_{i,j})(1 - f(v_{i,j}))$$
-	\item So, since $y_{i,j} = f(v_{i,j})$,
-	$$\frac{\partial y_{i,j}}{\partial v_{i,j}} = \frac{df}{dv_{i,j}} = 
-		f(v_{i,j})(1 - f(v_{i,j}))$$
+	$$\frac{df}{dv_{i,k}} = f(v_{i,k})(1 - f(v_{i,k}))$$
+	\item So, since $y_{i,k} = f(v_{i,k})$,
+	$$\frac{\partial y_{i,k}}{\partial v_{i,k}} = \frac{df}{dv_{i,k}} = 
+		f(v_{i,k})(1 - f(v_{i,k}))$$
 	\item Which is surprisingly nice for Logistic Regression
 \end{itemize}
 
 \end{frame}
 %***********************************************************
-\begin{frame}{Differentiating Neuron Input}
+\begin{frame}{Step 2: Differentiating Neuron Input}
 
 \begin{itemize} 
 	\item Now time to deal with
 	$$\frac{\partial v_{i,k}}{\partial w_{i,j,k}}$$
-	\item Note that $v_{i,k}$ computes a dot product, so:x 
+	\item Note that $v_{i,k}$ computes a dot product, so:
 	$$\frac{\partial v_{i,k}}{\partial w_{i,j,k}} = \frac{\partial}{\partial w_{i,j,k}} 
 		\sum_{j'} w_{i,j',k} y_{i-1,j'}$$
 	\item This is just $y_{i-1,j}$, since all the $j'$s drop out, except for the case where $j'=j$
@@ -318,12 +506,12 @@ repeat {
 \end{itemize}
 \end{frame}
 %***********************************************************
-\begin{frame}{Computing the Gradient - Neuron Input}
+\begin{frame}{Step 2: Computing the Gradient - Neuron Input}
 
 \includegraphics[width=1\textwidth]{lectBP/nnbpStep2.pdf}
 \end{frame}
 %***********************************************************
-\begin{frame}{Differentiating Neuron Input from the Input Layer}
+\begin{frame}{Step 2: Differentiating Neuron Input from the Input Layer}
 
 \begin{itemize} 
 	\item Note that if $i-1$ is the input layer, then $y_{i-1,j} = x_j$
@@ -333,16 +521,16 @@ repeat {
 \end{itemize}
 \end{frame}
 %***********************************************************
-\begin{frame}{Computing the Gradient - Neuron Input}
+\begin{frame}{Step 2: Computing the Gradient - Neuron Input}
 
 \includegraphics[width=1\textwidth]{lectBP/nnbpInput.pdf}
 \end{frame}
 %***********************************************************
-\begin{frame}{Differentiating the Loss}
+\begin{frame}{Step 3: Differentiating the Loss}
 
 \begin{itemize}
 	\item Next, need to be able to deal with differentiating the loss
-		$$\frac{\partial L}{\partial y_{i,j}}$$
+		$$\frac{\partial L}{\partial y_{i,k}}$$
 	\item If this is the output layer, it is easy:
 	$$\frac{\partial L}{\partial y_{t,1}} = 2 (y_{t,1} - y^{*}) \approx (y_{t,1} - y^{*})$$
 	\item Recall: $y^*$ is the hoped for output
@@ -350,21 +538,22 @@ repeat {
 \end{itemize}
 \end{frame}
 %***********************************************************
-\begin{frame}{Computing the Gradient - Loss for Output Layer}
+\begin{frame}{Step 3: Computing the Gradient - Loss for Output Layer}
 
 \includegraphics[width=1\textwidth]{lectBP/nnbpStep3.pdf}
 \end{frame}
 %***********************************************************
-\begin{frame}{Differentiating the Loss}
+\begin{frame}{Step 3: Differentiating the Loss}
 
+Recall
 \begin{itemize}
 	\item Next, need to be able to deal with differentiating the loss
-		$$\frac{\partial L}{\partial y_{i,j}}$$
+		$$\frac{\partial L}{\partial y_{i,k}}$$
 	\item If this is the output layer, it is easy:
 	$$\frac{\partial L}{\partial y_{t,1}} = 2 (y_{t,1} - y^{*}) \approx (y_{t,1} - y^{*})$$
 	\item Recall: $y^*$ is the hoped for output
 	\item Can drop the $2$ since will be swallowed into the learning rate
-	\item[?] But what about the other layers?
+	\item[?] \textcolor{red}{But what about the other layers?}
 \end{itemize}
 \end{frame}
 %***********************************************************
@@ -427,48 +616,48 @@ repeat {
 \end{itemize}
 \end{frame}
 %***********************************************************
-\begin{frame}{Differentiating Loss for Hidden Layers}
+\begin{frame}{Step 3: Differentiating Loss for Hidden Layers}
 
 \begin{itemize} 
 	\item Why is total derivative relevant?
 	\begin{itemize}
 	\item Note that Loss is a function of all the neuron inputs
 	\item All $v$'s at layer $i+1$: $v_{i+1,1}, v_{i+1,2}, v_{i+1,3}, ...$
-	\item Where $v_{i+1,k}$ is itself a function of $y_{i,j}$
+	\item Where $v_{i+1,k}$ is itself a function of the prior layer $y_i$
 	\item (Plus a lot of other things we'll treat as constants)
-	\item This is exactly the case where $\frac{\partial L}{\partial y_{i,j}}$ must be computed using total
+	\item This is exactly the case where $\frac{\partial L}{\partial y_{i,k}}$ must be computed using total
 		derivative
-	\item So take the total derivative wrt $y_{i,j}$:
-		$$\frac{\partial L}{\partial y_{i,j}} = \sum_{k} \frac{\partial L}{\partial v_{i+1,k}}
-			\frac{\partial  v_{i+1,k}}{\partial y_{i,j}}$$
+	\item So take the total derivative wrt $y_{i,k}$:
+		$$\frac{\partial L}{\partial y_{i,k}} = \sum_{j'} \frac{\partial L}{\partial v_{i+1,j'}}
+			\frac{\partial  v_{i+1,j'}}{\partial y_{i,k}}$$
 	\item Partial of L wrt the $j$th neuron in layer $i$
-	\item Recall that $y_{i,j}$ depends on all of the input weights
+	\item Recall that $y_{i,k}$ depends on all of the input weights
 	\end{itemize}
 \end{itemize}
 \end{frame}
 %***********************************************************
-\begin{frame}{Computing the Gradient - Loss for Hidden Layers}
+\begin{frame}{Step 3: Computing the Gradient - Loss for Hidden Layers}
 
 \includegraphics[width=1\textwidth]{lectBP/nnbpVs.pdf}
 \end{frame}
 %***********************************************************
-\begin{frame}{Differentiating the Loss for Hidden Layers}
+\begin{frame}{Step 3: Differentiating the Loss for Hidden Layers}
 \begin{itemize}
 	\item And since $\frac{\partial  v_{i+1,k}}{\partial y_{i,j}} = w_{i+1,j,k}$ 
 %	\item That is, the change in inputs wrt prior outputs is the weight
 	\item We have:
-		$$\frac{\partial L}{\partial y_{i,j}} = \sum_{k} \frac{\partial L}{\partial v_{i+1,k}}
-                        w_{i+1,j,k}$$
+		$$\frac{\partial L}{\partial y_{i,k}} = \sum_{j'} \frac{\partial L}{\partial v_{i+1,j'}}
+			\frac{\partial  v_{i+1,j'}}{\partial y_{i,k}}$$
 	\begin{itemize}
 	\item Further, note that, by chain rule:
-		 $$\frac{\partial L}{\partial v_{i+1,k}} = \frac{\partial L}{\partial y_{i+1,k}} 
-                                                \frac{\partial y_{i+1,k}}{\partial v_{i+1,k}}$$
+		 $$\frac{\partial L}{\partial v_{i+1,j'}} = \frac{\partial L}{\partial y_{i+1,j'}} 
+                                                \frac{\partial y_{i+1,j'}}{\partial v_{i+1,j'}}$$
 	\end{itemize}
-	\item Refer to $\frac{\partial L}{\partial v_{i+1,k}}$ as $\delta_{i+1,k}$.
+	\item Refer to $\frac{\partial L}{\partial v_{i+1,j}}$ as $\delta_{i+1,j}$.
 	\begin{itemize}
 	\item So
-		$$\frac{\partial L}{\partial y_{i,j}} = \sum_{k} \delta_{i+1,k}
-                        w_{i+1,j,k}$$
+		$$\frac{\partial L}{\partial y_{i,k}} = \sum_{j'} \delta_{i+1,j'}
+                        w_{i+1,k,j'}$$
 	\end{itemize}
 \end{itemize}
 \end{frame}
@@ -482,7 +671,7 @@ repeat {
 	\begin{itemize}
 	\item And we can write this as:
 	\begin{align} \frac{\partial L}{\partial w_{i,j,k}} &= 
-		\left( \sum_{k'} \delta_{i+1,k'} w_{i+1,k,k'} \right)  
+		\left( \sum_{j'} \delta_{i+1,j'} w_{i+1,k,j'} \right)  
 		\left( f(v_{i,k})(1 - f(v_{i,k})) \right)
 			\left( y_{i-1,j} \right) \nonumber \\	
 		&= \delta_{i,k} \left( y_{i-1,j} \right) \nonumber \end{align}
@@ -564,34 +753,34 @@ repeat {
 \end{itemize}
 \end{frame}
 %***********************************************************
-
-\begin{frame}{How To Implement Learning?}
-\begin{itemize}
-	\item This math has been known for many years
-	\item Once you understand it, is quite simple
-	\item So would be easy to implement learning directly in Python
-	\item But applies to particular narrow case:
-		\begin{itemize}
-		\item Fully-connected network
-		\item Logistic activation
-		\item Feed-forward
-		\item L2 loss
-		\item One output neuron
-		\item One data item
-		\end{itemize}
-\end{itemize}
-\end{frame}
+%
+%\begin{frame}{How To Implement Learning?}
+%\begin{itemize}
+%	\item This math has been known for many years
+%	\item Once you understand it, is quite simple
+%	\item So would be easy to implement learning directly in Python
+%	\item But applies to particular narrow case:
+%		\begin{itemize}
+%		\item Fully-connected network
+%		\item Logistic activation
+%		\item Feed-forward
+%		\item L2 loss
+%		\item One output neuron
+%		\item One data item
+%		\end{itemize}
+%\end{itemize}
+%\end{frame}
 %***********************************************************
 
-\begin{frame}{What If Your Network Is Different?}
+\begin{frame}{What If Your Network Is not a Fully Connected FF Network?}
 
 \begin{itemize}
 	\item Some changes are easy:
 	\begin{itemize}
 		\item Different loss: only changes $\frac{\partial L}{\partial y_{t,1}}$
-		\item Multiple data points in a batch: 
-			compute $\frac{\partial L}{\partial w_{i,j,k}}$ wrt each, and
-			then add them up (can be made efficient with vector/matrix ops)
+%		\item Multiple data points in a batch: 
+%			compute $\frac{\partial L}{\partial w_{i,j,k}}$ wrt each, and
+%			then add them up (can be made efficient with vector/matrix ops)
 		\item Different activation: only changes $\frac{\partial y_{i,j}}{\partial v_{i,j}}$
 	\end{itemize}
 	\item But some are hard...

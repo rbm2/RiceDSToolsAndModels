@@ -101,6 +101,13 @@
  \titlepage
 \end{frame}
 %***********************************************************
+\begin{frame}{Objectives}
+
+\begin{itemize}
+\item Learn about the issues with RNNs and learn about a neural network architecture that solves some of these issues
+\end{itemize}
+\end{frame}
+%***********************************************************
 \begin{frame}{RNN}
 
 \begin{itemize}
@@ -139,6 +146,7 @@
         $$ \frac{\partial L}{\partial w_{i,j,k}} = \frac{\partial L}{\partial y_{i,k}}
                                                 \frac{\partial y_{i,k}}{\partial v_{i,k}}
                                                 \frac{\partial v_{i,k}}{\partial w_{i,j,k}}$$
+	$$  \frac{\text{Loss}}{\text{Neuron Output}}\frac{\text{Neuron Output}}{\text{Neuron input}}\frac{\text{Neuron Input}}{\text{Weights}}$$
 	\item If activation function is logistic function $\sigma$ then
 	$\frac{\partial y_{i,k}}{\partial v_{i,k}} = \sigma (v_{i,k})(1 - \sigma (v_{i,k}))$
 	\item Means you have a multiplier that maxes out at 0.25
@@ -160,7 +168,7 @@
 	\item First proposed in 1997 by Hichreiter/Schimiduber
 	\begin{itemize}
 	\item Uses a more complicated architecture in each recurrent unit
-	\item Now used in most state-of-the-art sequence-based ML
+	\item Now used in many state-of-the-art sequence-based ML
 	\item Translation, text processing, speech-to-text, many others...
 	\end{itemize}
 \end{itemize}
@@ -199,16 +207,14 @@
 \end{frame}
 %***********************************************************
 \begin{frame}{A Note on Notation}
+\includegraphics[width=0.8\textwidth]{lectLSTM/LSTM2-notation.png}\\
 \begin{itemize}
-	\item In this pic:
-	\begin{itemize}
-	\item Vectors travel along lines
-	\item A circle/oval represents application of a function to each dimension in a vector
-	\item A rectangle represents a neural network
+%	\item Vectors travel along lines
+%	\item A circle/oval represents application of a function to each dimension in a vector
+%	\item A rectangle represents a neural network
 	\item $\sigma$ means a logistic activation layer at the top
 	\item tanh means a hyperbolic tangent activation layer at the top
 	\end{itemize}
-\end{itemize}
 \includegraphics[width=0.8\textwidth]{lectLSTM/LSTMNew.png}
 \footnote{Reprinted with permission. \url{http://colah.github.io/posts/2015-08-Understanding-LSTMs/}}
 \end{frame}
@@ -458,6 +464,15 @@
 \end{frame}
 %***********************************************************
 
-\begin{frame}{Questions?}
+\begin{frame}{Wrap up}
+\begin{itemize}
+	\item[?] How can we use what we learned today?
+	\item What LSTMs are and how they work
+	\vspace{2em}
+	\item[?] What do we know now that we didn't know before?
+	\item Another way to handle sequential data in a neural network
+\end{itemize}
+
+
 \end{frame}
 \end{document}

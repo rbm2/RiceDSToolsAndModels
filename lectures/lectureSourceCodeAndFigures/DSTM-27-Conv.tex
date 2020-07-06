@@ -1,0 +1,1196 @@
+%Copyright 2019 Christopher M. Jermaine (cmj4@rice.edu) and Risa B. Myers (rbm2@rice.edu)
+%
+%Licensed under the Apache License, Version 2.0 (the "License");
+%you may not use this file except in compliance with the License.
+%You may obtain a copy of the License at
+%
+%    https://www.apache.org/licenses/LICENSE-2.0
+%
+%Unless required by applicable law or agreed to in writing, software
+%distributed under the License is distributed on an "AS IS" BASIS,
+%WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+%See the License for the specific language governing permissions and
+%limitations under the License.
+%===============================================================
+\documentclass[aspectratio=169,14pt]{beamer}
+
+\AtBeginSection[]
+{
+  \begin{frame}
+    \frametitle{Table of Contents}
+    \tableofcontents[currentsection]
+  \end{frame}
+}
+
+\mode<presentation>
+{
+\usetheme[noshadow,minimal,numbers,nonav]{Rice}
+\usefonttheme[onlymath]{serif}
+% \setbeamercovered{transparent}
+}
+
+\useinnertheme{rectangles}
+
+\usepackage[english]{babel}
+
+\usepackage{amsmath}
+\usepackage{mathptmx}
+\usepackage{helvet}
+\usepackage{courier}
+\usepackage[T1]{fontenc}
+\usepackage{trajan}
+\usepackage{ textcomp }
+\usepackage{listings}
+
+\newenvironment{noindentitemize}
+{ \begin{itemize}
+ \setlength{\itemsep}{1.5ex}
+  \setlength{\parsep}{0pt}
+  \setlength{\parskip}{0pt}
+ \addtolength{\leftskip}{-2em}
+ }
+{ \end{itemize} }
+
+\newenvironment{noindentitemize2}
+{ \begin{itemize}
+  \setlength{\itemsep}{0ex}
+  \setlength{\parskip}{0pt}
+  \setlength{\parsep}{0pt}
+  \addtolength{\leftskip}{-2em}  }
+{ \end{itemize} }
+
+\lstnewenvironment{SQL}
+  {\lstset{
+        aboveskip=5pt,
+        belowskip=5pt,
+        escapechar=!,
+        mathescape=true,
+        upquote=true,
+        language=SQL,
+        basicstyle=\linespread{0.94}\ttfamily\footnotesize,
+        morekeywords={WHILE, DO, END},
+        deletekeywords={VALUE, PRIOR},
+        showstringspaces=true}
+        \vspace{0pt}%
+        \noindent\minipage{0.47\textwidth}}
+  {\endminipage\vspace{0pt}}
+
+\newcommand{\LIKES}{\textrm{LIKES}}
+\newcommand{\FREQUENTS}{\textrm{FREQUENTS}}
+\newcommand{\SERVES}{\textrm{SERVES}}
+\newcommand{\CAFE}{\textrm{CAFE}}
+\newcommand{\COFFEE}{\textrm{COFFEE}}
+\newcommand{\DRINKER}{\textrm{DRINKER}}
+\newcommand{\ALLPEEPS}{\textrm{ALLPEEPS}}
+\newcommand{\ALLCOMBOS}{\textrm{ALLCOMBOS}}
+
+
+%############################################
+
+
+% TikZ
+\usepackage{tikz}
+\usepackage{pgflibraryshapes}
+\usetikzlibrary{decorations.text}
+\usetikzlibrary{decorations.pathreplacing}
+\usetikzlibrary{backgrounds}
+\usetikzlibrary{calc}
+\usetikzlibrary{arrows}
+\usetikzlibrary{snakes}
+\usetikzlibrary{tikzmark,positioning}
+\usetikzlibrary{shapes}
+\usetikzlibrary{shapes.misc}
+\usetikzlibrary{mindmap}
+\usetikzlibrary{positioning}
+\usetikzlibrary{math}
+\usetikzlibrary{calc}
+\usetikzlibrary{patterns}
+%%\input{figures/tikzColors}
+\definecolor{cffffff}{RGB}{255,255,255}
+\definecolor{cff00c0}{RGB}{255,0,192}
+\definecolor{c0f00ff}{RGB}{15,0,255}
+\definecolor{c00ff20}{RGB}{0,255,32}
+\definecolor{cfffd00}{RGB}{255,253,0}
+\definecolor{c00e0ff}{RGB}{0,224,255}
+\usepackage{pgfplots}
+\usepackage{pgfplotstable}
+% \usepackage{adjustbox}
+\usepackage[export]{adjustbox}
+
+\usepackage{multirow}
+\usepackage{multimedia}
+\usepackage{bigints}
+\usepackage{varwidth}
+\usepackage[none]{hyphenat}
+\usepackage{fontawesome}
+
+
+
+%############################################
+
+
+
+
+\setbeamerfont{block body}{size=\tiny}
+
+%===============================================================%
+
+\title[]
+{Tools \& Models for Data Science}
+
+\subtitle{Neural Networks: Bells and Whistles}
+
+\author[]{Jonas Actor and Risa Myers}
+\institute
+{  Rice University  }
+
+\date[]{}
+
+% \subject{Beamer}
+
+\begin{document}
+
+\begin{frame}
+ \titlepage
+\end{frame}
+
+
+
+%***********************************************************
+\begin{frame}
+    \frametitle{Motivation}
+
+NN are large nonconvex optimization problems
+~\\~\\
+\quad \dots large nonconvex optimization problems are hard to solve
+
+\end{frame}
+
+\begin{frame}
+\frametitle{Objective}
+Learn common ways to $\rule{3cm}{0.15mm}$ of NNs:
+\begin{enumerate}
+\item combat model complexity
+\item improve generalization
+\item overcome difficulties in training
+\end{enumerate}
+
+\end{frame}
+
+
+%***********************************************************
+
+
+\begin{frame}
+\frametitle{Bells and Whistles}
+\tableofcontents
+\end{frame}
+
+\section{Convolutional Neural Networks}
+\begin{frame}
+\frametitle{What is a discrete convolution?}
+ Linear operator that applies a small kernel everywhere
+ \begin{itemize}
+     \item local point-wise multiplication
+     \item reduce via sum
+ \end{itemize}
+\end{frame}
+
+
+\begin{frame}
+    \frametitle{What is a discrete convolution?}
+    $k$: kernel of size $n_k$ a small number \\
+    $x$: vector ~\\
+$$ (x * k)_i = \sum_{j=-n_k}^{n_k} x_{i+j} \, k_j $$
+\end{frame}
+
+\begin{frame}
+\frametitle{Example of 1D Convolution}
+\begin{equation*} \begin{split}
+x &= \begin{bmatrix} 1 & 2 & -3 & 0 & 4 & -1 & 2 \end{bmatrix} \\
+k &= \begin{bmatrix} -1 & 0 & 1 \end{bmatrix} \\
+\end{split} \end{equation*}
+\end{frame}
+
+
+\begin{frame}
+    \frametitle{Example of 1D Convolution}
+    \begin{center}
+\begin{tikzpicture}
+    \onslide<1->{
+\foreach \s/\x in {0/[, 1/1, 2/2, 3/-3, 4/0, 5/-4, 6/-1, 7/2, 8/]}
+{
+    \node[xshift=\s*25] (0,0) {$\x$};
+}
+}
+\node[xshift=0,yshift=-100] (0,0) {$[$};
+\node[xshift=200,yshift=-100] (0,0) {$]$};
+\foreach \ss/\v in {2/-4,3/-2,4/-1,5/-1,6/6}
+{
+    \onslide<\ss-\ss>{
+        \node[xshift=(\ss-1)*25,yshift=-25] (0,0) {$-1$};
+        \node[xshift=\ss*25,yshift=-25] (0,0) {$0$};
+        \node[xshift=(\ss+1)*25,yshift=-25] (0,0) {$1$};
+        \draw[|-|,below,xshift=(\ss-1)*25,yshift=-40] (0,0) -- (2,0) ;
+        \draw[->,xshift=(\ss-1)*25,yshift=-40] (1,0) -- (1,-1) ;
+    }
+    \onslide<\ss->{ \node[xshift=\ss*25,yshift=-100] (0,0) {$\v$}; }
+
+}
+\end{tikzpicture}
+\end{center}
+\end{frame}
+
+
+
+\begin{frame}
+    \frametitle{What to do at the boundary}
+\begin{enumerate}
+    \item ignore them! (`valid')
+    \item pad with zeros (`same')
+    \item wrap around the end (`periodic')
+\end{enumerate}
+\end{frame}
+
+
+
+\begin{frame}
+    \frametitle{Example with Valid Padding}
+    \begin{center}
+\begin{tikzpicture}
+    \onslide<1->{
+\foreach \s/\x in {0/[, 1/1, 2/2, 3/-3, 4/0, 5/-4, 6/-1, 7/2, 8/]}
+{
+    \node[xshift=\s*25] (0,0) {$\x$};
+}
+}
+\onslide<1-1>{
+\node[xshift=0,yshift=-100] (0,0) {$[$};
+\node[xshift=200,yshift=-100] (0,0) {$]$};
+}
+\onslide<2->{
+\node[xshift=25,yshift=-100] (0,0) {$[$};
+\node[xshift=175,yshift=-100] (0,0) {$]$};
+}
+\foreach \ss/\v in {2/-4,3/-2,4/-1,5/-1,6/6}
+{
+    \onslide<1->{ \node[xshift=\ss*25,yshift=-100] (0,0) {$\v$}; }
+}
+\end{tikzpicture}
+\end{center}
+\end{frame}
+
+
+% \begin{frame}
+%     \frametitle{Example of 1D Convolution: Valid padding}
+%     \begin{equation*} \begin{split}
+%     x &= \begin{bmatrix} 1 & 2 & -3 & 0 & 4 & -1 & 2 \end{bmatrix} \\
+%     k &= \begin{bmatrix} -1 & 0 & 1 \end{bmatrix} \\
+%     &\\
+%     \onslide<1>{x * k &= \begin{bmatrix} ? & -4 & -2 & 7 & -1 & -2 & ? \end{bmatrix} \\}
+%     \onslide<2->{x * k &= \begin{bmatrix} \quad & -4 & -2 & 7 & -1 & -2 & \quad \end{bmatrix} \\}
+%     \end{split} \end{equation*}
+% \end{frame}
+
+
+\begin{frame}
+    \frametitle{Example with Zero Padding}
+    \begin{center}
+\begin{tikzpicture}
+\onslide<1-1>{
+    \foreach \s/\x in {0/[, 1/1, 2/2, 3/-3, 4/0, 5/-4, 6/-1, 7/2, 8/]}
+    {
+        \node[xshift=\s*25] (0,0) {$\x$};
+    }
+    \node[xshift=0,yshift=-100] (0,0) {$[$};
+    \node[xshift=200,yshift=-100] (0,0) {$]$};
+}
+\onslide<2->{
+    \foreach \s/\x in {-1/[, 1/1, 2/2, 3/-3, 4/0, 5/-4, 6/-1, 7/2, 9/]}
+    {
+        \node[xshift=\s*25] (0,0) {$\x$};
+    }
+    \node[xshift=0,red] (0,0) {$0$};
+    \node[xshift=200,red] (0,0) {$0$};
+    \node[xshift=0,yshift=-100] (0,0) {$[$};
+    \node[xshift=200,yshift=-100] (0,0) {$]$};
+}
+\foreach \ss/\v in {2/-4,3/-2,4/-1,5/-1,6/6}
+{
+    \onslide<1->{ \node[xshift=\ss*25,yshift=-100] (0,0) {$\v$}; }
+}
+\onslide<2->{
+    \foreach \ss/\v in {1/2,7/1}
+    {
+            \node[xshift=(\ss-1)*25,yshift=-25] (0,0) {$-1$};
+            \node[xshift=\ss*25,yshift=-25] (0,0) {$0$};
+            \node[xshift=(\ss+1)*25,yshift=-25] (0,0) {$1$};
+            \draw[|-|,below,xshift=(\ss-1)*25,yshift=-40] (0,0) -- (2,0) ;
+            \draw[->,xshift=(\ss-1)*25,yshift=-40] (1,0) -- (1,-1) ;
+            \node[xshift=\ss*25,yshift=-100] (0,0) {$\v$};
+    }
+}
+\end{tikzpicture}
+\end{center}
+\end{frame}
+
+%
+% \begin{frame}
+%     \frametitle{Example of 1D Convolution: Same padding}
+%     \begin{equation*} \begin{split}
+%     x &= \begin{bmatrix} 1 & 2 & -3 & 0 & 4 & -1 & 2 \end{bmatrix} \\
+%     k &= \begin{bmatrix} -1 & 0 & 1 \end{bmatrix} \\
+%     &\\
+%     \onslide<1>{x * k &= \begin{bmatrix} ? & -4 & -2 & 7 & -1 & -2 & ? \end{bmatrix} \\}
+%     \onslide<2->{x * k &= \begin{bmatrix} 2 & -4 & -2 & 7 & -1 & -2 & 1 \quad \end{bmatrix} \\}
+%     \end{split} \end{equation*}
+% \end{frame}
+
+
+\begin{frame}
+    \frametitle{Example with Periodic Padding}
+    \begin{center}
+\begin{tikzpicture}
+\onslide<1-1>{
+    \foreach \s/\x in {0/[, 1/1, 2/2, 3/-3, 4/0, 5/-4, 6/-1, 7/2, 8/]}
+    {
+        \node[xshift=\s*25] (0,0) {$\x$};
+    }
+    \node[xshift=0,yshift=-100] (0,0) {$[$};
+    \node[xshift=200,yshift=-100] (0,0) {$]$};
+}
+\onslide<2->{
+    \foreach \s/\x in {-1/[, 1/1, 2/2, 3/-3, 4/0, 5/-4, 6/-1, 7/2, 9/]}
+    {
+        \node[xshift=\s*25] (0,0) {$\x$};
+    }
+    \node[xshift=0,red] (0,0) {$2$};
+    \node[xshift=200,red] (0,0) {$1$};
+    \node[xshift=0,yshift=-100] (0,0) {$[$};
+    \node[xshift=200,yshift=-100] (0,0) {$]$};
+}
+\foreach \ss/\v in {2/-4,3/-2,4/-1,5/-1,6/6}
+{
+    \onslide<1->{ \node[xshift=\ss*25,yshift=-100] (0,0) {$\v$}; }
+}
+\onslide<2->{
+    \foreach \ss/\v in {1/0,7/2}
+    {
+            \node[xshift=(\ss-1)*25,yshift=-25] (0,0) {$-1$};
+            \node[xshift=\ss*25,yshift=-25] (0,0) {$0$};
+            \node[xshift=(\ss+1)*25,yshift=-25] (0,0) {$1$};
+            \draw[|-|,below,xshift=(\ss-1)*25,yshift=-40] (0,0) -- (2,0) ;
+            \draw[->,xshift=(\ss-1)*25,yshift=-40] (1,0) -- (1,-1) ;
+            \node[xshift=\ss*25,yshift=-100] (0,0) {$\v$};
+    }
+}
+\end{tikzpicture}
+\end{center}
+\end{frame}
+
+
+%
+% \begin{frame}
+%     \frametitle{Example of 1D Convolution: Periodic padding}
+%     \begin{equation*} \begin{split}
+%     x &= \begin{bmatrix} 1 & 2 & -3 & 0 & 4 & -1 & 2 \end{bmatrix} \\
+%     k &= \begin{bmatrix} -1 & 0 & 1 \end{bmatrix} \\
+%     &\\
+%     \onslide<1>{x * k &= \begin{bmatrix} ? & -4 & -2 & 7 & -1 & -2 & ? \end{bmatrix} \\}
+%     \onslide<2->{x * k &= \begin{bmatrix} 0 & -4 & -2 & 7 & -1 & -2 & 2 \end{bmatrix} \\}
+%     \end{split} \end{equation*}
+% \end{frame}
+
+
+\begin{frame}
+    \frametitle{Convolutions in Neural Networks}
+\begin{center}
+    Learn small kernel instead of big weight matrix
+\end{center}
+
+\begin{figure}
+\begin{tikzpicture}
+\foreach \y in {0,1,2,3,4}
+    \draw (0,\y) circle (0.2cm);
+\foreach \y in {1,2,3}
+    \draw (3,\y) circle (0.2cm);
+
+\onslide<1-1>{
+    \draw (0,1+1) --  node {-1} (3,1);
+    \draw (0,1+0) --  node { 0} (3,1);
+    \draw (0,1-1) --  node { 1}(3,1);
+        }
+\onslide<2->{
+    \draw (0,1+1) --  (3,1);
+    \draw (0,1+0) --  (3,1);
+    \draw (0,1-1) --  (3,1);
+        }
+\onslide<2-2>{
+    \draw (0,2+1) --  node {-1} (3,2);
+    \draw (0,2+0) --  node { 0} (3,2);
+    \draw (0,2-1) --  node { 1} (3,2);
+        }
+\onslide<3->{
+    \draw (0,2+1) --  (3,2);
+    \draw (0,2+0) --  (3,2);
+    \draw (0,2-1) --  (3,2);
+        }
+\onslide<3->{
+    \draw (0,3+1) --  node {-1} (3,3);
+    \draw (0,3+0) --  node { 0} (3,3);
+    \draw (0,3-1) --  node { 1} (3,3);
+        }
+\end{tikzpicture}
+\end{figure}
+
+\end{frame}
+
+
+
+\begin{frame}
+    \frametitle{Why CNNs help}
+\begin{itemize}
+    \item Position matters $\rightarrow$ model complexity
+    \item Only consider local information $\rightarrow$ model complexity
+    \item Only learn a small kernel, not big weight matrix $\rightarrow$ model complexity, size
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Problems where CNNs are useful}
+\begin{itemize}
+    \item image/video tasks
+    \begin{itemize}
+        \item classification
+        \item segmentaion
+        \item \dots
+    \end{itemize}
+    \item sequence analysis
+    \item graphical models
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}
+    \frametitle{Images: 2D convolution}
+\begin{columns}
+    \begin{column}{0.5\textwidth}
+        \begin{center}
+\begin{tikzpicture}
+    \draw[fill=black!50] (0,4) -- (0,2.5) -- (2,2.5) -- (2,4) -- (0,4) ;
+    \draw[fill=black!50] (0,2.5) -- (1,2.5) -- (1,0.5) -- (0,0.5) -- (0,2.5);
+\foreach \x in {0,1,2,3,4,5,6}
+    \draw (\x/2,0) -- (\x/2,4);
+\foreach \y in {0,1,2,3,4,5,6,7,8}
+    \draw (0,\y/2) -- (3,\y/2);
+\end{tikzpicture}
+\end{center}
+\end{column}
+\begin{column}{0.5\textwidth}
+$\begin{bmatrix}
+1 & 1 & 1 & 1 & 0 & 0 \\
+1 & 1 & 1 & 1 & 0 & 0 \\
+1 & 1 & 1 & 1 & 0 & 0 \\
+1 & 1 & 0 & 0 & 0 & 0 \\
+1 & 1 & 0 & 0 & 0 & 0 \\
+1 & 1 & 0 & 0 & 0 & 0 \\
+1 & 1 & 0 & 0 & 0 & 0 \\
+0 & 0 & 0 & 0 & 0 & 0 \\
+\end{bmatrix}$
+\end{column}
+\end{columns}
+\end{frame}
+
+
+\begin{frame}
+    \frametitle{Images: 2D convolution}
+\begin{columns}
+    \begin{column}{0.25\textwidth}
+        \begin{center}
+\begin{tikzpicture}
+    \draw[fill=black!50] (0,4) -- (0,2.5) -- (2,2.5) -- (2,4) -- (0,4) ;
+    \draw[fill=black!50] (0,2.5) -- (1,2.5) -- (1,0.5) -- (0,0.5) -- (0,2.5);
+\foreach \x in {0,1,2,3,4,5,6}
+    \draw (\x/2,0) -- (\x/2,4);
+\foreach \y in {0,1,2,3,4,5,6,7,8}
+    \draw (0,\y/2) -- (3,\y/2);
+
+
+\onslide<1-1>{
+\draw[ultra thick] (0,0) -- (1.5,0) -- (1.5,1.5) -- (0,1.5) --(0,0) ;
+\draw[ultra thick] (0.5,0) -- (0.5,1.5);
+\draw[ultra thick] (0,0.5) -- (1.5,0.5);
+\draw[ultra thick] (1,0) -- (1,1.5);
+\draw[ultra thick] (0,1) -- (1.5,1);
+}
+\onslide<2-2>{
+\draw[ultra thick] (0.5,0) -- (2,0) -- (2,1.5) -- (0.5,1.5) --(0.5,0) ;
+\draw[ultra thick] (1,0) -- (1,1.5);
+\draw[ultra thick] (0.5,0.5) -- (2,0.5);
+\draw[ultra thick] (1.5,0) -- (1.5,1.5);
+\draw[ultra thick] (0.5,1) -- (2,1);
+}
+\onslide<3-3>{
+\draw[ultra thick] (1,0) -- (2.5,0) -- (2.5,1.5) -- (1,1.5) --(1,0) ;
+\draw[ultra thick] (1.5,0) -- (1.5,1.5);
+\draw[ultra thick] (1,0.5) -- (2.5,0.5);
+\draw[ultra thick] (2,0) -- (2,1.5);
+\draw[ultra thick] (1,1) -- (2.5,1);
+}
+\onslide<4-4>{
+\draw[ultra thick] (1.5,0) -- (3,0) -- (3,1.5) -- (1.5,1.5) --(1.5,0) ;
+\draw[ultra thick] (2,0) -- (2,1.5);
+\draw[ultra thick] (1.5,0.5) -- (3,0.5);
+\draw[ultra thick] (2.5,0) -- (2.5,1.5);
+\draw[ultra thick] (1.5,1) -- (3,1);
+}
+\onslide<5-5>{
+\draw[ultra thick] (0,0.5) -- (1.5,0.5) -- (1.5,2) -- (0,2) --(0,0.5) ;
+\draw[ultra thick] (0.5,0.5) -- (0.5,2);
+\draw[ultra thick] (0,1) -- (1.5,1);
+\draw[ultra thick] (1,0.5) -- (1,2);
+\draw[ultra thick] (0,1.5) -- (1.5,1.5);
+}
+\onslide<6-6>{
+\draw[ultra thick] (0.5,0.5) -- (2,0.5) -- (2,2) -- (0.5,2) --(0.5,0.5) ;
+\draw[ultra thick] (1,0.5) -- (1,2);
+\draw[ultra thick] (0.5,1) -- (2,1);
+\draw[ultra thick] (1.5,0.5) -- (1.5,2);
+\draw[ultra thick] (0.5,1.5) -- (2,1.5);
+}
+\onslide<7-7>{
+\draw[ultra thick] (1,0.5) -- (2.5,0.5) -- (2.5,2) -- (1,2) --(1,0.5) ;
+\draw[ultra thick] (1.5,0.5) -- (1.5,2);
+\draw[ultra thick] (1,1) -- (2.5,1);
+\draw[ultra thick] (2,0.5) -- (2,2);
+\draw[ultra thick] (1,1.5) -- (2.5,1.5);
+}
+\onslide<8-8>{
+\draw[ultra thick] (1.5,0.5) -- (3,0.5) -- (3,2) -- (1.5,2) --(1.5,0.5) ;
+\draw[ultra thick] (2,0.5) -- (2,2);
+\draw[ultra thick] (1.5,1) -- (3,1);
+\draw[ultra thick] (2.5,0.5) -- (2.5,2);
+\draw[ultra thick] (1.5,1.5) -- (3,1.5);
+}
+\end{tikzpicture}
+\end{center}
+\end{column}
+\begin{column}{0.1\textwidth}
+    \begin{tikzpicture}
+        \node (0,0) {{\footnotesize $* \begin{bmatrix} -1 & 0 & 1 \\ -2 & 0 & 2 \\ -1 & 0 & 1 \end{bmatrix} = $}};
+\end{tikzpicture}
+\end{column}
+\begin{column}{0.5\textwidth}
+    \begin{center}
+    \begin{tikzpicture}
+\onslide<1-1>{
+    \node (0,0) {
+    $\begin{bmatrix}
+     &  &  &  &  &  \\
+     &  &  &  &  &  \\
+     &  &  &  & &  \\
+     &  &  &  &  &  \\
+     &  &  &  &  &  \\
+     &  &  &  &  &  \\
+     & -3 &  &  &  &  \\
+     {\color{white}0}&{\color{white}0} &{\color{white}0}  &{\color{white}0}  &{\color{white}0}  &{\color{white}0}  \\
+    \end{bmatrix}$
+    };
+}
+\onslide<2-2>{
+    \node (0,0) {
+    $\begin{bmatrix}
+     &  &  &  &  &  \\
+     &  &  &  &  &  \\
+     &  &  &  & &  \\
+     &  &  &  &  &  \\
+     &  &  &  &  &  \\
+     &  &  &  &  &  \\
+     & -3 & -3 &  &  &  \\
+     {\color{white}0}&{\color{white}0} &{\color{white}0}  &{\color{white}0}  &{\color{white}0}  &{\color{white}0}  \\
+    \end{bmatrix}$
+    };
+}
+\onslide<3-3>{
+    \node (0,0) {
+    $\begin{bmatrix}
+     &  &  &  &  &  \\
+     &  &  &  &  &  \\
+     &  &  &  & &  \\
+     &  &  &  &  &  \\
+     &  &  &  &  &  \\
+     &  &  &  &  &  \\
+     & -3 & -3 & 0 &  &  \\
+     {\color{white}0}&{\color{white}0} &{\color{white}0}  &{\color{white}0}  &{\color{white}0}  &{\color{white}0}  \\
+    \end{bmatrix}$
+    };
+}
+\onslide<4-4>{
+    \node (0,0) {
+    $\begin{bmatrix}
+     &  &  &  &  &  \\
+     &  &  &  &  &  \\
+     &  &  &  & &  \\
+     &  &  &  &  &  \\
+     &  &  &  &  &  \\
+     &  &  &  &  &  \\
+     & -3 & -3 & 0 & 0 &  \\
+     {\color{white}0}&{\color{white}0} &{\color{white}0}  &{\color{white}0}  &{\color{white}0}  &{\color{white}0}  \\
+    \end{bmatrix}$
+    };
+}
+\onslide<5-5>{
+    \node (0,0) {
+    $\begin{bmatrix}
+     &  &  &  &  &  \\
+     &  &  &  &  &  \\
+     &  &  &  & &  \\
+     &  &  &  &  &  \\
+     &  &  &  &  &  \\
+     & -4 &  &  &  &  \\
+     & -3 & -3 & 0 & 0 &  \\
+     {\color{white}0}&{\color{white}0} &{\color{white}0}  &{\color{white}0}  &{\color{white}0}  &{\color{white}0}  \\
+    \end{bmatrix}$
+    };
+}
+\onslide<6-6>{
+    \node (0,0) {
+    $\begin{bmatrix}
+     &  &  &  &  &  \\
+     &  &  &  &  &  \\
+     &  &  &  & &  \\
+     &  &  &  &  &  \\
+     &  &  &  &  &  \\
+     & -4 & -4 &  &  &  \\
+     & -3 & -3 & 0 & 0 &  \\
+     {\color{white}0}&{\color{white}0} &{\color{white}0}  &{\color{white}0}  &{\color{white}0}  &{\color{white}0}  \\
+    \end{bmatrix}$
+    };
+}
+\onslide<7-7>{
+    \node (0,0) {
+    $\begin{bmatrix}
+     &  &  &  &  &  \\
+     &  &  &  &  &  \\
+     &  &  &  & &  \\
+     &  &  &  &  &  \\
+     &  &  &  &  &  \\
+     & -4 & -4 & 0 &  &  \\
+     & -3 & -3 & 0 & 0 &  \\
+     {\color{white}0}&{\color{white}0} &{\color{white}0}  &{\color{white}0}  &{\color{white}0}  &{\color{white}0}  \\
+    \end{bmatrix}$
+    };
+}
+\onslide<8-8>{
+    \node (0,0) {
+    $\begin{bmatrix}
+     &  &  &  &  &  \\
+     &  &  &  &  &  \\
+     &  &  &  & &  \\
+     &  &  &  &  &  \\
+     &  &  &  &  &  \\
+     & -4 & -4 & 0 & 0 &  \\
+     & -3 & -3 & 0 & 0 &  \\
+     {\color{white}0}&{\color{white}0} &{\color{white}0}  &{\color{white}0}  &{\color{white}0}  &{\color{white}0}  \\
+    \end{bmatrix}$
+    };
+}
+\onslide<9-9>{
+    \node (0,0) {
+    $\begin{bmatrix}
+     &  &  &  &  &  \\
+     & 0 & 0 & -4 & -4 &  \\
+     & -1 & -1 & -3 & -3 &  \\
+     & -3 & -3 & -1 & -1 &  \\
+     & -4 & -4 & 0 & 0 &  \\
+     & -4 & -4 & 0 & 0 &  \\
+     & -3 & -3 & 0 & 0 &  \\
+     {\color{white}0}&{\color{white}0} &{\color{white}0}  &{\color{white}0}  &{\color{white}0}  &{\color{white}0}  \\
+    \end{bmatrix}$
+    };
+}
+\end{tikzpicture}
+\end{center}
+\end{column}
+\end{columns}
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Channels in, channels out}
+\begin{itemize}
+    % \item instead of keeping track of each pixel, treat each learned image feature
+    \item keep track of \emph{image feature} instead of individual pixels
+    \item node in NN is a channel ( = feature )
+    \item add bias to every channel \\\qquad\qquad$\rightarrow$ add constant to each image feature
+    \item apply $\sigma$ to each pixel
+    \item channels in $\rightarrow$ \# convolutions summed together in output
+    \item channels out $\rightarrow$ \# distinct convolution kernels learned
+\end{itemize}
+% \begin{center}
+% node = pixel
+% ~\\~\\
+% node = image
+% \end{center}
+\end{frame}
+
+%
+% \begin{frame}
+% \frametitle{Multiple channels in}
+% \begin{columns}
+%     \begin{column}{0.5\textwidth}
+%         \begin{center}
+% \begin{tikzpicture}
+%
+% \foreach \color/\shift in {blue/0.8, green/0.4, red/0}
+% {
+%     \draw[fill=white] (0-\shift,0+\shift) -- (3-\shift,0+\shift) -- (3-\shift,4+\shift) -- (0-\shift,4+\shift) -- (0-\shift,0+\shift);
+%     \draw[fill=\color!50] (0-\shift,4+\shift) -- (0-\shift,2.5+\shift) -- (2-\shift,2.5+\shift) -- (2-\shift,4+\shift) -- (0-\shift,4+\shift) ;
+%     \draw[fill=\color!50] (0-\shift,2.5+\shift) -- (1-\shift,2.5+\shift) -- (1-\shift,0.5+\shift) -- (0-\shift,0.5+\shift) -- (0-\shift,2.5+\shift);
+%     \foreach \x in {0,1,2,3,4,5,6}
+%         \draw (\x/2 -\shift,0+\shift) -- (\x/2 -\shift,4+\shift);
+%     \foreach \y in {0,1,2,3,4,5,6,7,8}
+%         \draw (0-\shift,\y/2 +\shift) -- (3-\shift,\y/2 +\shift);
+% }
+%
+%     \end{tikzpicture}
+%     \end{center}
+%     \end{column}
+%     \begin{column}{0.5\textwidth}
+% \begin{tikzpicture}
+% \foreach \c/\shift/\cc in {blue/20/white, green/10/white, red/0/red}
+% {
+%     \node[xshift=-\shift,yshift=\shift] (0,0) {\color{\c}
+%     $\begin{bmatrix}
+%     {\color{\cc} 1} & {\color{\cc} 1} & {\color{\cc} 1} & {\color{\cc} 1} &{\color{\cc} 0}& {\color{\cc} 0} \\
+%     {\color{\cc} 1} & {\color{\cc} 1} & {\color{\cc} 1} & {\color{\cc} 1} &{\color{\cc} 0}& {\color{\cc} 0} \\
+%     {\color{\cc} 1} & {\color{\cc} 1} & {\color{\cc} 1} & {\color{\cc} 1} &{\color{\cc} 0}& {\color{\cc} 0} \\
+%     {\color{\cc} 1} & {\color{\cc} 1} & {\color{\cc} 0} & {\color{\cc} 0} &{\color{\cc} 0}& {\color{\cc} 0} \\
+%     {\color{\cc} 1} & {\color{\cc} 1} & {\color{\cc} 0} & {\color{\cc} 0} &{\color{\cc} 0}& {\color{\cc} 0} \\
+%     {\color{\cc} 1} & {\color{\cc} 1} & {\color{\cc} 0} & {\color{\cc} 0} &{\color{\cc} 0}& {\color{\cc} 0} \\
+%     {\color{\cc} 1} & {\color{\cc} 1} & {\color{\cc} 0} & {\color{\cc} 0} &{\color{\cc} 0}& {\color{\cc} 0} \\
+%     {\color{\cc} 0} & {\color{\cc} 0} & {\color{\cc} 0} & {\color{\cc} 0} &{\color{\cc} 0}& {\color{\cc} 0} \\
+%     \end{bmatrix}$
+%     };
+%     }
+% \end{tikzpicture}
+% \end{column}
+% \end{columns}
+% \end{frame}
+
+
+\begin{frame}
+\frametitle{Convolution with multiple channels in}
+\begin{columns}
+    \begin{column}{0.13\textwidth}
+        \begin{center}
+\begin{tikzpicture}
+
+\foreach \color/\shift in {blue/0.8, green/0.4, red/0}
+{
+    \draw[fill=white] (0-\shift,0+\shift) -- (3-\shift,0+\shift) -- (3-\shift,4+\shift) -- (0-\shift,4+\shift) -- (0-\shift,0+\shift);
+    \draw[fill=\color!50] (0-\shift,4+\shift) -- (0-\shift,2.5+\shift) -- (2-\shift,2.5+\shift) -- (2-\shift,4+\shift) -- (0-\shift,4+\shift) ;
+    \draw[fill=\color!50] (0-\shift,2.5+\shift) -- (1-\shift,2.5+\shift) -- (1-\shift,0.5+\shift) -- (0-\shift,0.5+\shift) -- (0-\shift,2.5+\shift);
+    \foreach \x in {0,1,2,3,4,5,6}
+        \draw (\x/2 -\shift,0+\shift) -- (\x/2 -\shift,4+\shift);
+    \foreach \y in {0,1,2,3,4,5,6,7,8}
+        \draw (0-\shift,\y/2 +\shift) -- (3-\shift,\y/2 +\shift);
+}
+\end{tikzpicture}
+\end{center}
+\end{column}
+\begin{column}{0.5\textwidth}
+\begin{tikzpicture}
+\foreach \c/\shift in {blue/20, green/10, red/0}
+    {
+        \draw[xshift=-\shift,yshift=\shift,ultra thick,fill=\c!50] (0,0) -- (0,1) -- (1,1) -- (1,0) -- (0,0);
+        \draw[xshift=-\shift,yshift=\shift,ultra thick] (1/3,0) -- (1/3,1);
+        \draw[xshift=-\shift,yshift=\shift,ultra thick] (2/3,0) -- (2/3,1);
+        \draw[xshift=-\shift,yshift=\shift,ultra thick] (0,1/3) -- (1,1/3);
+        \draw[xshift=-\shift,yshift=\shift,ultra thick] (0,2/3) -- (1,2/3);
+    }
+\node[xshift=-50,yshift=20] (0,0) {{\huge $*$}};
+\draw[xshift=50,yshift=20,->,ultra thick] (0,0) -- (1.3,0) ;
+\node[xshift=110,yshift=20] (0,0) {{\large sum}};
+% \foreach \color/\shift/\yshft in {black/20/0}
+% {
+%     \draw[fill=white] (0-\shift,0+\yshft) -- (3-\shift,0+\yshft) -- (3-\shift,4+\yshft) -- (0-\shift,4+\yshft) -- (0-\shift,0+\yshft);
+%     \draw[fill=\color!50] (0-\shift,4+\yshft) -- (0-\shift,2.5+\yshft) -- (2-\shift,2.5+\yshft) -- (2-\shift,4+\yshft) -- (0-\shift,4+\yshft) ;
+%     \draw[fill=\color!50] (0-\shift,2.5+\yshft) -- (1-\shift,2.5+\yshft) -- (1-\shift,0.5+\yshft) -- (0-\shift,0.5+\yshft) -- (0-\shift,2.5+\yshft);
+%     \foreach \x in {0,1,2,3,4,5,6}
+%         \draw (\x/2 -\shift,0+\yshft) -- (\x/2 -\shift,4+\yshft);
+%     \foreach \y in {0,1,2,3,4,5,6,7,8}
+%         \draw (0-\shift,\y/2 +\yshft) -- (3-\shift,\y/2 +\yshft);
+% }
+\end{tikzpicture}
+\end{column}
+\end{columns}
+\end{frame}
+
+
+\begin{frame}
+    \frametitle{Convolution with multiple channels in}
+{\normalsize $$ (320 \times 240 \times 3) \,\, * \,\,  3 \times 3 \times 3\text{ kernel} \,\, = \,\, (320 \times 240 \times 1) $$ }
+\end{frame}
+
+\begin{frame}
+    \frametitle{Convolution with multiple channels in}
+{\normalsize $$ (n_x \times n_y \times n_{in}) \,\, * \,\,  n_k \times n_k \times n_{in} \text{ kernel} \,\, = \,\, (n_x \times n_y \times 1) $$ }
+~\\
+\begin{columns}[t]
+    \begin{column}{0.5\textwidth}
+        \begin{itemize}
+            \item $n_x$ : pixels in $x$ direction
+            \item $n_y$ : pixels in $y$ direction
+            \item $n_k$ : window size of convolution kernel
+        \end{itemize}
+    \end{column}
+    \begin{column}{0.5\textwidth}
+        \begin{itemize}
+            \item $n_{in}$ \,: channels in
+            \item $n_{out}$ : channels out
+        \end{itemize}
+    \end{column}
+\end{columns}
+
+\end{frame}
+
+
+\begin{frame}
+    \frametitle{Convolution with multiple channels out}
+    {\normalsize $$ (n_x \times n_y \times n_{in}) \,\, * \,\,  [\, n_k \times n_k \times n_{in} \, ]\times n_{out} \text{ kernel} \,\, = \,\, (n_x \times n_y \times n_{out}) $$ }
+    ~\\
+    \begin{columns}[t]
+        \begin{column}{0.5\textwidth}
+            \begin{itemize}
+                \item $n_x$ : pixels in $x$ direction
+                \item $n_y$ : pixels in $y$ direction
+                \item $n_k$ : window size of convolution kernel
+            \end{itemize}
+        \end{column}
+        \begin{column}{0.5\textwidth}
+            \begin{itemize}
+                \item $n_{in}$ \,: channels in
+                \item $n_{out}$ : channels out
+            \end{itemize}
+        \end{column}
+    \end{columns}
+
+\end{frame}
+
+
+\begin{frame}
+    \frametitle{A complete convolution layer}
+$$ \text{layer}_\ell \longmapsto \vec{\sigma} \left(\,\, \text{layer}_{\ell} \,\,*\,\, \text{kernel}_{\ell} \,\,+ \text{bias}_\ell \,\,\right) = \text{layer}_{\ell+1}$$
+\end{frame}
+
+
+\begin{frame}
+    \frametitle{Downsides}
+\begin{itemize}
+    \item Longer to train \\\qquad $\rightarrow$ backpropagation needs global data \\\qquad {\color{white}$\rightarrow$} to update kernel weights \\ \qquad $\rightarrow$ generalization: locally connected layers ~\\~\\
+    \item Requires a grid \\\qquad $\rightarrow$ generalization: graph convolutions
+\end{itemize}
+\end{frame}
+
+\section{Multi-resolution Networks}
+\begin{frame}
+    \frametitle{Data at multiple scales}
+\begin{itemize}
+    \item images
+    \item time series data
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}
+    \frametitle{Downsampling and Upsampling}
+\begin{itemize}
+    \item Reduces/increases number of pixels at each node
+    \item Captures data at different resolutions
+    \item Removes noise
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}
+    \frametitle{Example: Downsampling via Max Pooling}
+    \begin{columns}
+        \begin{column}{0.5\textwidth}
+            \begin{center}
+    \begin{tikzpicture}
+        \draw[fill=black!20] (0,4) -- (0,2.5) -- (2,2.5) -- (2,4) -- (0,4) ;
+        \draw[fill=black!50] (0,2.5) -- (1,2.5) -- (1,0.5) -- (0,0.5) -- (0,2.5);
+        \draw[ultra thick] (0,3) -- (0,2) -- (1,2) -- (1,3) -- (0,3);
+        \draw[ultra thick] (0,2.5) -- (1,2.5);
+        \draw[ultra thick] (0.5,2) -- (0.5,3);
+    \foreach \x in {0,1,2,3,4,5,6}
+        \draw (\x/2,0) -- (\x/2,4);
+    \foreach \y in {0,1,2,3,4,5,6,7,8}
+        \draw (0,\y/2) -- (3,\y/2);
+    \end{tikzpicture}
+    \end{center}
+    \end{column}
+        \begin{column}{0.5\textwidth}
+            \begin{center}
+    \begin{tikzpicture}
+        \draw[fill=black!20] (0,4) -- (2,4) -- (2,2) -- (1,2) --(1,3) --(0,3) -- (0,4) ;
+        \draw[fill=black!50] (0,3) -- (1,3) -- (1,0) -- (0,0) -- (0,3);
+        \draw[ultra thick] (0,3) -- (0,2) -- (1,2) -- (1,3) -- (0,3);
+    \foreach \x in {0,1,2,3}
+        \draw (\x,0) -- (\x,4);
+    \foreach \y in {0,1,2,3,4}
+        \draw (0,\y) -- (3,\y);
+    \end{tikzpicture}
+    \end{center}
+    \end{column}
+    \end{columns}
+
+\end{frame}
+
+
+\begin{frame}
+    \frametitle{Example: Upsampling}
+    \begin{columns}
+    \begin{column}{0.5\textwidth}
+        \begin{center}
+\begin{tikzpicture}
+    \draw[fill=black!20] (0,4) -- (2,4) -- (2,2) -- (1,2) --(1,3) --(0,3) -- (0,4) ;
+    \draw[fill=black!50] (0,3) -- (1,3) -- (1,0) -- (0,0) -- (0,3);
+    \draw[ultra thick] (0,3) -- (0,2) -- (1,2) -- (1,3) -- (0,3);
+\foreach \x in {0,1,2,3}
+    \draw (\x,0) -- (\x,4);
+\foreach \y in {0,1,2,3,4}
+    \draw (0,\y) -- (3,\y);
+\end{tikzpicture}
+\end{center}
+\end{column}
+\begin{column}{0.5\textwidth}
+     \begin{center}
+\begin{tikzpicture}
+    \draw[fill=black!20] (0,4) -- (2,4) -- (2,2) -- (1,2) --(1,3) --(0,3) -- (0,4) ;
+    \draw[fill=black!50] (0,3) -- (1,3) -- (1,0) -- (0,0) -- (0,3);
+    \draw[ultra thick] (0,3) -- (0,2) -- (1,2) -- (1,3) -- (0,3);
+    \draw[ultra thick] (0,2.5) -- (1,2.5);
+    \draw[ultra thick] (0.5,2) -- (0.5,3);
+\foreach \x in {0,1,2,3,4,5,6}
+ \draw (\x/2,0) -- (\x/2,4);
+\foreach \y in {0,1,2,3,4,5,6,7,8}
+ \draw (0,\y/2) -- (3,\y/2);
+\end{tikzpicture}
+\end{center}
+\end{column}
+\end{columns}
+
+\end{frame}
+
+\begin{frame}
+    \frametitle{Pooling causes loss of information}
+    \begin{columns}
+    \begin{column}{0.5\textwidth}
+        \begin{center}
+            \begin{tikzpicture}
+                \draw[fill=black!20] (0,4) -- (0,2.5) -- (2,2.5) -- (2,4) -- (0,4) ;
+                \draw[fill=black!50] (0,2.5) -- (1,2.5) -- (1,0.5) -- (0,0.5) -- (0,2.5);
+                % \draw[ultra thick] (0,3) -- (0,2) -- (1,2) -- (1,3) -- (0,3);
+                % \draw[ultra thick] (0,2.5) -- (1,2.5);
+                % \draw[ultra thick] (0.5,2) -- (0.5,3);
+            \foreach \x in {0,1,2,3,4,5,6}
+                \draw (\x/2,0) -- (\x/2,4);
+            \foreach \y in {0,1,2,3,4,5,6,7,8}
+                \draw (0,\y/2) -- (3,\y/2);
+            \end{tikzpicture} ~\\
+            Original
+\end{center}
+\end{column}
+\begin{column}{0.5\textwidth}
+     \begin{center}
+\begin{tikzpicture}
+    \draw[fill=black!20] (0,4) -- (2,4) -- (2,2) -- (1,2) --(1,3) --(0,3) -- (0,4) ;
+    \draw[fill=black!50] (0,3) -- (1,3) -- (1,0) -- (0,0) -- (0,3);
+    % \draw[ultra thick] (0,3) -- (0,2) -- (1,2) -- (1,3) -- (0,3);
+    % \draw[ultra thick] (0,2.5) -- (1,2.5);
+    % \draw[ultra thick] (0.5,2) -- (0.5,3);
+\foreach \x in {0,1,2,3,4,5,6}
+ \draw (\x/2,0) -- (\x/2,4);
+\foreach \y in {0,1,2,3,4,5,6,7,8}
+ \draw (0,\y/2) -- (3,\y/2);
+\end{tikzpicture} ~\\
+Downsampled and upsampled
+\end{center}
+\end{column}
+\end{columns}
+
+\end{frame}
+
+\begin{frame}
+    \frametitle{Usage}
+\begin{tikzpicture}
+    \foreach \s in {0,5,10}
+    {
+    \draw[fill=white,xshift=\s,yshift=-\s] (0,1) -- (1,1) -- (1,2) -- (0,2) -- (0,1);
+    \draw[xshift=\s,yshift=-\s] (0.5,1) -- (0.5,2);
+    \draw[xshift=\s,yshift=-\s] (0.25,1) -- (0.25,2);
+    \draw[xshift=\s,yshift=-\s] (0.75,1) -- (0.75,2);
+    \draw[xshift=\s, yshift=-\s] (1,1.5) -- (0,1.5);
+    \draw[xshift=\s, yshift=-\s] (1,1.25) -- (0,1.25);
+    \draw[xshift=\s, yshift=-\s] (1,1.75) -- (0,1.75);
+    \draw[fill=white,xshift=\s,yshift=-\s] (3,1) -- (4,1) -- (4,2) -- (3,2) -- (3,1);
+    \draw[xshift=\s,yshift=-\s] (3.5,1) -- (3.5,2);
+    \draw[xshift=\s,yshift=-\s] (3.25,1) -- (3.25,2);
+    \draw[xshift=\s,yshift=-\s] (3.75,1) -- (3.75,2);
+    \draw[xshift=\s, yshift=-\s] (3,1.5) -- (4,1.5);
+    \draw[xshift=\s, yshift=-\s] (3,1.25) -- (4,1.25);
+    \draw[xshift=\s, yshift=-\s] (3,1.75) -- (4,1.75);
+    \draw[fill=white,xshift=\s,yshift=-\s] (3,-2) -- (4,-2) -- (4,-1) -- (3,-1) -- (3,-2);
+    \draw[xshift=\s,yshift=-\s] (3.5,-1) -- (3.5,-2);
+    \draw[xshift=\s, yshift=-\s] (3,-1.5) -- (4,-1.5);
+}
+\draw[->] (1.5,1.5) -- (2.5,1.5);
+\draw[->,above left] (2,1.5) -- (2,-1.5) node {{\small MaxPool}}-- (2.5,-1.5);
+\draw[->,above] (4.5,1.5) -- node {{\small Conv2D}} (9.5,1.5) ;
+\draw[->,above] (4.5,-1.5) -- node {{\small Conv2D}} (7.5,-1.5) ;
+\foreach \s in {0,5,10,15}
+    {
+    \draw[fill=white,xshift=\s,yshift=-\s] (8,-2) -- (9,-2) -- (9,-1) -- (8,-1) -- (8,-2);
+    \draw[xshift=\s,yshift=-\s] (8.5,-1) -- (8.5,-2);
+    \draw[xshift=\s, yshift=-\s] (8,-1.5) -- (9,-1.5);
+}
+\draw[->,above right] (10,-1.5) -- (11.5,-1.5) node {{\small Upsample}}-- (11.5,-0.5);
+\foreach \s in {0,5,10,15,20,25,30}
+    {
+\draw[fill=white,xshift=\s,yshift=-\s] (10,1) -- (11,1) -- (11,2) -- (10,2) -- (10,1);
+\draw[xshift=\s,yshift=-\s] (10.5,1) -- (10.5,2);
+\draw[xshift=\s,yshift=-\s] (10.25,1) -- (10.25,2);
+\draw[xshift=\s,yshift=-\s] (10.75,1) -- (10.75,2);
+\draw[xshift=\s,yshift=-\s] (11,1.5) -- (10,1.5) ;
+\draw[xshift=\s,yshift=-\s] (11,1.25) -- (10,1.25) ;
+\draw[xshift=\s,yshift=-\s] (11,1.75) -- (10,1.75) ;
+}
+\draw (9.75,2) -- (9.75,1) -- (10.2,0.55);
+\draw (10.3,0.45) -- (11,-0.25) -- (12,-0.25);
+\end{tikzpicture}
+
+\end{frame}
+
+
+
+\begin{frame}
+    \frametitle{Concerns}
+    \begin{itemize}
+\item aliasing : lose high frequencies
+\item loss of information : downsample + upsample $\ne$ original
+\end{itemize}
+\end{frame}
+
+
+\section{Dropout}
+\begin{frame}
+    \frametitle{Why use Dropout}
+\begin{itemize}
+    \item Form of regularization \\ \qquad\qquad $\rightarrow$ force net to learn redundancies ~\\~\\
+    \item Protects against overfitting \\\qquad\qquad $\rightarrow$ better generalization
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}
+    \frametitle{What is Dropout?}
+\begin{enumerate}
+    \item Before training, fix probability $p$
+    \item Each epoch, take $z_i \sim$ Ber$(p)$ for each output channel $i$
+    \item If $z_i = 1$, update channel $i$ during this epoch
+    \item Else, ignore channel $i$ during this epoch
+\end{enumerate}
+\end{frame}
+
+\begin{frame}
+    \frametitle{What is Dropout?}
+\begin{equation*} \begin{split}
+z_i &\sim \text{Ber}(p) \quad \text{for each channel }i \text{ in layer output} \\
+Z &= \text{diag}(z_i) \\
+&\\
+x &\mapsto Z \vec{\sigma}(W x + b) \\
+\end{split} \end{equation*}
+\end{frame}
+
+\begin{frame}
+    \frametitle{Notes}
+\begin{itemize}
+    \item Each epoch, a random subset of channels is updated
+    \item At evaluation, all channels are used
+    \item Drop channels, not individual weights
+    \begin{itemize}
+        \item Feedforward NN : drop neurons
+        \item Convolutional NN : drop channels
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}
+    \frametitle{Changes to training}
+\begin{itemize}
+    \item Requires more steps of gradient descent
+    \item Fewer parameters to update at every step \\ \qquad\qquad $\rightarrow$ empirically trains faster ~\\~\\
+    \item No extra parameters to learn
+\end{itemize}
+\end{frame}
+
+
+
+\section{Batch Normalization}
+\begin{frame}
+    \frametitle{Batch Normalization}
+    \begin{itemize}
+        \item combat vanishing and exploding gradients
+        \item assume each layer maintains same relative scale + distribution
+        \item fight \emph{covariance shift}
+    \end{itemize}
+\end{frame}
+
+
+\begin{frame}
+    \frametitle{Details}
+Normalize each channel individually, then rescale
+\begin{enumerate}
+    \item $\mu_B$ = batch mean
+    \item $\sigma_B$ = batch variance
+    \item Normalize each channel $x \longmapsto \frac{x - \mu_B}{\sigma_B} := \hat{x}$
+    \item Affine transformation $\hat{x} \longmapsto \gamma \, \hat{x} + \beta$
+\end{enumerate}
+\end{frame}
+
+\begin{frame}
+    \frametitle{Changes to training}
+\begin{itemize}
+    \item Allows (empirically) use of bigger learning rates \\
+    \qquad\qquad $\rightarrow$ easier to train ~\\~\\
+    \item Backpropagation to update $\gamma,\,\beta$
+\end{itemize}
+\end{frame}
+%
+% %***********************************************************
+%
+\begin{frame}{Summary}
+\begin{columns}[t]
+    \begin{column}{0.5\textwidth}
+\begin{itemize}
+\item convolutions
+\item upsampling and downsampling
+\item dropout
+\item batch normalization
+\end{itemize}
+\end{column}
+\begin{column}{0.5\textwidth}
+\begin{itemize}
+    \item combat model complexity
+    \item improve generalization
+    \item overcome difficulties in training
+\end{itemize}
+\end{column}
+\end{columns}
+\end{frame}
+% %***********************************************************
+\end{document}

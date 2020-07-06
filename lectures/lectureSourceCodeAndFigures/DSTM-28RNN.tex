@@ -1,0 +1,623 @@
+%Copyright 2019 Christopher M. Jermaine (cmj4@rice.edu) and Risa B. Myers (rbm2@rice.edu)
+%
+%Licensed under the Apache License, Version 2.0 (the "License");
+%you may not use this file except in compliance with the License.
+%You may obtain a copy of the License at
+%
+%    https://www.apache.org/licenses/LICENSE-2.0
+%
+%Unless required by applicable law or agreed to in writing, software
+%distributed under the License is distributed on an "AS IS" BASIS,
+%WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+%See the License for the specific language governing permissions and
+%limitations under the License.
+%===============================================================
+\documentclass[aspectratio=169]{beamer}
+\mode<presentation> 
+{
+\usetheme[noshadow, minimal,numbers,riceb,nonav]{Rice}
+\usefonttheme[onlymath]{serif}
+\setbeamercovered{transparent}
+}
+\useinnertheme{rectangles}
+
+\usepackage[english]{babel}
+
+\usepackage{amsmath}
+\usepackage{mathptmx}
+\usepackage{helvet}
+\usepackage{courier}
+\usepackage[T1]{fontenc}
+\usepackage{trajan}
+\usepackage{ textcomp }
+\usepackage{listings}
+
+\newenvironment{noindentitemize}
+{ \begin{itemize}
+ \setlength{\itemsep}{1.5ex}
+  \setlength{\parsep}{0pt}   
+  \setlength{\parskip}{0pt}
+ \addtolength{\leftskip}{-2em}
+ }
+{ \end{itemize} }
+
+\newenvironment{noindentitemize2}
+{ \begin{itemize}
+  \setlength{\itemsep}{0ex}
+  \setlength{\parskip}{0pt}
+  \setlength{\parsep}{0pt}   
+  \addtolength{\leftskip}{-2em}  }
+{ \end{itemize} }
+
+  
+  \lstnewenvironment{SQL}
+  {\lstset{
+        aboveskip=5pt,
+        belowskip=5pt,
+        escapechar=!,
+        mathescape=true,
+        upquote=true,
+        language=C,
+        basicstyle=\linespread{0.94}\ttfamily\footnotesize,
+	morekeywords={FOR, TO},
+        deletekeywords={VALUE, PRIOR},
+        showstringspaces=true}
+        \vspace{0pt}%
+        \noindent\minipage{0.47\textwidth}}
+  {\endminipage\vspace{0pt}}
+  
+\newcommand{\LIKES}{\textrm{LIKES}} 
+\newcommand{\FREQUENTS}{\textrm{FREQUENTS}} 
+\newcommand{\SERVES}{\textrm{SERVES}} 
+\newcommand{\CAFE}{\textrm{CAFE}} 
+\newcommand{\COFFEE}{\textrm{COFFEE}} 
+\newcommand{\DRINKER}{\textrm{DRINKER}} 
+\newcommand{\ALLPEEPS}{\textrm{ALLPEEPS}} 
+\newcommand{\ALLCOMBOS}{\textrm{ALLCOMBOS}} 
+
+
+\setbeamerfont{block body}{size=\tiny}
+
+%===============================================================%
+
+\title[]
+{Tools \& Models for Data Science}
+
+\subtitle{Deep Neural Networks (3): RNN}
+
+\author[]{Chris Jermaine \& Risa Myers}
+\institute
+{
+  Rice University 
+}
+
+\date[]{}
+
+\subject{Beamer}
+
+\begin{document}
+
+\begin{frame}
+ \titlepage
+\end{frame}
+%***********************************************************
+\begin{frame}{Objectives}
+
+\begin{itemize}
+\item Learn about another neural network architecture
+\item Learn about the types of problems which are well-suited to it
+\end{itemize}
+\end{frame}
+%***********************************************************
+\begin{frame}{Data}
+
+\begin{itemize}
+	\item[?] What kinds of input have we considered so far (in the course)?
+\end{itemize}
+\end{frame}
+%%***********************************************************
+%\begin{frame}{Data}
+%
+%\begin{itemize}
+%	\item What kinds of input have we considered so far (in the course)?
+%	\begin{itemize}
+%	\item Rx counts and costs
+%%	\item Genome sequences
+%	\item PubMed abstracts
+%	\item Clinical trial descriptions
+%	\item Books (Sherlock Holmes, War and Peace, Shakespeare)
+%	\item Wikipedia newsgroups
+%	\end{itemize}
+%	\item[?] How have we represented the text data?
+%\end{itemize}
+%\end{frame}
+%***********************************************************
+\begin{frame}{Data Representation}
+
+\begin{itemize}
+%	\item What kinds of input have we considered so far (in the course)?
+%	\begin{itemize}
+%	\item Rx counts and costs
+%%	\item Genome sequences
+%	\item PubMed abstracts
+%	\item Clinical trial descriptions
+%	\item Books (Sherlock Holmes, War and Peace, Shakespeare)
+%	\item Wikipedia newsgroups
+%	\end{itemize}
+	\item How have we represented the text data?
+	\begin{itemize}
+		\item Bag of words
+	\end{itemize}
+	\item[?] What are the limitations of this representation?
+\end{itemize}
+\end{frame}
+%***********************************************************
+\begin{frame}{Issues with Data Representation}
+
+\begin{itemize}
+%	\item What kinds of input have we considered so far (in the course)?
+%	\begin{itemize}
+%	\item Rx counts and costs
+%	\item Genome sequences
+%	\item PubMed abstracts
+%	\item Clinical trial descriptions
+%	\item Books (Sherlock Holmes, War and Peace, Shakespeare)
+%	\item Wikipedia newsgroups
+%	\end{itemize}
+	\item How have we represented the text data?
+	\begin{itemize}
+		\item Bag of words
+	\end{itemize}
+	\item What are the limitations of this representation?
+	\begin{itemize}
+		\item Lose the order/context
+		\item Fixed dictionary
+	\end{itemize}
+\end{itemize}
+\end{frame}
+%***********************************************************
+\begin{frame}{Consider our Simple Feed-Forward Networks}
+
+\begin{itemize}
+	\item They don't easily handle sequences
+	\item What if I want to classify text docs?
+	\begin{itemize}
+	\item And I don't want to do the bag-of-words thing
+	\item After all: bag-of-words loses word order
+	\item[?] What are my options?
+	\end{itemize}
+\end{itemize}
+\end{frame}
+%***********************************************************
+\begin{frame}{Consider our Simple Feed-Forward Networks}
+
+\begin{itemize}
+	\item They don't easily handle sequences
+	\item What if I want to classify text docs?
+	\begin{itemize}
+	\item And I don't want to do the bag-of-words thing
+	\item After all: bag-of-words loses word order
+	\item What are my options?
+		\begin{itemize}
+		\item Sequence of tokens
+		\end{itemize}
+	\end{itemize}
+\end{itemize}
+\end{frame}
+
+%***********************************************************
+\begin{frame}{Standard Idea}
+
+\begin{columns}
+\begin{column}{0.5\textwidth}
+\begin{itemize}
+	\item Use FF network with enough input units (e.g. 20,000 tokens or 20,000 characters)
+	\begin{itemize}
+	\item To handle any document in training
+	\item Pad unused tokens with a special character
+	\end{itemize}
+\end{itemize}
+\end{column}
+\begin{column}{0.5\textwidth}
+\includegraphics[width=1\textwidth]{lectRNN/tokens.pdf}
+\end{column}
+\end{columns}
+\end{frame}
+%***********************************************************
+\begin{frame}{Issues with Standard idea}
+
+\begin{itemize}
+	\item High model complexity
+	\begin{itemize}
+	\item Max $n$ input tokens
+	\item Size $m$ first hidden layer
+	\item Means $n \times m$ weights to learn
+	$$10^4 \times 10^5 = 10^9 = 1\text{B weights}$$
+	\item[?] What if max tokens is 100K, average is 1000?
+	\end{itemize}
+\end{itemize}
+\end{frame}
+%***********************************************************
+\begin{frame}{Issues}
+
+\begin{itemize}
+	\item High model complexity
+	\begin{itemize}
+	\item Max $n$ input tokens
+	\item Size $m$ first hidden layer
+	\item Means $n \times m$ weights to learn
+	\item What if max tokens is 100K, average is 1000?
+	\vspace{2em}
+	\item[?] What other issues are there? 
+\end{itemize}
+\end{itemize}
+\end{frame}
+%***********************************************************
+\begin{frame}{Other issues}
+	\begin{itemize}
+	\item We are spending effort learning a network that is too big
+	\item Likely not much training data for right-most inputs
+	\item We can't handle bigger lengths (training or test)
+	\item We have to use all the inputs
+	\end{itemize}
+\end{frame}
+%***********************************************************
+\begin{frame}{Token position issue}
+
+\begin{itemize}
+	\item Position $i$ treated as different from position $j$
+	\begin{itemize}
+	\item Not always the case!
+	\item If we see ``kitten'' at pos 34 or pos 1034, it is perhaps the same
+	\item We want to recognize pattern ``kitten'' regardless of position
+	\item Or consider swapping the order of 2 paragraphs on Wikipedia. No one would notice!
+	\begin{itemize}
+	\item Whether or not it matters depends on the data / context
+	\end{itemize}
+	\end{itemize}
+\end{itemize}
+\end{frame}
+%***********************************************************
+\begin{frame}{FFs on Fixed Length Sequences of Tokens}
+
+\begin{itemize}
+	\item Don't work well
+	\item Alternatives?
+	\begin{itemize}
+	\item Recurrent Neural Networks (RNNs)
+	\end{itemize}
+	\item How do these help?
+	\begin{itemize}
+	\item Add extra nodes that preserve context (order, state)
+	\item Incorporated via extra connections that cyclically link layers
+	\end{itemize}
+\end{itemize}
+\end{frame}
+%***********************************************************
+\begin{frame}{What does an RNN look like?}
+
+\begin{columns}
+\begin{column}{0.5\textwidth}
+\begin{itemize}
+	\item Classic RNN is Elman Network
+	\item The output from the hidden layer is pushed to the output AND copied to the state layer
+	\item Input from context neurons is fed in with the input data
+	\item There are NO weights from the hidden layer neurons output to the states
+	\item There ARE weights from the states  to the neuron inputs
+	\item There is a 1-1 correspondence between the saved state and each hidden node
+\end{itemize}
+\end{column}
+\begin{column}{0.5\textwidth}
+\includegraphics[width=1\textwidth]{lectRNN/Elman.pdf}
+\end{column}
+\end{columns}
+\end{frame}
+%***********************************************************
+\begin{frame}[fragile]{Elman Network}
+
+\begin{itemize}
+	\item Has a set of context nodes (the "state layer") (``s'' neurons in previous slide)
+	\item They read value of the hidden layer
+	\begin{itemize}
+		\item Non-trainable (e.g. values are not transformed)
+		\item Value simply remembered for one time tick 
+	\end{itemize}
+	\item To process $t$ ticks  of data:
+\end{itemize}
+
+\begin{SQL}
+init value of states in context/state layer to zeros
+for i = 1 to $t$
+  read input $x_i$
+  update hidden layer using $x_i$ along with state layer  
+  if ($i == t$) // for sequence-to-sequence, omit "if clause"
+    hidden layer used to produce output
+  hidden layer copied to state layer
+end for 
+\end{SQL}
+\end{frame}
+
+%***********************************************************
+\begin{frame}{RNN applications}
+
+\begin{columns}[t]
+\begin{column}{0.3\textwidth}
+Data
+\begin{enumerate}
+	\item Video data
+	\item Voice
+	\item Text
+	\item[]
+	\item Other time sequence
+	\begin{itemize}
+	\item Stock values 
+	\item Temperatures 
+	\end{itemize} 
+\end{enumerate}
+\end{column}
+\begin{column}{0.4\textwidth}
+Input
+\begin{enumerate}
+	\item Sequence of images
+	\item Sequence of signal values
+	\item Sequence of characters/tokens
+	\item Sequence of [multidimensional] numeric values
+\end{enumerate}
+\end{column}
+\begin{column}{0.3\textwidth}
+Output
+\begin{itemize}
+	\item Also a sequence
+	\item Generated at each time tick
+	\item Examples
+\begin{enumerate}
+	\item Video captions
+	\item Translation
+	\item Parts of speach
+	\item Classification
+\end{enumerate}
+\end{itemize}
+\end{column}
+\end{columns}
+\end{frame}
+
+%***********************************************************
+\begin{frame}[fragile]{Elman Network in Practice}
+
+\begin{columns}
+\begin{column}{0.6\textwidth}
+\begin{itemize}
+	\item Concatenate $x_i$ and the state values
+	\item Perform the matrix multiplication to get the inputs to the next layer
+	\item At the top, use only the hidden layer to product the output
+\end{itemize}
+\end{column}
+\begin{column}{0.4\textwidth}
+\includegraphics[width=1\textwidth]{lectRNN/Elman.pdf}
+\end{column}
+\end{columns}
+\end{frame}
+
+%***********************************************************
+\begin{frame}{Elman Network}
+
+\begin{columns}
+\begin{column}{0.4\textwidth}
+\begin{itemize}
+	\item We can have many hidden layers
+	\item That is, a ``deep net''
+	\item In this case
+	\begin{itemize}
+		\item Last hidden layer output copied to state
+		\item State used as input to first hidden layer...
+	\begin{itemize}
+		\item In next time tick
+	\end{itemize}
+	\end{itemize}
+\end{itemize}
+\end{column}
+\begin{column}{0.6\textwidth}
+\includegraphics[width=1\textwidth]{lectRNN/ElmanDeep.pdf}
+\end{column}
+\end{columns}
+\end{frame}
+
+%***********************************************************
+\begin{frame}{Jordan Network}
+
+\begin{columns}
+\begin{column}{0.4\textwidth}
+\begin{itemize} 
+	\item Similar, but copy output values, not hidden values
+	\item Can be used for sequence-to-sequence
+	\item Must be producing output at each tick
+\end{itemize}
+\end{column}
+\begin{column}{0.6\textwidth}
+\includegraphics[width=1\textwidth]{lectRNN/Jordan.pdf}
+\end{column}
+\end{columns}
+\end{frame}
+%***********************************************************
+\begin{frame}{Deep Jordan Network}
+
+\includegraphics[width=1\textwidth]{lectRNN/JordanDeep.pdf}
+
+\end{frame}
+
+%***********************************************************
+\begin{frame}{Training}
+
+\begin{itemize}
+        \item Classic algorithm is back-propagation through time
+	\item That is, view RNN as compact representation for a complex graph
+	\item Unroll the complex graph
+	\item And then use back-propagation on that
+	\begin{itemize}
+		\item Key difference from classic back-propagation:
+	\begin{itemize}
+		\item Weights are constrained to repeat
+		% since you are learning one set of weights, but basically unrolling the network, it appears to be possible to have > 1 set of weights, but it's not
+	\end{itemize}
+	\end{itemize}
+\end{itemize}
+\end{frame}
+%***********************************************************
+\begin{frame}{Example: Unrolling an Elman Network}
+
+\includegraphics[width=0.85\textwidth]{lectRNN/Unrolled.jpg}
+
+\begin{itemize}
+	\item Example of unrolling a network for three time ticks
+	\item Note distance backpropped error from last time tick must travel
+	\begin{itemize}
+		\item Goes through output neurons at time tick 3
+		\item Through hidden neurons time tick 3
+		\item Through hidden neurons time tick 2
+		\item Through hidden neurons time tick 1
+	\end{itemize}
+\end{itemize}
+\end{frame}
+%***********************************************************
+\begin{frame}{Training Difficulty: Vanishing Gradient}
+
+\begin{itemize}
+	\item Errors fall off exponentially as backpropped thru layers	
+	\begin{itemize}
+		\item Problem is that derivative of loss wrt activation function often $<< 1$
+		\item Repeatedly multiplying causes backpropped errors to tend to zero
+		\item Happens with deep, feed-forward nets, too 
+		\item But unrolled RNNs are often especially deep
+	\end{itemize}
+\end{itemize}
+
+\end{frame}
+%***********************************************************
+\begin{frame}{Training Difficulty: Vanishing Gradient}
+
+\begin{itemize}
+	\item Errors fall off exponentially as backpropped thru layers	
+	\begin{itemize}
+		\item Problem is that derivative of loss wrt activation function often $<< 1$
+		\item Repeatedly multiplying causes backpropped errors to tend to zero
+		\item Happens with deep, feed-forward nets, too 
+		\item But unrolled RNNs are often especially deep
+	\end{itemize}
+	\item Means that in a deep net...
+	\begin{itemize}
+	\item ...backprop does not affect weights much in first (leftmost) few layers
+	\end{itemize}
+\end{itemize}
+
+\end{frame}
+%***********************************************************
+\begin{frame}{Training Difficulty: Vanishing Gradient}
+
+\begin{itemize}
+	\item Especially a problem if there is just one output at end of unrolled RNN
+	\item Like in a pure classification task
+	\begin{itemize}
+	\item Means that you will learn to classify
+	\item ...using only the last few time-tick's worth of data
+	\item Because early data can't interact with backpropped error
+	\item Starting or ending data ends of being prioritized (depending on order data is fed in)
+	\item Mitigation
+		\begin{itemize}
+		\item Batch normalization - normalize inputs to each layer
+		% https://towardsdatascience.com/batch-normalization-in-neural-networks-1ac91516821c
+		\end{itemize}
+	\end{itemize}
+\end{itemize}
+
+\end{frame}
+%***********************************************************
+\begin{frame}{Problem With RNNs}
+
+\begin{itemize}
+	\item The ``vanishing gradient'' problem
+	\item During back-propagation
+	\begin{itemize}
+	\item Update magnitude drops exponentially with distance from output
+	\item Recall 
+        $$ \frac{\partial L}{\partial w_{i,j,k}} = \frac{\partial L}{\partial y_{i,k}}
+                                                \frac{\partial y_{i,k}}{\partial v_{i,k}}
+                                                \frac{\partial v_{i,k}}{\partial w_{i,j,k}}$$
+	\item If activation function is logistic function $\sigma$ then
+	$\frac{\partial y_{i,k}}{\partial v_{i,k}} = \sigma (v_{i,k})(1 - \sigma (v_{i,k}))$
+	\item Means you have a multiplier that maxes out at 0.25
+	\item Max value is when $v_{i,k} = 0.5$
+	\item $\sigma(0.5) = 0.25$
+	\item As you back-propagate, you keep multiplying by this in DP... $.25 \times .25 \times .25 ...$ gradient gets tiny
+	\end{itemize}
+	\item Result is that output at time tick $t$...
+	\begin{itemize}
+	\item ...has little interaction with input at tick $t - 100$ during back-propagation
+	\item Practically speaking: means back-propagation has limited-duration memory
+	\end{itemize}
+\end{itemize}
+\end{frame}
+
+%***********************************************************
+\begin{frame}{Other Issues with RNNs}
+
+\begin{itemize}
+	\item Very expensive to train
+	\item Still expensive to use
+	\item Alternatives?
+	\begin{itemize}
+	\item Long Short Term Memory networks (LSTMs) 
+	\end{itemize}
+
+\end{itemize}
+
+\end{frame}
+%***********************************************************
+\begin{frame}{LSTMs}
+
+\begin{itemize} 
+	\item Long Short Term Memory networks
+	\begin{itemize}
+	\item Special RNN designed to deal with vanishing gradient problem
+	\item In LSTM, long term memory is not pushed through activation functions
+	\item So we don't have vanishing gradients
+	\item \url{http://colah.github.io/posts/2015-08-Understanding-LSTMs/}
+	\end{itemize}
+\end{itemize}
+\end{frame}
+%***********************************************************
+
+\begin{frame}{Tokens or characters?}
+\begin{itemize}
+\item Depends on what you are trying to learn
+\item Tokens
+\begin{itemize}
+	\item Can stem words / tokens
+	\item Fewer parameters needed 
+	\item Lower computational cost
+\end{itemize}
+\item Characters
+\begin{itemize}
+	\item Smaller input dataset 
+	\item Little to no preprocessing needed
+	\item Better for some languages (morphologically rich)
+	\item Grammar is reflected more in words than in position
+\end{itemize}
+\end{itemize}
+
+
+\end{frame}
+%***********************************************************
+
+\begin{frame}{Wrap up}
+\begin{itemize}
+	\item[?] How can we use what we learned today?
+	\item What RNNs are and how they work
+	\vspace{2em}
+	\item[?] What do we know now that we didn't know before?
+	\item How to handle sequential data in a neural network
+\end{itemize}
+
+
+\end{frame}
+
+\end{document}

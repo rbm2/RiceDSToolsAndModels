@@ -84,7 +84,7 @@
 \title[]
 {Tools \& Models for Data Science}
 
-\subtitle{Deep Neural Networks (1)}
+\subtitle{Neural Networks (1)}
 
 \author[]{Chris Jermaine \& Risa Myers}
 \institute
@@ -102,8 +102,20 @@
  \titlepage
 \end{frame}
 %***********************************************************
-\begin{frame}{What Is a Deep NN?}
+\begin{frame}{Objectives}
 
+\begin{itemize}
+\item Learn what an Artificial Neural Network is
+\item Learn the history of neural networks
+\item Learn components of and terminology for neural networks
+\item Learn the types of problems that can be addressed with neural networks
+\end{itemize}
+\end{frame}
+%***********************************************************
+\begin{frame}{What Is a Neural Network?}
+
+\begin{columns}
+\begin{column}{0.5\textwidth}
 \begin{itemize}
 	\item At highest level
 	\begin{itemize}
@@ -111,6 +123,11 @@
 		\item Often represented as a graph
 	\end{itemize}
 \end{itemize}
+\end{column}
+\begin{column}{0.5\textwidth}
+\includegraphics[width=1\textwidth]{lectFF/nn.pdf}
+\end{column}
+\end{columns}
 \end{frame}
 %***********************************************************
 \begin{frame}{Some History: 1950s}
@@ -129,7 +146,10 @@
 \end{itemize}
 \end{column}
 \begin{column}{0.4\textwidth}
-\includegraphics[width=1\textwidth]{lectFF/vna.pdf}
+\begin{centering}
+\includegraphics[width=1\textwidth]{lectFF/vna.pdf}\\
+von Neumann architecture
+\end{centering}
 \end{column}
 \end{columns}
 \end{frame}
@@ -220,13 +240,18 @@
 \includegraphics[width=0.9\textwidth]{lectFF/nn.pdf}
 \end{frame}
 %***********************************************************
-\begin{frame}{What Does a NN Look Like?}
+\begin{frame}{Terminology (1)}
 
+\begin{columns}
+\begin{column}{0.6\textwidth}
 \begin{itemize}
 	\item Inputs
 	\begin{itemize}
+		\item Data!
+		\item \# is based on the shape of your input
                 \item Often floating point values
                 \item Could be a multidimensional feature vector
+                \item Could be images
 	\end{itemize}	
 	\item Hidden layer(s)
 	\begin{itemize}
@@ -239,8 +264,14 @@
 	\begin{itemize}
                 \item Often probabilities
                 \item Reflect levels of certainty % not binary like logistic regression
+                \item \# depends on what you want e.g. a probability for each class in a set
 	\end{itemize}	
 \end{itemize}
+\end{column}
+\begin{column}{0.4\textwidth}
+\includegraphics[width=1\textwidth]{lectFF/inputsAndOutputs.pdf}
+\end{column}
+\end{columns}
 
 \end{frame}
 %***********************************************************
@@ -249,70 +280,80 @@
 \includegraphics[width=0.9\textwidth]{lectFF/nnSteps.pdf}
 \end{frame}
 %***********************************************************
-\begin{frame}{Terminology}
+\begin{frame}{Terminology (2)}
+
+\includegraphics[width=0.9\textwidth]{lectFF/nnTerms.pdf}
+\end{frame}
+%***********************************************************
+\begin{frame}{Terminology (2)}
 
 \begin{itemize}
 	\item The circles are called ``neurons''
 	\begin{itemize}
-                \item Are little computational units
-		\item Function they compute is always chosen to be differentiable
-		\item Since learning is via gradient descent
+                \item Little computational units
+		\item Computed function  is usually continuous and ``nice''
+		\item Since learning is via gradient descent \footnote{There are more complex variants}
 	\end{itemize}	
 	\item Output of a neuron is called an ``activation''
 	\item Neurons are organized into ``layers''
 	\begin{itemize}
                 \item In simplest case, layers take input only from preceding layer
+                \item ``Hidden'' because they are not visible externally
 	\end{itemize}	
 \end{itemize}
 \end{frame}
 %***********************************************************
-\begin{frame}{NN Terminology}
+\begin{frame}{Terminology (4)}
 
-\includegraphics[width=0.9\textwidth]{lectFF/nnTerms.pdf}
+\includegraphics[width=0.9\textwidth]{lectFF/nnTerms2.pdf}
 \end{frame}
 %***********************************************************
-\begin{frame}{Terminology (cont'd)}
+\begin{frame}{Terminology (4)}
 
 \begin{itemize}
-	\item Top/right layer in deep NN is the ``output layer'' (layer $t$ for ``top'')
-	\item Bottom/left layer in deep NN is the ``input layer'' (layer 1)
+	\item \textbf{Deep} Neural Networks have $>$ 1 hidden layer
+	\item Top/right layer in a NN is the ``output layer'' (layer $t$ for ``top'')
+	\item Bottom/left layer in a NN is the ``input layer'' (layer 1)
 	\begin{itemize}
                 \item Activation of input neurons read directly from input features
 	\end{itemize}	
-	\item Are one or more ``hidden layers'' between those two (layers $1 < i < t$)
+	\item One or more ``hidden layers'' are between those two (layers $1 < i < t$)
 	\item Each link between neurons has a ``weight''
 	\begin{itemize}
-                \item Input into a neuron is the weighted sum of activation that travels over all edges that
+                \item Input into a neuron is the weighted sum of activations that travel over all edges that
 		point into the neuron
 	\end{itemize}	
 \end{itemize}
 \end{frame}
 %***********************************************************
-\begin{frame}{NN Terminology}
-
-\includegraphics[width=0.9\textwidth]{lectFF/nnTerms2.pdf}
-\end{frame}
-%***********************************************************
-\begin{frame}{Terminology (cont'd)}
+\begin{frame}{Neural Network Types}
 
 \begin{itemize}
 	\item Today we'll assume a ``fully connected'' NN
 	\begin{itemize}
                 \item That is, each neuron in layer $i > 1$ takes input from all neurons in layer $i-1$
 	\end{itemize}	
-	\item But there are other connection patterns between layers
+	\item But there are other connection patterns between layers \footnote{later lectures}
 	\begin{itemize}
-		\item Example: convolutional layers
+		\item Convolutional layers
+	\begin{itemize}
 		\item Used extensively in image processing
 		\item Where subsets of neurons are constrained to only work on contiguous regions of input data
 	\end{itemize}
-\end{itemize}\end{frame}
+	\item Recurrent Neural Networks (RNNs)
+	\begin{itemize}
+		\item In an RNN, input from upper layer fed recursively into input in lower layer
+		\item Input to a layer can come from $>$ 1 layer
+	\end{itemize}
+	\end{itemize}
+\end{itemize}
+\end{frame}
 %***********************************************************
 
 \begin{frame}{Simplest NNs}
 
-\begin{columns}[b]
-\begin{column}{0.6\textwidth}
+%\begin{columns}[T]
+%\begin{column}{0.5\textwidth}
 \begin{itemize}
 	\item Are called ``feed-forward'' NNs 
 	\begin{itemize}
@@ -321,22 +362,18 @@
 		\item Thru hidden layers
 		\item And out of the output layer
 	\end{itemize}
-	\item Other options include ``recurrent'' NNs
-	\begin{itemize}
-		\item In an RNN, input from upper layer fed recursively into input in lower layer
-	\end{itemize}
 \end{itemize}
-\end{column}
-\begin{column}{0.4\textwidth}
-\includegraphics[width=1\textwidth]{lectFF/rnn.pdf}
-\end{column}
-\end{columns}
+%\end{column}
+%\begin{column}{0.5\textwidth}
+\includegraphics[width=.6\textwidth]{lectFF/nn.pdf}
+%\end{column}
+%\end{columns}
 \end{frame}
 %***********************************************************
 \begin{frame}{What Function Does Each Neuron Compute?}
 
 \begin{itemize}
-	\item Need each neuron to compute some function $f(v)$
+	\item Need each neuron to compute some  activation function $f(v)$
 	\begin{itemize}
 		\item $v$ is weighted sum over input activations
 		\item $f(v)$ is often simple and differentiable
@@ -346,16 +383,16 @@
 \includegraphics[width=0.8\textwidth]{lectFF/nnFV.pdf}
 \end{frame}
 %***********************************************************
-\begin{frame}{What Function Does Each Neuron Compute?}
+\begin{frame}{Activation Functions}
 
 \begin{columns}
 \begin{column}{0.6\textwidth}
 \begin{itemize}
-	\item Typically a ``sigmoid'' function
+	\item Classically, the activation function is a ``sigmoid'' function
 	\begin{itemize}
 	\item So neuron goes from ``off'' to ``on'' (like a soft binary gate)
 	\item Output is a floating point number
-	\item But smoothly, so differentiable (gradient descent once again!!)
+	\item But smoothly, so it is differentiable (gradient descent once again!!)
 	\end{itemize}
 \end{itemize}
 \end{column}
@@ -372,9 +409,9 @@
 \begin{column}{0.6\textwidth}
 \begin{itemize}
 		\item First, the hyperbolic tangent function
-		$$y = \tanh(v)$$
+		$$y = \tanh(v)$$ % {-1, 1 }
 		\item Second, the logistic function
-		$$y = (1 + e^{-v})^{-1}$$
+		$$y = (1 + e^{-v})^{-1}$$ % {0, 1}
 \end{itemize}
 \end{column}
 \begin{column}{0.5\textwidth}
@@ -383,7 +420,7 @@
 \end{columns}
 \end{frame}
 %***********************************************************
-\begin{frame}{Modern Sigmoid Function}
+\begin{frame}{Modern Activation Function}
 
 \begin{columns}
 \begin{column}{0.6\textwidth}
@@ -400,22 +437,6 @@
 
 	\end{frame}
 %***********************************************************
-\begin{frame}{Evaluation of a Feed-Forward NN}
-
-\begin{itemize}
-	\item Typically done via vectorized operations... fast!
-        \item How to push activation thru a network...
-	\begin{itemize}
-	\item Let $y_i$ be a row vector denoting output of $i$th layer
-	\item Define $y_1 = x$, the input data
-	\item Let $f$ denote the vector-valued function applying the activation function to each item in a vector
-	\item Let $W_{i}$ denote the matrix of weights connecting layer $i-1$ to layer $i$
-	\item If layer $i-1$ has $n$ neurons, layer $i$ has $m$ neurons, then $W_{i}$ has $n$ rows, $m$ columns
-	\item And $y_i = f(y_{i-1} \times W_{i})$
-        \end{itemize}
-\end{itemize}
-\end{frame}
-%***********************************************************
 \begin{frame}{NN Evaluation}
 
 \includegraphics[width=0.75\textwidth]{lectFF/nnEval.pdf}
@@ -424,7 +445,43 @@
 \begin{frame}{Evaluation of a Feed-Forward NN}
 
 \begin{itemize}
+	\item Typically done via vectorized operations... fast!
+        \item How to push activation thru a network...
+	\begin{itemize}
+	\item Let $y_i$ be a  vector denoting output of $i$th layer
+	\item Define $y_1 = x$, the input data
+	\item Let $f$ denote the vector-valued function applying the activation function to each item in a vector
+	\item Let $W_{i}$ denote the matrix of weights connecting layer $i-1$ to layer $i$
+	\item If layer $i-1$ has $n$ neurons, layer $i$ has $m$ neurons, then $W_{i}$ has $n$ rows, $m$ columns
+	\item And $y_i = f(W_{i} \otimes y_{i-1} )$, the tensor product of $W_i$ and $y_{i-1}$
+        \end{itemize}
+\end{itemize}
+\[
+\begin{bmatrix}
+& & \\
+ \hspace{2em} & W & \hspace{2em} \\
+& & \\
+\end{bmatrix}
+\otimes
+\begin{bmatrix}
+ \\ \\
+y_{i-1}  \\
+ \\ \\
+\end{bmatrix}
+= 
+\begin{bmatrix}
+ \\ \\
+y_{i}  \\
+ \\ \\
+\end{bmatrix}
+\]
+\end{frame}
+%***********************************************************
+\begin{frame}{Evaluation of a Feed-Forward NN}
+
+\begin{itemize}
         \item It's all about matrix \& vector multiplication
+        \item ... and applying a non-linear activation function
         \item You could write lots of loops in Python
         \item Recall, we've talked a lot about vector operations
         \item GPUs are really good at linear algebra
@@ -446,6 +503,71 @@ In practice
 
 \end{itemize}
 \end{frame}
+%%***********************************************************
+%\begin{frame}{Bias}
+%
+%\begin{itemize}
+%	\item Just like in regression....
+%	\begin{itemize}
+%		\item We want to be able to bias output of each neuron
+%		\item So, the neuron is not on/off 50\% of the time with totally random input
+%		\item Maybe we want it on just 5\% of the time with random input
+%		\item Basically like adding an intercept term
+%	\end{itemize}
+%	\item How to do this?
+%\end{itemize}
+%\end{frame}
+%***********************************************************
+
+\begin{frame}{Bias}
+
+\begin{columns}
+\begin{column}{0.6\textwidth}
+{\footnotesize{
+\begin{itemize}
+	\item Just like in Linear Regression
+	\item Have a special neuron at each layer
+	\item It always outputs the value 1, regardless of its inputs
+	\item Recall $i$ is the layer and $j$ is the neuron index
+	\item Then the last row of each $W_i$ will have biases
+	\item Since $w_{i,j} \times 1$ will be added into input to each neuron in layer $i+1$
+	\item $y_i = f(W_{i} \otimes y_{i-1} + b_i )$
+	\item $b_i$ is a scalar that is added to every entry:
+\[
+\begin{bmatrix}
+& & \\
+ \hspace{2em} & W & \hspace{2em} \\
+& & \\
+\end{bmatrix}
+\otimes
+\begin{bmatrix}
+ \\ \\
+y_{i-1}  \\
+ \\ \\
+\end{bmatrix}
++ b_i 
+\begin{bmatrix}
+ 1\\  .\\
+.  \\
+. \\ 1 \\
+\end{bmatrix}
+= 
+\begin{bmatrix}
+ \\ \\
+y_{i}  \\
+ \\ \\
+\end{bmatrix}
+\]
+
+\end{itemize}
+}}
+\end{column}
+\begin{column}{0.4\textwidth}
+\includegraphics[width=1\textwidth]{lectFF/biasNN.pdf}
+\end{column}
+\end{columns}
+\end{frame}
+
 %***********************************************************
 \begin{frame}{NN Example}
 
@@ -462,7 +584,7 @@ In practice
 \begin{itemize}
 	\item NNs classically used for classification
 	\begin{itemize}
-	\item Output is function of activations of second-to-last layer
+	\item Output is function of activations of the last hidden layer
         \end{itemize}
       	\item Often, we want certainty - e.g. a probability
 	\item Typically we use a ``softmax'' function
@@ -495,7 +617,7 @@ In practice
 \begin{itemize}
 	\item Want to solve a classification problem
 	\item Chihuahua or muffin?
-	\item Push the picture through the FF network
+	\item Push the picture through the network
 	\item End with two neurons
 	\begin{itemize}
 		\item Chihuahua
@@ -510,26 +632,26 @@ In practice
 \end{columns}
 	\end{frame}
 
-%***********************************************************
-\begin{frame}{Using Softmax}
-
-\begin{columns}
-\begin{column}{0.6\textwidth}
-\begin{itemize}
-	\item Could take the max of the two outputs
-	\item But it's a smooth function -- we have degrees of ``On''
-	\item The \textbf{max} function is not differentiable
-	\item Use \textbf{softmax} instead 
-	\item Gives us Pr[Chihuahua] and Pr[Muffin]
-	\item Sample using probabilities to choose one 
-\end{itemize}
-
-\end{column}
-\begin{column}{0.4\textwidth}
-\includegraphics[width=1\textwidth]{lectFF/dogOrMuffin.jpeg}
-\end{column}
-\end{columns}
-	\end{frame}
+%%***********************************************************
+%\begin{frame}{Using Softmax}
+%
+%\begin{columns}
+%\begin{column}{0.6\textwidth}
+%\begin{itemize}
+%	\item Could take the max of the two outputs
+%	\item But it's a smooth function -- we have degrees of ``On''
+%	\item The \textbf{max} function is not differentiable
+%	\item Use \textbf{softmax} instead 
+%	\item Gives us Pr[Chihuahua] and Pr[Muffin]
+%	\item Sample using probabilities to choose one 
+%\end{itemize}
+%
+%\end{column}
+%\begin{column}{0.4\textwidth}
+%\includegraphics[width=1\textwidth]{lectFF/dogOrMuffin.jpeg}
+%\end{column}
+%\end{columns}
+%	\end{frame}
 %***********************************************************
 \begin{frame}{Another Example}
 
@@ -544,7 +666,15 @@ In practice
 \end{itemize}
 \end{column}
 \begin{column}{0.4\textwidth}
-\includegraphics[width=1\textwidth]{lectFF/if_scales_of_Balance_172544.png}
+%\includegraphics[width=1\textwidth]{lectFF/if_scales_of_Balance_172544.png}
+\begin{itemize}
+	\item Amazon
+	\item Search
+	\item Profitability
+	\item Relevance
+	\item Third-party sellers 
+	\item Product recommendations
+\end{itemize}
 \end{column}
 \end{columns}
 \end{frame}
@@ -577,43 +707,7 @@ In practice
 	\end{frame}
 
 
-%***********************************************************
-\begin{frame}{Bias}
 
-\begin{itemize}
-	\item Just like in regression....
-	\begin{itemize}
-		\item We want to be able to bias output of each neuron
-		\item So, the neuron is not on/off 50\% of the time with totally random input
-		\item Maybe we want it on just 5\% of the time with random input
-		\item Basically like adding an intercept term
-	\end{itemize}
-	\item How to do this?
-\end{itemize}
-\end{frame}
-%***********************************************************
-
-\begin{frame}{Bias}
-
-\begin{columns}
-\begin{column}{0.5\textwidth}
-\begin{itemize}
-	\item Easy!
-	\begin{itemize}
-		\item Just like in LR
-		\item Have a special neuron at each layer
-		\item It always outputs the value 1
-		\item Regardless of its inputs
-		\item Then the last row of each $W_i$ will have biases
-		\item Since $w_{i,j} \times 1$ will be added into input to each neuron in layer $i+1$
-	\end{itemize}
-\end{itemize}
-\end{column}
-\begin{column}{0.5\textwidth}
-\includegraphics[width=1\textwidth]{lectFF/biasNN.pdf}
-\end{column}
-\end{columns}
-\end{frame}
 %***********************************************************
 
 \begin{frame}{Summary}
@@ -630,12 +724,8 @@ In practice
 
 \begin{itemize}
 \item What are the weights?
-\item Accomplished via gradient descent
+\item Learned via gradient descent
 \item Gives rise to the famous ``back-propagation'' algorithm
 \end{itemize}
 \end{frame}
-%***********************************************************
-\begin{frame}{Questions?}
-\end{frame}
-
 \end{document}
